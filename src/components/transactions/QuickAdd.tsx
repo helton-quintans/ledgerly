@@ -54,16 +54,26 @@ export default function QuickAdd({ onCreated }: Props) {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <TypeToggle value={type} onChange={setType} />
-      <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="rounded border px-2 py-1">
-        <option value="USD">USD</option>
-        <option value="BRL">BRL</option>
-        <option value="EUR">EUR</option>
-      </select>
-      <Input inputMode="decimal" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} className="w-40" />
-      <Input placeholder="Description" value={desc} onChange={(e) => setDesc(e.target.value)} />
-      <Button onClick={handleCreate}>Add</Button>
+    <div className="w-full">
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2 justify-center w-full">
+          <TypeToggle value={type} onChange={setType} />
+          <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="rounded border px-2 py-1">
+            <option value="USD">USD</option>
+            <option value="BRL">BRL</option>
+            <option value="EUR">EUR</option>
+          </select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Input inputMode="decimal" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} className="w-40" />
+          <Input placeholder="Description" value={desc} onChange={(e) => setDesc(e.target.value)} />
+        </div>
+
+        <div>
+          <Button onClick={handleCreate} className="w-full sm:w-auto">Add</Button>
+        </div>
+      </div>
     </div>
   );
 }
