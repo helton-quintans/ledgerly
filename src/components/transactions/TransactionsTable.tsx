@@ -37,7 +37,7 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
               <TableCell>{new Date(t.date).toLocaleString()}</TableCell>
               <TableCell>{t.description || t.category}</TableCell>
               <TableCell className={`text-right ${t.type === "income" ? "text-green-600" : "text-red-600"}`}>
-                {t.type === "income" ? "+" : "-"}${t.amount.toFixed(2)}
+                {t.type === "income" ? "+" : "-"}{new Intl.NumberFormat(undefined, { style: "currency", currency: t.currency || "USD" }).format(t.amount)}
               </TableCell>
               <TableCell className="text-center">
                 <div className="flex items-center justify-center gap-2">
