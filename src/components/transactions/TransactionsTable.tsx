@@ -25,20 +25,20 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Date</TableHead>
+            <TableHead className="text-left">Amount</TableHead>
             <TableHead>Description</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
+            <TableHead>Date</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {items.map((t) => (
             <TableRow key={t.id}>
-              <TableCell>{new Date(t.date).toLocaleString()}</TableCell>
-              <TableCell>{t.description || t.category}</TableCell>
-              <TableCell className={`text-right ${t.type === "income" ? "text-green-600" : "text-red-600"}`}>
+              <TableCell className={`${t.type === "income" ? "text-green-600" : "text-red-600"} text-left` }>
                 {t.type === "income" ? "+" : "-"}{new Intl.NumberFormat(undefined, { style: "currency", currency: t.currency || "USD" }).format(t.amount)}
               </TableCell>
+              <TableCell>{t.description || t.category}</TableCell>
+              <TableCell>{new Date(t.date).toLocaleString()}</TableCell>
               <TableCell className="text-center">
                 <div className="flex items-center justify-center gap-2">
                   <Button size="icon" variant="ghost" onClick={() => onEdit(t)} aria-label="Edit">
