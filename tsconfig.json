@@ -19,9 +19,6 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "@/registry": [
-        "./registry.json"
       ]
     },
     "plugins": [

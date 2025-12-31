@@ -1,4 +1,5 @@
-import registry from "@/registry";
+// Registry helpers removed for this project. Stubs provided so imports
+// elsewhere in the codebase continue to type-check during build.
 
 export interface Component {
   name: string;
@@ -9,42 +10,21 @@ export interface Component {
 }
 
 export function getRegistryItems(): Component[] {
-  // exclude style item as it's not relevant to show in the ui
-  const components = registry.items.filter(
-    (item) => item.type !== "registry:style",
-  );
-
-  return components as Component[];
+  return [];
 }
 
 export function getRegistryItem(name: string): Component {
-  const components = getRegistryItems();
-
-  const component = components.find(
-    (item: { name: string }) => item.name === name,
-  );
-
-  if (component == null) {
-    throw new Error(`Component "${name}" not found`);
-  }
-
-  return component;
+  throw new Error(`Registry not available: component "${name}" not found`);
 }
 
 export function getBlocks() {
-  return getRegistryItems().filter(
-    (component) => component.type === "registry:block",
-  );
+  return [] as Component[];
 }
 
 export function getUIPrimitives() {
-  return getRegistryItems().filter(
-    (component) => component.type === "registry:ui",
-  );
+  return [] as Component[];
 }
 
 export function getComponents() {
-  return getRegistryItems().filter(
-    (component) => component.type === "registry:component",
-  );
+  return [] as Component[];
 }
