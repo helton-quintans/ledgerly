@@ -75,15 +75,6 @@ export function BrandHeader() {
 
           <ThemeToggle />
 
-          <Button variant="ghost" size="sm" className="text-foreground">
-            <HelpCircle className="mr-2 size-4" />
-            Support
-          </Button>
-
-          <Button variant="ghost" size="sm" className="text-foreground">
-            Upgrade Trial
-          </Button>
-
           <Avatar className="size-8">
             <AvatarFallback className="bg-primary text-primary-foreground">
               <span className="text-xs">ME</span>
