@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import QuickAdd from "@/components/transactions/QuickAdd";
-import TransactionDrawer from "@/components/transactions/TransactionDrawer";
 import TransactionsTable from "@/components/transactions/TransactionsTable";
 import { listTransactions, deleteTransaction, Transaction } from "@/lib/transactions";
 import { Eye, EyeOff } from "lucide-react";
@@ -37,9 +36,8 @@ export default function Home() {
 
   return (
     <main className="p-6">
-      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Transactions</h1>
-        <TransactionDrawer onSaved={load} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
