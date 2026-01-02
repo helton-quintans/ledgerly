@@ -13,7 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { createTransaction } from "@/lib/transactions";
-import { ArrowDown, ArrowUp, Plus } from "lucide-react";
+import { ArrowDown, ArrowUp, Plus, DollarSign, FileText, Tag } from "lucide-react";
+import CurrencySelector from "@/components/transactions/CurrencySelector";
 import { useState } from "react";
 
 type Props = {
@@ -61,65 +62,70 @@ export default function TransactionFormModal({ onSaved }: Props) {
   );
 
   const content = (
-    <div className="space-y-4">
-      <DialogHeader>
+    <div className="space-y-4 p-2">
+      <DialogHeader className="radius-8">
         <DialogTitle>New transaction</DialogTitle>
       </DialogHeader>
       <div className="grid gap-2">
-        <Input
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <Input
-          placeholder="Amount"
-          inputMode="decimal"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        />
-        <Input
-          placeholder="Category / Label"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        />
-        <div className="flex items-center gap-2">
-          <select
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-            className="rounded border px-2 py-1"
-          >
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-            <option value="BRL">BRL</option>
-          </select>
+        <div className="flex justify-center">
+          <CurrencySelector value={currency} onChange={(v) => setCurrency(v)} />
+        </div>
 
-          <div className="flex-1">
-            <div className="flex w-full rounded-md bg-muted p-1">
-              <button
-                type="button"
-                className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded ${type === "income" ? "bg-green-200 text-green-800" : "text-green-600"}`}
-                onClick={() => setType("income")}
-              >
-                <ArrowUp className="size-4" />
-                <span>In</span>
-              </button>
-              <button
-                type="button"
-                className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded ${type === "expense" ? "bg-red-200 text-red-800" : "text-red-600"}`}
-                onClick={() => setType("expense")}
-              >
-                <ArrowDown className="size-4" />
-                <span>Out</span>
-              </button>
-            </div>
-          </div>
+        <div className="relative">
+          <Input
+            placeholder="Amount"
+            inputMode="decimal"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="pl-9"
+          />
+          <DollarSign className="absolute left-2 top-2 size-4" style={{ color: 'var(--input-placeholder)' }} />
+        </div>
+
+        <div className="relative">
+          <Input
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="pl-9"
+          />
+          <FileText className="absolute left-2 top-2 size-4" style={{ color: 'var(--input-placeholder)' }} />
+        </div>
+
+        <div className="relative">
+          <Input
+            placeholder="Category / Label"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="pl-9"
+          />
+          <Tag className="absolute left-2 top-2 size-4" style={{ color: 'var(--input-placeholder)' }} />
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer ${type === "income" ? "bg-green-200 text-green-800" : "text-green-600"}`}
+            onClick={() => setType("income")}
+          >
+            <ArrowUp className="size-4" />
+            <span>In</span>
+          </button>
+
+          <button
+            type="button"
+            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer ${type === "expense" ? "bg-red-200 text-red-800" : "text-red-600"}`}
+            onClick={() => setType("expense")}
+          >
+            <ArrowDown className="size-4" />
+            <span>Out</span>
+          </button>
         </div>
       </div>
-      <DialogFooter>
-        <Button variant="secondary" onClick={() => setOpen(false)}>
+      <DialogFooter className="flex flex-col gap-2 sm:flex-col">
+        <Button size="lg" className="w-full" onClick={save}>Save</Button>
+        <Button variant="outline" size="lg" className="w-full" onClick={() => setOpen(false)}>
           Cancel
         </Button>
-        <Button onClick={save}>Save</Button>
       </DialogFooter>
     </div>
   );
