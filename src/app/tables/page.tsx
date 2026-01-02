@@ -1,4 +1,4 @@
-export default function TablesPage(){
+export default function TablesPage() {
   return (
     <div className="py-12">
       <h1 className="text-2xl font-semibold">Tables</h1>

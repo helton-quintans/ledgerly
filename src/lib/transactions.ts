@@ -1,5 +1,5 @@
 function generateId() {
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,9)}`;
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
 export type Transaction = {
@@ -46,7 +46,10 @@ export async function createTransaction(input: Omit<Transaction, "id">) {
   return t;
 }
 
-export async function updateTransaction(id: string, patch: Partial<Transaction>) {
+export async function updateTransaction(
+  id: string,
+  patch: Partial<Transaction>,
+) {
   items = items.map((it) => (it.id === id ? { ...it, ...patch } : it));
   await new Promise((r) => setTimeout(r, 100));
   return items.find((i) => i.id === id)!;

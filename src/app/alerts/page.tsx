@@ -1,4 +1,4 @@
-export default function AlertsPage(){
+export default function AlertsPage() {
   return (
     <div className="py-12">
       <h1 className="text-2xl font-semibold">Alerts</h1>

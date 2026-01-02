@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import QuickAdd from "@/components/transactions/QuickAdd";
-import TransactionsTable from "@/components/transactions/TransactionsTable";
-import TransactionFormModal from "@/components/transactions/TransactionFormModal";
-import Summary from "@/components/transactions/Summary";
 import CurrencySelector from "@/components/transactions/CurrencySelector";
-import { listTransactions, deleteTransaction, Transaction } from "@/lib/transactions";
+import QuickAdd from "@/components/transactions/QuickAdd";
+import Summary from "@/components/transactions/Summary";
+import TransactionFormModal from "@/components/transactions/TransactionFormModal";
+import TransactionsTable from "@/components/transactions/TransactionsTable";
+import {
+  type Transaction,
+  deleteTransaction,
+  listTransactions,
+} from "@/lib/transactions";
 import { Eye, EyeOff } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [items, setItems] = useState<Transaction[]>([]);
@@ -32,10 +36,27 @@ export default function Home() {
     return (amount * f) / t;
   }
 
-  const incomes = items.reduce((acc, it) => acc + (it.type === "income" ? convert(it.amount, it.currency, displayCurrency) : 0), 0);
-  const expenses = items.reduce((acc, it) => acc + (it.type === "expense" ? convert(it.amount, it.currency, displayCurrency) : 0), 0);
+  const incomes = items.reduce(
+    (acc, it) =>
+      acc +
+      (it.type === "income"
+        ? convert(it.amount, it.currency, displayCurrency)
+        : 0),
+    0,
+  );
+  const expenses = items.reduce(
+    (acc, it) =>
+      acc +
+      (it.type === "expense"
+        ? convert(it.amount, it.currency, displayCurrency)
+        : 0),
+    0,
+  );
   const balance = incomes - expenses;
-  const fmt = new Intl.NumberFormat(undefined, { style: "currency", currency: displayCurrency || "USD" });
+  const fmt = new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency: displayCurrency || "USD",
+  });
 
   return (
     <main className="p-6">
@@ -48,13 +69,30 @@ export default function Home() {
 
       <div className="mb-4">
         <div className="flex items-center justify-end gap-2 mb-3">
-          <CurrencySelector value={displayCurrency} onChange={(v) => setDisplayCurrency(v)} />
-          <button aria-label="Toggle balance visibility" onClick={() => setHidden((s) => !s)} className="p-1 rounded hover:bg-muted">
-            {hidden ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          <CurrencySelector
+            value={displayCurrency}
+            onChange={(v) => setDisplayCurrency(v)}
+          />
+          <button
+            aria-label="Toggle balance visibility"
+            onClick={() => setHidden((s) => !s)}
+            className="p-1 rounded hover:bg-muted"
+          >
+            {hidden ? (
+              <EyeOff className="w-5 h-5" />
+            ) : (
+              <Eye className="w-5 h-5" />
+            )}
           </button>
         </div>
 
-        <Summary incomes={incomes} expenses={expenses} balance={balance} hidden={hidden} fmt={(v) => fmt.format(v)} />
+        <Summary
+          incomes={incomes}
+          expenses={expenses}
+          balance={balance}
+          hidden={hidden}
+          fmt={(v) => fmt.format(v)}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -75,7 +113,9 @@ export default function Home() {
         <aside className="space-y-4">
           <div className="rounded-md border p-4">
             <h3 className="text-sm font-medium">Resumo</h3>
-            <div className="text-sm text-muted-foreground">Receitas e despesas recentes</div>
+            <div className="text-sm text-muted-foreground">
+              Receitas e despesas recentes
+            </div>
           </div>
         </aside>
       </div>

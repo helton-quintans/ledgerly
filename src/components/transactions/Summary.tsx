@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, ArrowDown, DollarSign } from "lucide-react";
+import { ArrowDown, ArrowUp, DollarSign } from "lucide-react";
 
 type Props = {
   incomes: number;
@@ -10,7 +10,13 @@ type Props = {
   fmt: (v: number) => string;
 };
 
-export default function Summary({ incomes, expenses, balance, hidden, fmt }: Props) {
+export default function Summary({
+  incomes,
+  expenses,
+  balance,
+  hidden,
+  fmt,
+}: Props) {
   return (
     <div className="grid grid-cols-1 gap-4 mb-4">
       {/* Mobile horizontal */}
@@ -18,7 +24,9 @@ export default function Summary({ incomes, expenses, balance, hidden, fmt }: Pro
         <div className="min-w-60 shrink-0 rounded-md p-4 bg-accent text-accent-foreground flex items-center justify-between snap-start">
           <div>
             <div className="text-sm">Total</div>
-            <div className="text-2xl font-semibold mt-1">{hidden ? "......" : fmt(balance)}</div>
+            <div className="text-2xl font-semibold mt-1">
+              {hidden ? "......" : fmt(balance)}
+            </div>
           </div>
           <DollarSign className="size-5 opacity-70" />
         </div>
@@ -26,7 +34,9 @@ export default function Summary({ incomes, expenses, balance, hidden, fmt }: Pro
         <div className="min-w-60 shrink-0 rounded-md p-4 bg-muted flex items-center justify-between snap-start">
           <div>
             <div className="text-sm text-muted-foreground">In</div>
-            <div className="text-2xl font-semibold mt-1">{hidden ? "......" : fmt(incomes)}</div>
+            <div className="text-2xl font-semibold mt-1">
+              {hidden ? "......" : fmt(incomes)}
+            </div>
           </div>
           <ArrowUp className="size-5 opacity-70" />
         </div>
@@ -34,7 +44,9 @@ export default function Summary({ incomes, expenses, balance, hidden, fmt }: Pro
         <div className="min-w-60 shrink-0 rounded-md p-4 bg-muted flex items-center justify-between snap-start">
           <div>
             <div className="text-sm text-muted-foreground">Out</div>
-            <div className="text-2xl font-semibold mt-1">{hidden ? "......" : fmt(expenses)}</div>
+            <div className="text-2xl font-semibold mt-1">
+              {hidden ? "......" : fmt(expenses)}
+            </div>
           </div>
           <ArrowDown className="size-5 opacity-70" />
         </div>
@@ -45,7 +57,9 @@ export default function Summary({ incomes, expenses, balance, hidden, fmt }: Pro
         <div className="w-64 rounded-md p-4 bg-accent text-accent-foreground flex items-center justify-between">
           <div>
             <div className="text-sm">Total</div>
-            <div className="text-2xl font-semibold mt-1">{hidden ? "......" : fmt(balance)}</div>
+            <div className="text-2xl font-semibold mt-1">
+              {hidden ? "......" : fmt(balance)}
+            </div>
           </div>
           <DollarSign className="size-5 opacity-70" />
         </div>
@@ -53,7 +67,9 @@ export default function Summary({ incomes, expenses, balance, hidden, fmt }: Pro
         <div className="w-64 rounded-md p-4 bg-muted flex items-center justify-between">
           <div>
             <div className="text-sm text-muted-foreground">In</div>
-            <div className="text-2xl font-semibold mt-1">{hidden ? "......" : fmt(incomes)}</div>
+            <div className="text-2xl font-semibold mt-1">
+              {hidden ? "......" : fmt(incomes)}
+            </div>
           </div>
           <ArrowUp className="size-5 opacity-70" />
         </div>
@@ -61,7 +77,9 @@ export default function Summary({ incomes, expenses, balance, hidden, fmt }: Pro
         <div className="w-64 rounded-md p-4 bg-muted flex items-center justify-between">
           <div>
             <div className="text-sm text-muted-foreground">Out</div>
-            <div className="text-2xl font-semibold mt-1">{hidden ? "......" : fmt(expenses)}</div>
+            <div className="text-2xl font-semibold mt-1">
+              {hidden ? "......" : fmt(expenses)}
+            </div>
           </div>
           <ArrowDown className="size-5 opacity-70" />
         </div>

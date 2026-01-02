@@ -1,4 +1,4 @@
-export default function HistoryPage(){
+export default function HistoryPage() {
   return (
     <div className="py-12">
       <h1 className="text-2xl font-semibold">History</h1>

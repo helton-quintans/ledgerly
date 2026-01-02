@@ -15,9 +15,7 @@ export default function ErrorPage({
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center text-center">
-      <h1 className="text-6xl font-bold tracking-tight md:text-8xl">
-        500
-      </h1>
+      <h1 className="text-6xl font-bold tracking-tight md:text-8xl">500</h1>
       <h2 className="mt-4 text-2xl font-semibold md:text-3xl">
         Something went wrong
       </h2>

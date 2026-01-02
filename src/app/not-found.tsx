@@ -7,10 +7,7 @@ export default function NotFound() {
       <h2 className="mt-4 text-2xl font-semibold md:text-3xl">
         Page Not Found
       </h2>
-      <Link
-        href="/"
-        className="mt-6 rounded-md bg-black px-4 py-2 text-white"
-      >
+      <Link href="/" className="mt-6 rounded-md bg-black px-4 py-2 text-white">
         Go Home
       </Link>
     </div>

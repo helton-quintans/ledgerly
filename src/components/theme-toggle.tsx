@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState<boolean | null>(null);
@@ -14,7 +14,9 @@ export default function ThemeToggle() {
       document.documentElement.classList.toggle("dark", stored === "dark");
     } else {
       // follow system preference
-      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const prefersDark =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
       setIsDark(prefersDark);
       document.documentElement.classList.toggle("dark", prefersDark);
     }
@@ -30,7 +32,12 @@ export default function ThemeToggle() {
   if (isDark === null) return null;
 
   return (
-    <Button variant="ghost" size="icon" onClick={toggle} aria-label="Toggle theme">
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={toggle}
+      aria-label="Toggle theme"
+    >
       {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
     </Button>
   );

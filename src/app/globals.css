@@ -4,9 +4,9 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
- /* Base neutrals */
-  --background: #FAFAFA; 
-  --foreground: #0f1724; 
+  /* Base neutrals */
+  --background: #fafafa;
+  --foreground: #0f1724;
 
   /* Surface tokens */
   --card: #ffffff; /* cards / panels */
@@ -67,7 +67,7 @@
 }
 
 .dark {
-  --background: #222222; 
+  --background: #222222;
   --foreground: #f8fafc;
 
   --card: #16181b;
@@ -96,7 +96,7 @@
   --warning: #f59e0b;
 
   /* Interaction tokens */
-  --hover: #efefef; 
+  --hover: #efefef;
   --border: #111827;
   --input: #0b1220;
   --ring: #6b7280;

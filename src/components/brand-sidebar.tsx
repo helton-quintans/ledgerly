@@ -3,6 +3,7 @@
 import {
   AlertTriangle,
   BarChart2,
+  ChevronDown,
   Clock,
   Database,
   Home,
@@ -11,12 +12,12 @@ import {
   MoreHorizontal,
   Plus,
   Search,
-  ChevronDown,
   Table,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,12 +28,12 @@ import {
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-  SidebarMenuSubButton,
   SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar";
@@ -72,7 +73,11 @@ export function BrandSidebar() {
         { title: "Beta", href: "/projects/beta" },
       ],
     },
-    { title: "Databases", href: "/databases", icon: <Database className="size-4" /> },
+    {
+      title: "Databases",
+      href: "/databases",
+      icon: <Database className="size-4" />,
+    },
     {
       title: "Tables",
       href: "/tables",
@@ -82,7 +87,11 @@ export function BrandSidebar() {
   ];
 
   const toolsNavItems: NavItem[] = [
-    { title: "Alerts", href: "/alerts", icon: <AlertTriangle className="size-4" /> },
+    {
+      title: "Alerts",
+      href: "/alerts",
+      icon: <AlertTriangle className="size-4" />,
+    },
     {
       title: "Analytics",
       href: "/analytics",
@@ -93,7 +102,11 @@ export function BrandSidebar() {
       ],
     },
     { title: "History", href: "/history", icon: <Clock className="size-4" /> },
-    { title: "AI", href: "/ai", icon: <MessageSquareText className="size-4" /> },
+    {
+      title: "AI",
+      href: "/ai",
+      icon: <MessageSquareText className="size-4" />,
+    },
   ];
 
   const q = query.trim().toLowerCase();
@@ -135,21 +148,30 @@ export function BrandSidebar() {
                   if (!q) return true;
                   if (item.title.toLowerCase().includes(q)) return true;
                   if (item.children) {
-                    return item.children.some((c) => c.title.toLowerCase().includes(q));
+                    return item.children.some((c) =>
+                      c.title.toLowerCase().includes(q),
+                    );
                   }
                   return false;
                 })
                 .map((item) => {
                   const hasChildren = Boolean(item.children?.length);
                   const childMatches = hasChildren
-                    ? item.children!.some((c) => c.title.toLowerCase().includes(q))
+                    ? item.children!.some((c) =>
+                        c.title.toLowerCase().includes(q),
+                      )
                     : false;
-                  const isOpen = Boolean(expanded[item.title]) || (!!q && childMatches);
+                  const isOpen =
+                    Boolean(expanded[item.title]) || (!!q && childMatches);
 
                   return (
                     <SidebarMenuItem key={item.href}>
                       {hasChildren ? (
-                        <SidebarMenuButton asChild className="cursor-pointer" tooltip={item.title}>
+                        <SidebarMenuButton
+                          asChild
+                          className="cursor-pointer"
+                          tooltip={item.title}
+                        >
                           <button
                             type="button"
                             onClick={() => toggleExpand(item.title)}
@@ -185,29 +207,31 @@ export function BrandSidebar() {
 
                       {hasChildren && isOpen && (
                         <SidebarMenuSub>
-                          {item.children!
-                            .filter((c) => {
+                          {item
+                            .children!.filter((c) => {
                               if (!q) return true;
                               return c.title.toLowerCase().includes(q);
                             })
                             .map((child) => (
-                                <SidebarMenuSubItem key={child.href}>
-                                  <SidebarMenuSubButton asChild>
-                                    <Link
-                                      href={child.href}
-                                      onClick={() => {
-                                        setOpenMobile(false);
-                                      }}
-                                    >
-                                      {child.title}
-                                    </Link>
-                                  </SidebarMenuSubButton>
-                                </SidebarMenuSubItem>
+                              <SidebarMenuSubItem key={child.href}>
+                                <SidebarMenuSubButton asChild>
+                                  <Link
+                                    href={child.href}
+                                    onClick={() => {
+                                      setOpenMobile(false);
+                                    }}
+                                  >
+                                    {child.title}
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
                             ))}
                         </SidebarMenuSub>
                       )}
 
-                      {item.badge && <SidebarMenuBadge>{item.badge.text}</SidebarMenuBadge>}
+                      {item.badge && (
+                        <SidebarMenuBadge>{item.badge.text}</SidebarMenuBadge>
+                      )}
                     </SidebarMenuItem>
                   );
                 })}
@@ -226,21 +250,30 @@ export function BrandSidebar() {
                   if (!q) return true;
                   if (item.title.toLowerCase().includes(q)) return true;
                   if (item.children) {
-                    return item.children.some((c) => c.title.toLowerCase().includes(q));
+                    return item.children.some((c) =>
+                      c.title.toLowerCase().includes(q),
+                    );
                   }
                   return false;
                 })
                 .map((item) => {
                   const hasChildren = Boolean(item.children?.length);
                   const childMatches = hasChildren
-                    ? item.children!.some((c) => c.title.toLowerCase().includes(q))
+                    ? item.children!.some((c) =>
+                        c.title.toLowerCase().includes(q),
+                      )
                     : false;
-                  const isOpen = Boolean(expanded[item.title]) || (!!q && childMatches);
+                  const isOpen =
+                    Boolean(expanded[item.title]) || (!!q && childMatches);
 
                   return (
                     <SidebarMenuItem key={item.href}>
                       {hasChildren ? (
-                        <SidebarMenuButton asChild className="cursor-pointer" tooltip={item.title}>
+                        <SidebarMenuButton
+                          asChild
+                          className="cursor-pointer"
+                          tooltip={item.title}
+                        >
                           <button
                             type="button"
                             onClick={() => toggleExpand(item.title)}
@@ -257,7 +290,11 @@ export function BrandSidebar() {
                           </button>
                         </SidebarMenuButton>
                       ) : (
-                        <SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.title}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.href}
+                          tooltip={item.title}
+                        >
                           <Link
                             href={item.href}
                             onClick={() => {
@@ -272,29 +309,31 @@ export function BrandSidebar() {
 
                       {hasChildren && isOpen && (
                         <SidebarMenuSub>
-                          {item.children!
-                            .filter((c) => {
+                          {item
+                            .children!.filter((c) => {
                               if (!q) return true;
                               return c.title.toLowerCase().includes(q);
                             })
                             .map((child) => (
-                                <SidebarMenuSubItem key={child.href}>
-                                  <SidebarMenuSubButton asChild>
-                                    <Link
-                                      href={child.href}
-                                      onClick={() => {
-                                        setOpenMobile(false);
-                                      }}
-                                    >
-                                      {child.title}
-                                    </Link>
-                                  </SidebarMenuSubButton>
-                                </SidebarMenuSubItem>
+                              <SidebarMenuSubItem key={child.href}>
+                                <SidebarMenuSubButton asChild>
+                                  <Link
+                                    href={child.href}
+                                    onClick={() => {
+                                      setOpenMobile(false);
+                                    }}
+                                  >
+                                    {child.title}
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
                             ))}
                         </SidebarMenuSub>
                       )}
 
-                      {item.badge && <SidebarMenuBadge>{item.badge.text}</SidebarMenuBadge>}
+                      {item.badge && (
+                        <SidebarMenuBadge>{item.badge.text}</SidebarMenuBadge>
+                      )}
                     </SidebarMenuItem>
                   );
                 })}
