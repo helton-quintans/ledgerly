@@ -50,7 +50,7 @@ interface NavItem {
 
 export function BrandSidebar() {
   const pathname = usePathname();
-  const { state } = useSidebar();
+  const { state, setOpenMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   const [query, setQuery] = useState("");
@@ -171,7 +171,12 @@ export function BrandSidebar() {
                           isActive={pathname === item.href}
                           tooltip={item.title}
                         >
-                          <Link href={item.href}>
+                          <Link
+                            href={item.href}
+                            onClick={() => {
+                              setOpenMobile(false);
+                            }}
+                          >
                             {item.icon}
                             <span>{item.title}</span>
                           </Link>
@@ -186,11 +191,18 @@ export function BrandSidebar() {
                               return c.title.toLowerCase().includes(q);
                             })
                             .map((child) => (
-                              <SidebarMenuSubItem key={child.href}>
-                                <SidebarMenuSubButton asChild>
-                                  <Link href={child.href}>{child.title}</Link>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
+                                <SidebarMenuSubItem key={child.href}>
+                                  <SidebarMenuSubButton asChild>
+                                    <Link
+                                      href={child.href}
+                                      onClick={() => {
+                                        setOpenMobile(false);
+                                      }}
+                                    >
+                                      {child.title}
+                                    </Link>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
                             ))}
                         </SidebarMenuSub>
                       )}
@@ -246,7 +258,12 @@ export function BrandSidebar() {
                         </SidebarMenuButton>
                       ) : (
                         <SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.title}>
-                          <Link href={item.href}>
+                          <Link
+                            href={item.href}
+                            onClick={() => {
+                              setOpenMobile(false);
+                            }}
+                          >
                             {item.icon}
                             <span>{item.title}</span>
                           </Link>
@@ -261,11 +278,18 @@ export function BrandSidebar() {
                               return c.title.toLowerCase().includes(q);
                             })
                             .map((child) => (
-                              <SidebarMenuSubItem key={child.href}>
-                                <SidebarMenuSubButton asChild>
-                                  <Link href={child.href}>{child.title}</Link>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
+                                <SidebarMenuSubItem key={child.href}>
+                                  <SidebarMenuSubButton asChild>
+                                    <Link
+                                      href={child.href}
+                                      onClick={() => {
+                                        setOpenMobile(false);
+                                      }}
+                                    >
+                                      {child.title}
+                                    </Link>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
                             ))}
                         </SidebarMenuSub>
                       )}
