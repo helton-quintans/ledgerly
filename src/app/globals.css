@@ -42,8 +42,10 @@
 
   /* Interaction tokens */
   --hover: #efefef; /* shared hover/tile color (same in both themes) */
-  --border: #e6e6e6;
-  --input: #f9fafb;
+  --border: #c1c5cc; /* stronger border for better contrast */
+  --input: #f3f4f6; /* light gray input background for better contrast on light mode */
+  --input-shadow: 0 1px 0 rgba(16, 24, 40, 0.04);
+  --input-placeholder: #94a3b8;
   --ring: #111827; /* focus ring */
 
   /* Charts / tonal helpers */
@@ -64,6 +66,17 @@
   --sidebar-ring: var(--ring);
 
   --radius: 0.5rem;
+}
+
+/* Accent shadow utility: uses color-mix when available, falls back to neutral shadow */
+.accent-shadow {
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--accent-1) 12%, transparent);
+}
+
+@supports not (color-mix(in srgb, var(--accent-1) 12%, transparent)) {
+  .accent-shadow {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  }
 }
 
 .dark {
@@ -186,5 +199,20 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-border, currentColor);
+  }
+
+  input,
+  textarea,
+  select,
+  .input {
+    background-color: var(--color-input);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--input-shadow);
+    color: var(--color-foreground);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--input-placeholder);
   }
 }

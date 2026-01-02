@@ -1,7 +1,6 @@
 "use client";
 
 import CurrencySelector from "@/components/transactions/CurrencySelector";
-import QuickAdd from "@/components/transactions/QuickAdd";
 import Summary from "@/components/transactions/Summary";
 import TransactionFormModal from "@/components/transactions/TransactionFormModal";
 import TransactionsTable from "@/components/transactions/TransactionsTable";
@@ -62,12 +61,6 @@ export default function Home() {
     <main className="p-6">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Transactions</h1>
-        <div>
-          <TransactionFormModal onSaved={load} />
-        </div>
-      </div>
-
-      <div className="mb-4">
         <div className="flex items-center justify-end gap-2 mb-3">
           <CurrencySelector
             value={displayCurrency}
@@ -85,7 +78,9 @@ export default function Home() {
             )}
           </button>
         </div>
+      </div>
 
+      <div className="mb-4">
         <Summary
           incomes={incomes}
           expenses={expenses}
@@ -98,7 +93,11 @@ export default function Home() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <section className="lg:col-span-2 space-y-4">
           <div className="rounded-md border p-4 relative">
-            <QuickAdd onCreated={load} />
+            <div className="mb-4">
+              <div className="flex gap-2 justify-end">
+                <TransactionFormModal onSaved={load} />
+              </div>
+            </div>
             <TransactionsTable
               items={items}
               onEdit={(t) => console.log("edit", t.id)}

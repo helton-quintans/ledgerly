@@ -7,6 +7,7 @@ import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
@@ -323,12 +324,18 @@ function SidebarInput({
   ...props
 }: React.ComponentProps<typeof Input>) {
   return (
-    <Input
-      data-slot="sidebar-input"
-      data-sidebar="input"
-      className={cn("h-8 w-full bg-background shadow-none", className)}
-      {...props}
-    />
+    <div className="relative">
+      <Input
+        data-slot="sidebar-input"
+        data-sidebar="input"
+        className={cn("h-8 w-full pl-9 bg-background shadow-none", className)}
+        {...props}
+      />
+      <Search
+        className="absolute left-2 top-1.5 size-4"
+        style={{ color: "var(--input-placeholder)" }}
+      />
+    </div>
   );
 }
 

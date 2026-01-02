@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { createTransaction } from "@/lib/transactions";
-import { Plus } from "lucide-react";
+import { ArrowDown, ArrowUp, Plus } from "lucide-react";
 import { useState } from "react";
 
 type Props = {
@@ -92,21 +92,26 @@ export default function TransactionFormModal({ onSaved }: Props) {
             <option value="EUR">EUR</option>
             <option value="BRL">BRL</option>
           </select>
-          <div className="inline-flex rounded-md bg-muted p-1">
-            <button
-              type="button"
-              className={`px-3 py-1 rounded ${type === "income" ? "bg-primary text-primary-foreground" : ""}`}
-              onClick={() => setType("income")}
-            >
-              In
-            </button>
-            <button
-              type="button"
-              className={`px-3 py-1 rounded ${type === "expense" ? "bg-destructive text-destructive-foreground" : ""}`}
-              onClick={() => setType("expense")}
-            >
-              Out
-            </button>
+
+          <div className="flex-1">
+            <div className="flex w-full rounded-md bg-muted p-1">
+              <button
+                type="button"
+                className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded ${type === "income" ? "bg-green-200 text-green-800" : "text-green-600"}`}
+                onClick={() => setType("income")}
+              >
+                <ArrowUp className="size-4" />
+                <span>In</span>
+              </button>
+              <button
+                type="button"
+                className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded ${type === "expense" ? "bg-red-200 text-red-800" : "text-red-600"}`}
+                onClick={() => setType("expense")}
+              >
+                <ArrowDown className="size-4" />
+                <span>Out</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>

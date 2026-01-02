@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearch } from "@/components/search-context";
 import { HelpCircle, Menu, Search, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -17,6 +18,7 @@ export function BrandHeader() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const { query, setQuery } = useSearch();
 
   return (
     <header className="fixed z-50 w-full border-border border-b bg-background">
@@ -58,6 +60,8 @@ export function BrandHeader() {
                 className="h-9 w-64 pl-9"
                 autoFocus
                 onBlur={() => setIsSearchOpen(false)}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
               />
               <Search className="absolute top-2.5 left-3 size-4 text-foreground" />
             </div>
@@ -83,7 +87,12 @@ export function BrandHeader() {
         </div>
 
         <div className="flex gap-2 md:hidden items-center">
-          <Button variant="ghost" size="sm" className="text-foreground">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-foreground"
+            onClick={() => setIsSearchOpen(true)}
+          >
             <Search className="h-5 w-5" />
           </Button>
 
@@ -95,6 +104,31 @@ export function BrandHeader() {
             </AvatarFallback>
           </Avatar>
         </div>
+        {isSearchOpen && (
+          <div className="fixed inset-0 z-50 bg-background/90 md:hidden p-4">
+            <div className="max-w-full">
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Search"
+                  className="h-11 w-full pl-10"
+                  autoFocus
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+                <Search className="absolute top-3 left-3 size-5 text-foreground" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-2 top-2"
+                  onClick={() => setIsSearchOpen(false)}
+                >
+                  <X className="size-5" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
