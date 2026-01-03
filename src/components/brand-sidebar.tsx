@@ -6,18 +6,19 @@ import {
   ChevronDown,
   Clock,
   Database,
+  Heart,
+  Briefcase,
+  DollarSign,
   Home,
   LayoutGrid,
   MessageSquareText,
-  MoreHorizontal,
   Plus,
   Search,
   Table,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,6 +65,7 @@ export function BrandSidebar() {
   // Menus essenciais (enxuto)
   const mainNavItems: NavItem[] = [
     { title: "Home", href: "/", icon: <Home className="size-4" /> },
+    // Pillars will be rendered separately below Home
     {
       title: "Projects",
       href: "/projects",
@@ -83,6 +85,39 @@ export function BrandSidebar() {
       href: "/tables",
       icon: <Table className="size-4" />,
       badge: { text: "Beta" },
+    },
+  ];
+
+  const pillarNavItems: NavItem[] = [
+    {
+      title: "Career",
+      href: "/career",
+      icon: <Briefcase className="size-4" />,
+      children: [
+        { title: "Overview", href: "/career/overview" },
+        { title: "Goals", href: "/career/goals" },
+        { title: "Tasks", href: "/career/tasks" },
+      ],
+    },
+    {
+      title: "Health & Wellbeing",
+      href: "/health-wellbeing",
+      icon: <Heart className="size-4" />,
+      children: [
+        { title: "Overview", href: "/health-wellbeing/overview" },
+        { title: "Habits", href: "/health-wellbeing/habits" },
+        { title: "Activity Log", href: "/health-wellbeing/activity" },
+      ],
+    },
+    {
+      title: "Finance",
+      href: "/finance",
+      icon: <DollarSign className="size-4" />,
+      children: [
+        { title: "Overview", href: "/finance/overview" },
+        { title: "Budget", href: "/finance/budget" },
+        { title: "Transactions", href: "/finance/transactions" },
+      ],
     },
   ];
 
@@ -165,74 +200,129 @@ export function BrandSidebar() {
                     Boolean(expanded[item.title]) || (!!q && childMatches);
 
                   return (
-                    <SidebarMenuItem key={item.href}>
-                      {hasChildren ? (
-                        <SidebarMenuButton
-                          asChild
-                          className="cursor-pointer"
-                          tooltip={item.title}
-                        >
-                          <button
-                            type="button"
-                            onClick={() => toggleExpand(item.title)}
-                            aria-expanded={isOpen}
-                            className="flex w-full items-center justify-between gap-2"
+                    <React.Fragment key={item.href}>
+                      <SidebarMenuItem key={item.href}>
+                        {hasChildren ? (
+                          <SidebarMenuButton
+                            asChild
+                            className="cursor-pointer"
+                            tooltip={item.title}
                           >
-                            <span className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => toggleExpand(item.title)}
+                              aria-expanded={isOpen}
+                              className="flex w-full items-center justify-between gap-2"
+                            >
+                              <span className="flex items-center gap-2">
+                                {item.icon}
+                                <span>{item.title}</span>
+                              </span>
+                              <ChevronDown
+                                className={`size-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                              />
+                            </button>
+                          </SidebarMenuButton>
+                        ) : (
+                          <SidebarMenuButton
+                            asChild
+                            isActive={pathname === item.href}
+                            tooltip={item.title}
+                          >
+                            <Link
+                              href={item.href}
+                              onClick={() => {
+                                setOpenMobile(false);
+                              }}
+                            >
                               {item.icon}
                               <span>{item.title}</span>
-                            </span>
-                            <ChevronDown
-                              className={`size-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-                            />
-                          </button>
-                        </SidebarMenuButton>
-                      ) : (
-                        <SidebarMenuButton
-                          asChild
-                          isActive={pathname === item.href}
-                          tooltip={item.title}
-                        >
-                          <Link
-                            href={item.href}
-                            onClick={() => {
-                              setOpenMobile(false);
-                            }}
-                          >
-                            {item.icon}
-                            <span>{item.title}</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      )}
+                            </Link>
+                          </SidebarMenuButton>
+                        )}
 
-                      {hasChildren && isOpen && (
-                        <SidebarMenuSub>
-                          {item
-                            .children!.filter((c) => {
-                              if (!q) return true;
-                              return c.title.toLowerCase().includes(q);
-                            })
-                            .map((child) => (
-                              <SidebarMenuSubItem key={child.href}>
-                                <SidebarMenuSubButton asChild>
-                                  <Link
-                                    href={child.href}
-                                    onClick={() => {
-                                      setOpenMobile(false);
-                                    }}
+                        {hasChildren && isOpen && (
+                          <SidebarMenuSub>
+                            {item
+                              .children!.filter((c) => {
+                                if (!q) return true;
+                                return c.title.toLowerCase().includes(q);
+                              })
+                              .map((child) => (
+                                <SidebarMenuSubItem key={child.href}>
+                                  <SidebarMenuSubButton asChild>
+                                    <Link
+                                      href={child.href}
+                                      onClick={() => {
+                                        setOpenMobile(false);
+                                      }}
+                                    >
+                                      {child.title}
+                                    </Link>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              ))}
+                          </SidebarMenuSub>
+                        )}
+
+                        {item.badge && (
+                          <SidebarMenuBadge>{item.badge.text}</SidebarMenuBadge>
+                        )}
+                      </SidebarMenuItem>
+
+                      {item.title === "Home" && (
+                        // Insert pillar menus immediately after Home
+                        pillarNavItems.map((p) => {
+                          const pHasChildren = Boolean(p.children?.length);
+                          const pChildMatches = pHasChildren
+                            ? p.children!.some((c) => c.title.toLowerCase().includes(q))
+                            : false;
+                          const pIsOpen = Boolean(expanded[p.title]) || (!!q && pChildMatches);
+
+                          return (
+                            <SidebarMenuItem key={p.href}>
+                              {pHasChildren ? (
+                                <SidebarMenuButton asChild className="cursor-pointer" tooltip={p.title}>
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleExpand(p.title)}
+                                    aria-expanded={pIsOpen}
+                                    className="flex w-full items-center justify-between gap-2"
                                   >
-                                    {child.title}
+                                    <span className="flex items-center gap-2">
+                                      {p.icon}
+                                      <span>{p.title}</span>
+                                    </span>
+                                    <ChevronDown className={`size-4 transition-transform ${pIsOpen ? "rotate-180" : ""}`} />
+                                  </button>
+                                </SidebarMenuButton>
+                              ) : (
+                                <SidebarMenuButton asChild isActive={pathname === p.href} tooltip={p.title}>
+                                  <Link href={p.href} onClick={() => setOpenMobile(false)}>
+                                    {p.icon}
+                                    <span>{p.title}</span>
                                   </Link>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            ))}
-                        </SidebarMenuSub>
-                      )}
+                                </SidebarMenuButton>
+                              )}
 
-                      {item.badge && (
-                        <SidebarMenuBadge>{item.badge.text}</SidebarMenuBadge>
+                              {pHasChildren && pIsOpen && (
+                                <SidebarMenuSub>
+                                  {p.children!.map((child) => (
+                                    <SidebarMenuSubItem key={child.href}>
+                                      <SidebarMenuSubButton asChild>
+                                        <Link href={child.href} onClick={() => setOpenMobile(false)}>
+                                          {child.title}
+                                        </Link>
+                                      </SidebarMenuSubButton>
+                                    </SidebarMenuSubItem>
+                                  ))}
+                                </SidebarMenuSub>
+                              )}
+                            </SidebarMenuItem>
+                          );
+                        })
                       )}
-                    </SidebarMenuItem>
+                    </React.Fragment>
                   );
                 })}
             </SidebarMenu>
