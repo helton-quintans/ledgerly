@@ -13,7 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { createTransaction } from "@/lib/transactions";
-import { ArrowDown, ArrowUp, Plus, DollarSign, FileText, Tag } from "lucide-react";
+import { ArrowDown, ArrowUp, Plus,FileText, Tag, CheckCircle, XCircle } from "lucide-react";
+import { toast } from "sonner";
 import CurrencySelector from "@/components/transactions/CurrencySelector";
 import { useState, useEffect } from "react";
 
@@ -57,22 +58,32 @@ export default function TransactionFormModal({ onSaved }: Props) {
     const converted_amount_cents = Math.round(amount_cents * (rateToUSD[values.currency] ?? 1));
     const rate_timestamp = new Date().toISOString();
 
-    await createTransaction({
-      type: values.type,
-      amount_cents,
-      currency: values.currency,
-      converted_amount_cents,
-      converted_currency: "USD",
-      exchange_rate,
-      rate_timestamp,
-      date: values.date ?? new Date().toISOString(),
-      category: values.category || "Uncategorized",
-      description: values.description || "",
-    });
+    try {
+      await createTransaction({
+        type: values.type,
+        amount_cents,
+        currency: values.currency,
+        converted_amount_cents,
+        converted_currency: "USD",
+        exchange_rate,
+        rate_timestamp,
+        date: values.date ?? new Date().toISOString(),
+        category: values.category || "Uncategorized",
+        description: values.description || "",
+      });
 
-    reset();
-    setOpen(false);
-    onSaved?.();
+      toast.success("Transaction created", {
+        icon: <CheckCircle style={{ color: 'var(--success)' }} />,
+      });
+      reset();
+      setOpen(false);
+      onSaved?.();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to create transaction", {
+        icon: <XCircle style={{ color: 'var(--destructive)' }} />,
+      });
+    }
   }
 
   const trigger = (
@@ -96,7 +107,7 @@ export default function TransactionFormModal({ onSaved }: Props) {
       <DialogHeader className="radius-8">
         <DialogTitle>New transaction</DialogTitle>
       </DialogHeader>
-      <div className="grid gap-3">
+      <div className="grid gap-2">
         <div className="flex justify-center">
           <CurrencySelector value={watchedCurrency} onChange={(v) => setValue("currency", v)} />
         </div>
@@ -109,7 +120,7 @@ export default function TransactionFormModal({ onSaved }: Props) {
             className="pl-9"
           />
           <div className="absolute left-2 top-2 text-neutral-500">{currencySymbolMap[watchedCurrency] || "$"}</div>
-          <div className="h-5 mt-1 text-sm text-red-600">{errors.amount?.message as any}</div>
+          <div className="h-5 mt-1 text-sm text-red-400">{errors.amount?.message as string}</div>
         </div>
 
         <div className="relative">
@@ -119,7 +130,7 @@ export default function TransactionFormModal({ onSaved }: Props) {
             className="pl-9"
           />
           <FileText className="absolute left-2 top-2 size-4" style={{ color: 'var(--input-placeholder)' }} />
-          <div className="h-5 mt-1 text-sm text-red-600">{errors.description?.message as any}</div>
+          <div className="h-5 mt-1 text-sm text-red-400">{errors.description?.message as string}</div>
         </div>
 
         <div className="relative">
@@ -129,7 +140,7 @@ export default function TransactionFormModal({ onSaved }: Props) {
             className="pl-9"
           />
           <Tag className="absolute left-2 top-2 size-4" style={{ color: 'var(--input-placeholder)' }} />
-          <div className="h-5 mt-1 text-sm text-red-600">{errors.category?.message as any}</div>
+          <div className="h-5 mt-1 text-sm text-red-400">{errors.category?.message as string}</div>
         </div>
         <div className="flex gap-2">
           <button
@@ -143,7 +154,7 @@ export default function TransactionFormModal({ onSaved }: Props) {
 
           <button
             type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "expense" ? "bg-red-200 text-red-800 border-red-300" : "text-red-600 border-neutral-200"}`}
+            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "expense" ? "bg-red-200 text-red-800 border-red-300" : "text-red-400 border-neutral-200"}`}
             onClick={() => setValue("type", "expense")}
           >
             <ArrowDown className="size-4" />
