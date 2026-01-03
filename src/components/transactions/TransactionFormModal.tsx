@@ -44,7 +44,7 @@ export default function TransactionFormModal({ onSaved }: Props) {
     } as any,
   });
 
-  const { register, handleSubmit, formState: { errors }, reset, watch, setValue, clearErrors } = form;
+  const { register, handleSubmit, formState: { errors }, reset, watch, setValue, clearErrors, setError } = form;
 
   const watchedCurrency = (watch("currency") || "USD") as Currency;
 
@@ -99,6 +99,7 @@ export default function TransactionFormModal({ onSaved }: Props) {
     // clear validation messages when modal opens
     if (open) {
       clearErrors();
+      reset();
     }
   }, [open, clearErrors]);
 
@@ -118,6 +119,32 @@ export default function TransactionFormModal({ onSaved }: Props) {
             inputMode="decimal"
             {...register("amount")}
             className="pl-9"
+            onKeyDown={(e) => {
+              // allow control/meta/arrow keys
+              if (e.ctrlKey || e.metaKey || e.altKey) return;
+              const k = e.key;
+              // allow single-character navigation and permitted characters
+              if (k.length === 1 && !/[0-9.,-]/.test(k)) {
+                e.preventDefault();
+                setError("amount", { type: "manual", message: "Digits only" });
+              } else {
+                clearErrors("amount");
+              }
+            }}
+            onPaste={(e) => {
+              const paste = e.clipboardData.getData("text");
+              const cleaned = paste.replace(/[^0-9.,-]/g, "");
+              if (cleaned !== paste) {
+                e.preventDefault();
+                const target = e.target as HTMLInputElement;
+                const start = target.selectionStart ?? 0;
+                const end = target.selectionEnd ?? 0;
+                const current = target.value || "";
+                const next = current.slice(0, start) + cleaned + current.slice(end);
+                setValue("amount", next as any, { shouldDirty: true });
+                setError("amount", { type: "manual", message: "Digite apenas números" });
+              }
+            }}
           />
           <div className="absolute left-2 top-2 text-neutral-500">{currencySymbolMap[watchedCurrency] || "$"}</div>
           <div className="h-5 mt-1 text-sm text-red-400">{errors.amount?.message as string}</div>
