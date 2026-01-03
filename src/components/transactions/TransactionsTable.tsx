@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import type { Transaction } from "@/lib/transactions";
 import { formatCurrencyFromCents } from "@/lib/utils";
+import ConfirmModal from "@/components/ui/confirm-modal";
 import {
   Calendar,
   ChevronDown,
@@ -31,6 +32,7 @@ import {
   Tag,
   Trash2,
 } from "lucide-react";
+import { toast } from "sonner";
 import { useEffect, useMemo, useState } from "react";
 
 type Props = {
@@ -200,14 +202,25 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
                       >
                         <Edit className="size-4" />
                       </Button>
-                      <Button
-                        size="icon"
-                        variant="destructive"
-                        onClick={() => onDelete(t.id)}
-                        aria-label="Delete"
+                      <ConfirmModal
+                        title="Delete transaction"
+                        description="This action cannot be undone. Are you sure you want to delete this transaction?"
+                        confirmLabel="Delete"
+                        cancelLabel="Cancel"
+                        onConfirm={async () => {
+                          try {
+                            await Promise.resolve(onDelete(t.id));
+                            toast.success("Transaction deleted");
+                          } catch (err) {
+                            console.error(err);
+                            toast.error("Failed to delete transaction");
+                          }
+                        }}
                       >
-                        <Trash2 className="size-4" />
-                      </Button>
+                        <Button size="icon" variant="destructive" aria-label="Delete">
+                          <Trash2 className="size-4" />
+                        </Button>
+                      </ConfirmModal>
                     </div>
                   </TableCell>
                 )}

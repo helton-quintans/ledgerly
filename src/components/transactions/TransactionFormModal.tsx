@@ -73,9 +73,7 @@ export default function TransactionFormModal({ onSaved }: Props) {
         description: values.description || "",
       });
 
-      toast.success("Transaction created", {
-        icon: <CheckCircle style={{ color: 'var(--success)' }} />,
-      });
+      toast.success("Transaction created");
       reset();
       setOpen(false);
       onSaved?.();
