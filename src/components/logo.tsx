@@ -1,21 +1,19 @@
+import ReuleauxTriangle from "./ui/ReuleauxTriangle";
+import Spinner from "./ui/Spinner";
+
 export function Logo() {
   return (
     <div className="flex items-center gap-2">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="size-8"
-        role="graphics-symbol"
-      >
-        <circle className="fill-primary" cx="13.5" cy="6.5" r="2.5" />
-        <circle className="fill-primary" cx="19" cy="13" r="2.5" />
-        <circle className="fill-primary" cx="13.5" cy="19.5" r="2.5" />
-        <circle className="fill-primary" cx="6.5" cy="13" r="2.5" />
-      </svg>
+      <ReuleauxTriangle radius={28} variant="outline" stroke="var(--primary)" />
+      <h1 className="font-bold">ledgerly</h1>
+    </div>
+  );
+}
 
+export function LogoSpinner() {
+  return (
+    <div className="flex items-center gap-2">
+      <Spinner size={40} color="var(--primary)" speed={1} />
       <h1 className="font-bold">ledgerly</h1>
     </div>
   );
