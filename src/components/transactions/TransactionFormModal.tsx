@@ -15,7 +15,12 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { createTransaction } from "@/lib/transactions";
 import { ArrowDown, ArrowUp, Plus, DollarSign, FileText, Tag } from "lucide-react";
 import CurrencySelector from "@/components/transactions/CurrencySelector";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import transactionFormSchema, { TransactionFormValues } from "@/lib/schemas/transaction";
+import type { Currency } from "@/lib/schemas/transaction";
 
 type Props = {
   onSaved?: () => void;
@@ -25,32 +30,48 @@ export default function TransactionFormModal({ onSaved }: Props) {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
 
-  const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState("");
-  const [type, setType] = useState<"income" | "expense">("income");
-  const [currency, setCurrency] = useState<string>("USD");
+  const form = useForm<TransactionFormValues>({
+    resolver: zodResolver(transactionFormSchema) as any,
+    defaultValues: {
+      description: "",
+      // `amount` is stored as integer cents by the schema preprocess — keep input empty initially
+      amount: undefined as unknown as number,
+      category: "",
+      type: "income",
+      currency: "USD" as Currency,
+      date: undefined,
+    } as any,
+  });
 
-  async function save() {
-    const raw = amount.replace(/[^0-9.,-]/g, "").replace(",", ".");
-    const val = Number.parseFloat(raw);
-    if (isNaN(val)) return;
+  const { register, handleSubmit, formState: { errors }, reset, watch, setValue, clearErrors } = form;
+
+  const watchedCurrency = (watch("currency") || "USD") as Currency;
+
+  async function onSubmit(values: TransactionFormValues) {
+    // values.amount is the integer cents thanks to the zod preprocess
+    const amount_cents = Math.abs(values.amount as number);
+
+    // mock rates to USD
+    const rateToUSD: Record<string, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
+    const exchange_rate = (rateToUSD[values.currency] ?? 1) / (rateToUSD["USD"] ?? 1);
+    const converted_amount_cents = Math.round(amount_cents * (rateToUSD[values.currency] ?? 1));
+    const rate_timestamp = new Date().toISOString();
 
     await createTransaction({
-      type,
-      amount: Math.abs(val),
-      currency,
-      date: new Date().toISOString(),
-      category: category || "Uncategorized",
-      description,
+      type: values.type,
+      amount_cents,
+      currency: values.currency,
+      converted_amount_cents,
+      converted_currency: "USD",
+      exchange_rate,
+      rate_timestamp,
+      date: values.date ?? new Date().toISOString(),
+      category: values.category || "Uncategorized",
+      description: values.description || "",
     });
 
+    reset();
     setOpen(false);
-    setDescription("");
-    setAmount("");
-    setCategory("");
-    setType("income");
-    setCurrency("USD");
     onSaved?.();
   }
 
@@ -61,51 +82,60 @@ export default function TransactionFormModal({ onSaved }: Props) {
     </Button>
   );
 
+  const currencySymbolMap: Record<Currency, string> = { USD: "$", EUR: "€", BRL: "R$" };
+
+  useEffect(() => {
+    // clear validation messages when modal opens
+    if (open) {
+      clearErrors();
+    }
+  }, [open, clearErrors]);
+
   const content = (
-    <div className="space-y-4 p-2">
+    <div className="space-y-6 p-2">
       <DialogHeader className="radius-8">
         <DialogTitle>New transaction</DialogTitle>
       </DialogHeader>
-      <div className="grid gap-2">
+      <div className="grid gap-3">
         <div className="flex justify-center">
-          <CurrencySelector value={currency} onChange={(v) => setCurrency(v)} />
+          <CurrencySelector value={watchedCurrency} onChange={(v) => setValue("currency", v)} />
         </div>
 
         <div className="relative">
           <Input
             placeholder="Amount"
             inputMode="decimal"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            {...register("amount")}
             className="pl-9"
           />
-          <DollarSign className="absolute left-2 top-2 size-4" style={{ color: 'var(--input-placeholder)' }} />
+          <div className="absolute left-2 top-2 text-neutral-500">{currencySymbolMap[watchedCurrency] || "$"}</div>
+          <div className="h-5 mt-1 text-sm text-red-600">{errors.amount?.message as any}</div>
         </div>
 
         <div className="relative">
           <Input
             placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            {...register("description")}
             className="pl-9"
           />
           <FileText className="absolute left-2 top-2 size-4" style={{ color: 'var(--input-placeholder)' }} />
+          <div className="h-5 mt-1 text-sm text-red-600">{errors.description?.message as any}</div>
         </div>
 
         <div className="relative">
           <Input
             placeholder="Category / Label"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            {...register("category")}
             className="pl-9"
           />
           <Tag className="absolute left-2 top-2 size-4" style={{ color: 'var(--input-placeholder)' }} />
+          <div className="h-5 mt-1 text-sm text-red-600">{errors.category?.message as any}</div>
         </div>
         <div className="flex gap-2">
           <button
             type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer ${type === "income" ? "bg-green-200 text-green-800" : "text-green-600"}`}
-            onClick={() => setType("income")}
+            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "income" ? "bg-green-200 text-green-800 border-green-300" : "text-green-600 border-neutral-200"}`}
+            onClick={() => setValue("type", "income")}
           >
             <ArrowUp className="size-4" />
             <span>In</span>
@@ -113,8 +143,8 @@ export default function TransactionFormModal({ onSaved }: Props) {
 
           <button
             type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer ${type === "expense" ? "bg-red-200 text-red-800" : "text-red-600"}`}
-            onClick={() => setType("expense")}
+            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "expense" ? "bg-red-200 text-red-800 border-red-300" : "text-red-600 border-neutral-200"}`}
+            onClick={() => setValue("type", "expense")}
           >
             <ArrowDown className="size-4" />
             <span>Out</span>
@@ -122,8 +152,8 @@ export default function TransactionFormModal({ onSaved }: Props) {
         </div>
       </div>
       <DialogFooter className="flex flex-col gap-2 sm:flex-col">
-        <Button size="lg" className="w-full" onClick={save}>Save</Button>
-        <Button variant="outline" size="lg" className="w-full" onClick={() => setOpen(false)}>
+        <Button size="lg" className="w-full" onClick={handleSubmit(onSubmit)}>Save</Button>
+        <Button variant="outline" size="lg" className="w-full" onClick={() => { setOpen(false); reset(); }}>
           Cancel
         </Button>
       </DialogFooter>

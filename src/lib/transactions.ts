@@ -5,19 +5,31 @@ function generateId() {
 export type Transaction = {
   id: string;
   type: "income" | "expense";
-  amount: number;
-  currency?: string;
+  amount_cents: number;
+  currency?: import("./schemas/transaction").Currency;
+  // optional converted snapshot (stored at creation time)
+  converted_amount_cents?: number;
+  converted_currency?: import("./schemas/transaction").Currency;
+  exchange_rate?: number;
+  rate_timestamp?: string;
   date: string;
   category: string;
   description?: string;
 };
 
+// mock conversion rates to USD
+const rateToUSD: Record<import("./schemas/transaction").Currency, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
+
 let items: Transaction[] = [
   {
     id: generateId(),
     type: "income",
-    amount: 2500,
+    amount_cents: 2500 * 100,
     currency: "USD",
+    converted_amount_cents: Math.round(2500 * 100 * (rateToUSD["USD"] ?? 1)),
+    converted_currency: "USD",
+    exchange_rate: rateToUSD["USD"],
+    rate_timestamp: new Date().toISOString(),
     date: new Date().toISOString(),
     category: "Salary",
     description: "Monthly salary",
@@ -25,8 +37,12 @@ let items: Transaction[] = [
   {
     id: generateId(),
     type: "expense",
-    amount: 45.5,
+    amount_cents: Math.round(45.5 * 100),
     currency: "USD",
+    converted_amount_cents: Math.round(45.5 * 100 * (rateToUSD["USD"] ?? 1)),
+    converted_currency: "USD",
+    exchange_rate: rateToUSD["USD"],
+    rate_timestamp: new Date().toISOString(),
     date: new Date().toISOString(),
     category: "Food",
     description: "Lunch",

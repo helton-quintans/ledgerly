@@ -1,6 +1,7 @@
 "use client";
 
 import CurrencySelector from "@/components/transactions/CurrencySelector";
+import type { Currency } from "@/lib/schemas/transaction";
 import Summary from "@/components/transactions/Summary";
 import TransactionFormModal from "@/components/transactions/TransactionFormModal";
 import TransactionsTable from "@/components/transactions/TransactionsTable";
@@ -15,7 +16,7 @@ import { useEffect, useState } from "react";
 export default function Page() {
   const [items, setItems] = useState<Transaction[]>([]);
   const [hidden, setHidden] = useState(false);
-  const [displayCurrency, setDisplayCurrency] = useState<string>("USD");
+  const [displayCurrency, setDisplayCurrency] = useState<Currency>("USD");
 
   async function load() {
     const data = await listTransactions();
@@ -27,30 +28,30 @@ export default function Page() {
   }, []);
 
   // mock conversion rates to USD (1 unit of currency = x USD)
-  const rateToUSD: Record<string, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
+  const rateToUSD: Record<Currency, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
 
-  function convert(amount: number, from: string | undefined, to: string) {
+  function convert(amount: number, from: Currency | undefined, to: Currency) {
     const f = rateToUSD[from || "USD"] ?? 1;
     const t = rateToUSD[to] ?? 1;
     return (amount * f) / t;
   }
 
-  const incomes = items.reduce(
-    (acc, it) =>
-      acc +
-      (it.type === "income"
-        ? convert(it.amount, it.currency, displayCurrency)
-        : 0),
-    0,
-  );
-  const expenses = items.reduce(
-    (acc, it) =>
-      acc +
-      (it.type === "expense"
-        ? convert(it.amount, it.currency, displayCurrency)
-        : 0),
-    0,
-  );
+  const incomes = items.reduce((acc, it) => {
+    if (it.type !== "income") return acc;
+    // if there's a converted snapshot matching displayCurrency, use it
+    if (it.converted_currency === displayCurrency && typeof it.converted_amount_cents === "number") {
+      return acc + (it.converted_amount_cents || 0) / 100;
+    }
+    return acc + convert((it.amount_cents || 0) / 100, it.currency as Currency | undefined, displayCurrency);
+  }, 0);
+
+  const expenses = items.reduce((acc, it) => {
+    if (it.type !== "expense") return acc;
+    if (it.converted_currency === displayCurrency && typeof it.converted_amount_cents === "number") {
+      return acc + (it.converted_amount_cents || 0) / 100;
+    }
+    return acc + convert((it.amount_cents || 0) / 100, it.currency as Currency | undefined, displayCurrency);
+  }, 0);
   const balance = incomes - expenses;
   const fmt = new Intl.NumberFormat(undefined, {
     style: "currency",

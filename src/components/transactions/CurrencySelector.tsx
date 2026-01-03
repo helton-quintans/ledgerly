@@ -8,12 +8,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import type { Currency } from "@/lib/schemas/transaction";
+
 type Props = {
-  value: string;
-  onChange: (v: string) => void;
+  value: Currency;
+  onChange: (v: Currency) => void;
 };
 
-const options = [
+const options: { value: Currency; label: string; flag: string }[] = [
   { value: "USD", label: "USD", flag: "🇺🇸" },
   { value: "EUR", label: "EUR", flag: "🇪🇺" },
   { value: "BRL", label: "BRL", flag: "🇧🇷" },

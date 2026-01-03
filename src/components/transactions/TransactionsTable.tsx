@@ -177,7 +177,7 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
                     {new Intl.NumberFormat(undefined, {
                       style: "currency",
                       currency: t.currency || "USD",
-                    }).format(t.amount)}
+                    }).format((t.amount_cents || 0) / 100)}
                   </TableCell>
                 )}
 

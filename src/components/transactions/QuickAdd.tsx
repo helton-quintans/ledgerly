@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createTransaction } from "@/lib/transactions";
+import type { Currency } from "@/lib/schemas/transaction";
 import { useState } from "react";
 
 function TypeToggle({
@@ -40,16 +41,23 @@ export default function QuickAdd({ onCreated }: Props) {
   const [amount, setAmount] = useState("");
   const [desc, setDesc] = useState("");
   const [type, setType] = useState<"income" | "expense">("income");
-  const [currency, setCurrency] = useState<string>("USD");
+  const [currency, setCurrency] = useState<Currency>("USD");
 
   async function handleCreate() {
     const raw = amount.replace(/[^0-9.,-]/g, "").replace(",", ".");
     const val = Number.parseFloat(raw);
     if (isNaN(val)) return;
+    const amount_cents = Math.round(Math.abs(val) * 100);
+    const rateToUSD: Record<Currency, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
+    const converted_amount_cents = Math.round(amount_cents * (rateToUSD[currency] ?? 1));
     const t = await createTransaction({
       type,
-      amount: Math.abs(val),
+      amount_cents,
       currency,
+      converted_amount_cents,
+      converted_currency: "USD",
+      exchange_rate: rateToUSD[currency] ?? 1,
+      rate_timestamp: new Date().toISOString(),
       date: new Date().toISOString(),
       category: "Quick",
       description: desc,
@@ -66,7 +74,7 @@ export default function QuickAdd({ onCreated }: Props) {
           <TypeToggle value={type} onChange={setType} />
           <select
             value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
+            onChange={(e) => setCurrency(e.target.value as Currency)}
             className="rounded border px-2 py-1"
           >
             <option value="USD">USD</option>
