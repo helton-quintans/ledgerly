@@ -119,24 +119,59 @@ export default function TransactionFormModal({ onSaved }: Props) {
           <Controller
             name="amount"
             control={control}
-            render={({ field }) => (
-              <NumericFormat
-                {...field}
-                customInput={Input}
-                thousandSeparator={watchedCurrency === "BRL" ? "." : ","}
-                decimalSeparator={watchedCurrency === "BRL" ? "," : "."}
-                decimalScale={2}
-                allowNegative={false}
-                prefix={currencySymbolMap[watchedCurrency] || ""}
-                onValueChange={(values) => {
-                  const raw = values.value ?? "";
-                  const normalized = String(raw).replace(/,/g, ".").replace(/[^0-9.]/g, "");
-                  field.onChange(normalized);
-                  clearErrors("amount");
-                }}
-                className="pl-9"
-              />
-            )}
+            render={({ field }) => {
+              const thousandSep = watchedCurrency === "BRL" || watchedCurrency === "EUR" ? "." : ",";
+              const decimalSep = watchedCurrency === "BRL" || watchedCurrency === "EUR" ? "," : ".";
+
+              return (
+                <NumericFormat
+                  {...field}
+                  customInput={Input}
+                  thousandSeparator={thousandSep}
+                  decimalSeparator={decimalSep}
+                  decimalScale={2}
+                  allowNegative={false}
+                  prefix={currencySymbolMap[watchedCurrency] || ""}
+                  // numeric-proper changes (no suffix) provide floatValue
+                  onValueChange={(values) => {
+                    if (values.floatValue != null) {
+                      // pass number to RHF so zod preprocess handles it
+                      field.onChange(values.floatValue);
+                      clearErrors("amount");
+                    }
+                  }}
+                  // support shorthand like 1k, 1M — parse raw input before NumericFormat normalizes
+                  onChange={(e: any) => {
+                    const raw = String(e.target.value || "");
+                    // keep digits, separators and suffix letters
+                    const cleaned = raw.replace(new RegExp(`[^0-9\\${thousandSep}\\${decimalSep}kKmM-]`, "g"), "").trim();
+                    const m = cleaned.match(/^(-?[0-9${thousandSep}${decimalSep}]+)([kKmM])?$/);
+                    if (m) {
+                      let numStr = m[1];
+                      // remove thousand separators and normalize decimal to dot
+                      if (thousandSep) {
+                        const reThousand = new RegExp(`\\${thousandSep}`, "g");
+                        numStr = numStr.replace(reThousand, "");
+                      }
+                      if (decimalSep && decimalSep !== ".") {
+                        const reDecimal = new RegExp(`\\${decimalSep}`);
+                        numStr = numStr.replace(reDecimal, ".");
+                      }
+                      const parsed = parseFloat(numStr);
+                      if (!Number.isNaN(parsed)) {
+                        const suffix = m[2]?.toLowerCase();
+                        let value = parsed;
+                        if (suffix === "k") value = value * 1_000;
+                        if (suffix === "m") value = value * 1_000_000;
+                        field.onChange(value);
+                        clearErrors("amount");
+                      }
+                    }
+                  }}
+                  className="pl-9"
+                />
+              );
+            }}
           />
           <div className="absolute left-2 top-2 text-neutral-500">{currencySymbolMap[watchedCurrency] || "$"}</div>
           <div className="h-5 mt-1 text-sm text-red-400">{errors.amount?.message as string}</div>

@@ -19,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { Transaction } from "@/lib/transactions";
+import { formatCurrencyFromCents } from "@/lib/utils";
 import {
   Calendar,
   ChevronDown,
@@ -174,10 +175,7 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
                     className={`${t.type === "income" ? "text-green-600/80" : "text-red-600/80"} text-left`}
                   >
                     {t.type === "income" ? "+" : "-"}
-                    {new Intl.NumberFormat(undefined, {
-                      style: "currency",
-                      currency: t.currency || "USD",
-                    }).format((t.amount_cents || 0) / 100)}
+                    {formatCurrencyFromCents(t.amount_cents || 0, (t.currency as any) || "USD")}
                   </TableCell>
                 )}
 
