@@ -7,47 +7,35 @@ type Props = {
   size?: number;
   color?: string;
   speed?: number; // seconds per revolution
+  triangleScale?: number; // fraction of size to use for triangle (0-1)
 };
 
-export default function Spinner({ size = 40, color = "currentColor", speed = 1 }: Props) {
-  const triangleSize = Math.round(size * 0.5);
-  const orbit = size;
+export default function Spinner({ size = 40, color = "currentColor", speed = 1, triangleScale = 0.8 }: Props) {
+  const triangleSize = Math.max(8, Math.round(size * Math.min(Math.max(triangleScale, 0.1), 1)));
 
-  const style: React.CSSProperties = {
+  const containerStyle: React.CSSProperties = {
     width: size,
     height: size,
-    position: "relative",
-  };
-
-  const ringStyle: React.CSSProperties = {
-    position: "absolute",
-    inset: 0,
-    display: "flex",
+    display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
   };
 
-  const rotatingStyle: React.CSSProperties = {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: orbit,
-    height: orbit,
-    transformOrigin: "50% 50%",
+  const triangleWrapperStyle: React.CSSProperties = {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     animation: `spin ${speed}s linear infinite`,
+    transformOrigin: "50% 50%",
   };
 
   return (
-    <div style={style}>
-      <style>{`
-        @keyframes spin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
-      `}</style>
-      <div style={ringStyle} aria-hidden>
-        <div style={rotatingStyle}>
-          <div style={{ position: "absolute", top: 0, left: "50%", transform: `translateX(-50%)` }}>
-            <ReuleauxTriangle radius={triangleSize} fill={color} />
-          </div>
-        </div>
+    <div style={containerStyle}>
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+      <div style={triangleWrapperStyle} aria-hidden>
+        <ReuleauxTriangle radius={triangleSize} variant="outline" stroke={color} showLabel={false} width={triangleSize} height={triangleSize} />
       </div>
     </div>
   );
