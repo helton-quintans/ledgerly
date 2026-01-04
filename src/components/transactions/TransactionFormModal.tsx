@@ -1,5 +1,6 @@
 "use client";
 
+import CurrencySelector from "@/components/transactions/CurrencySelector";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,16 +14,25 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { createTransaction } from "@/lib/transactions";
-import { ArrowDown, ArrowUp, Plus,FileText, Tag, CheckCircle, XCircle } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  CheckCircle,
+  FileText,
+  Plus,
+  Tag,
+  XCircle,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import CurrencySelector from "@/components/transactions/CurrencySelector";
-import { useState, useEffect } from "react";
 
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import transactionFormSchema, { TransactionFormValues } from "@/lib/schemas/transaction";
-import { NumericFormat } from "react-number-format";
+import transactionFormSchema, {
+  type TransactionFormValues,
+} from "@/lib/schemas/transaction";
 import type { Currency } from "@/lib/schemas/transaction";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import { NumericFormat } from "react-number-format";
 
 type Props = {
   onSaved?: () => void;
@@ -45,7 +55,17 @@ export default function TransactionFormModal({ onSaved }: Props) {
     } as any,
   });
 
-  const { register, handleSubmit, formState: { errors }, reset, watch, setValue, clearErrors, setError, control } = form;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    watch,
+    setValue,
+    clearErrors,
+    setError,
+    control,
+  } = form;
 
   const watchedCurrency = (watch("currency") || "USD") as Currency;
 
@@ -55,8 +75,11 @@ export default function TransactionFormModal({ onSaved }: Props) {
 
     // mock rates to USD
     const rateToUSD: Record<string, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
-    const exchange_rate = (rateToUSD[values.currency] ?? 1) / (rateToUSD["USD"] ?? 1);
-    const converted_amount_cents = Math.round(amount_cents * (rateToUSD[values.currency] ?? 1));
+    const exchange_rate =
+      (rateToUSD[values.currency] ?? 1) / (rateToUSD["USD"] ?? 1);
+    const converted_amount_cents = Math.round(
+      amount_cents * (rateToUSD[values.currency] ?? 1),
+    );
     const rate_timestamp = new Date().toISOString();
 
     try {
@@ -80,7 +103,7 @@ export default function TransactionFormModal({ onSaved }: Props) {
     } catch (err) {
       console.error(err);
       toast.error("Failed to create transaction", {
-        icon: <XCircle style={{ color: 'var(--destructive)' }} />,
+        icon: <XCircle style={{ color: "var(--destructive)" }} />,
       });
     }
   }
@@ -92,7 +115,11 @@ export default function TransactionFormModal({ onSaved }: Props) {
     </Button>
   );
 
-  const currencySymbolMap: Record<Currency, string> = { USD: "$", EUR: "€", BRL: "R$" };
+  const currencySymbolMap: Record<Currency, string> = {
+    USD: "$",
+    EUR: "€",
+    BRL: "R$",
+  };
 
   useEffect(() => {
     // clear validation messages when modal opens
@@ -109,7 +136,10 @@ export default function TransactionFormModal({ onSaved }: Props) {
       </DialogHeader>
 
       <div className="flex justify-center items-center gap-2 my-2">
-        <CurrencySelector value={watchedCurrency} onChange={(v) => setValue("currency", v)} />
+        <CurrencySelector
+          value={watchedCurrency}
+          onChange={(v) => setValue("currency", v)}
+        />
       </div>
 
       <div className="grid gap-3 py-2">
@@ -118,8 +148,14 @@ export default function TransactionFormModal({ onSaved }: Props) {
             name="amount"
             control={control}
             render={({ field }) => {
-              const thousandSep = watchedCurrency === "BRL" || watchedCurrency === "EUR" ? "." : ",";
-              const decimalSep = watchedCurrency === "BRL" || watchedCurrency === "EUR" ? "," : ".";
+              const thousandSep =
+                watchedCurrency === "BRL" || watchedCurrency === "EUR"
+                  ? "."
+                  : ",";
+              const decimalSep =
+                watchedCurrency === "BRL" || watchedCurrency === "EUR"
+                  ? ","
+                  : ".";
 
               return (
                 <NumericFormat
@@ -142,8 +178,18 @@ export default function TransactionFormModal({ onSaved }: Props) {
                   onChange={(e: any) => {
                     const raw = String(e.target.value || "");
                     // keep digits, separators and suffix letters
-                    const cleaned = raw.replace(new RegExp(`[^0-9\\${thousandSep}\\${decimalSep}kKmM-]`, "g"), "").trim();
-                    const m = cleaned.match(/^(-?[0-9${thousandSep}${decimalSep}]+)([kKmM])?$/);
+                    const cleaned = raw
+                      .replace(
+                        new RegExp(
+                          `[^0-9\\${thousandSep}\\${decimalSep}kKmM-]`,
+                          "g",
+                        ),
+                        "",
+                      )
+                      .trim();
+                    const m = cleaned.match(
+                      /^(-?[0-9${thousandSep}${decimalSep}]+)([kKmM])?$/,
+                    );
                     if (m) {
                       let numStr = m[1];
                       // remove thousand separators and normalize decimal to dot
@@ -155,7 +201,7 @@ export default function TransactionFormModal({ onSaved }: Props) {
                         const reDecimal = new RegExp(`\\${decimalSep}`);
                         numStr = numStr.replace(reDecimal, ".");
                       }
-                      const parsed = parseFloat(numStr);
+                      const parsed = Number.parseFloat(numStr);
                       if (!Number.isNaN(parsed)) {
                         const suffix = m[2]?.toLowerCase();
                         let value = parsed;
@@ -171,8 +217,12 @@ export default function TransactionFormModal({ onSaved }: Props) {
               );
             }}
           />
-          <div className="absolute left-2 top-2 text-neutral-500">{currencySymbolMap[watchedCurrency] || "$"}</div>
-          <div className="h-5 mt-1 text-sm text-red-400">{errors.amount?.message as string}</div>
+          <div className="absolute left-2 top-2 text-neutral-500">
+            {currencySymbolMap[watchedCurrency] || "$"}
+          </div>
+          <div className="h-5 mt-1 text-sm text-red-400">
+            {errors.amount?.message as string}
+          </div>
         </div>
 
         <div className="relative">
@@ -181,8 +231,13 @@ export default function TransactionFormModal({ onSaved }: Props) {
             {...register("description")}
             className="pl-9"
           />
-          <FileText className="absolute left-2 top-2 size-4" style={{ color: 'var(--input-placeholder)' }} />
-          <div className="h-5 mt-1 text-sm text-red-400">{errors.description?.message as string}</div>
+          <FileText
+            className="absolute left-2 top-2 size-4"
+            style={{ color: "var(--input-placeholder)" }}
+          />
+          <div className="h-5 mt-1 text-sm text-red-400">
+            {errors.description?.message as string}
+          </div>
         </div>
 
         <div className="relative">
@@ -191,8 +246,13 @@ export default function TransactionFormModal({ onSaved }: Props) {
             {...register("category")}
             className="pl-9"
           />
-          <Tag className="absolute left-2 top-2 size-4" style={{ color: 'var(--input-placeholder)' }} />
-          <div className="h-5 mt-1 text-sm text-red-400">{errors.category?.message as string}</div>
+          <Tag
+            className="absolute left-2 top-2 size-4"
+            style={{ color: "var(--input-placeholder)" }}
+          />
+          <div className="h-5 mt-1 text-sm text-red-400">
+            {errors.category?.message as string}
+          </div>
         </div>
 
         <div className="flex gap-2">
@@ -217,8 +277,18 @@ export default function TransactionFormModal({ onSaved }: Props) {
       </div>
 
       <DialogFooter className="flex flex-col gap-2 sm:flex-col">
-        <Button size="lg" className="w-full" onClick={handleSubmit(onSubmit)}>Save</Button>
-        <Button variant="outline" size="lg" className="w-full" onClick={() => { setOpen(false); reset(); }}>
+        <Button size="lg" className="w-full" onClick={handleSubmit(onSubmit)}>
+          Save
+        </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          className="w-full"
+          onClick={() => {
+            setOpen(false);
+            reset();
+          }}
+        >
           Cancel
         </Button>
       </DialogFooter>

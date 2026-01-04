@@ -18,7 +18,11 @@ export type Transaction = {
 };
 
 // mock conversion rates to USD
-const rateToUSD: Record<import("./schemas/transaction").Currency, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
+const rateToUSD: Record<import("./schemas/transaction").Currency, number> = {
+  USD: 1,
+  EUR: 1.08,
+  BRL: 0.19,
+};
 
 let items: Transaction[] = [
   {

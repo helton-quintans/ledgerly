@@ -3,12 +3,12 @@
 import {
   AlertTriangle,
   BarChart2,
+  Briefcase,
   ChevronDown,
   Clock,
   Database,
-  Heart,
-  Briefcase,
   DollarSign,
+  Heart,
   Home,
   LayoutGrid,
   MessageSquareText,
@@ -270,19 +270,27 @@ export function BrandSidebar() {
                         )}
                       </SidebarMenuItem>
 
-                      {item.title === "Home" && (
+                      {item.title === "Home" &&
                         // Insert pillar menus immediately after Home
                         pillarNavItems.map((p) => {
                           const pHasChildren = Boolean(p.children?.length);
                           const pChildMatches = pHasChildren
-                            ? p.children!.some((c) => c.title.toLowerCase().includes(q))
+                            ? p.children!.some((c) =>
+                                c.title.toLowerCase().includes(q),
+                              )
                             : false;
-                          const pIsOpen = Boolean(expanded[p.title]) || (!!q && pChildMatches);
+                          const pIsOpen =
+                            Boolean(expanded[p.title]) ||
+                            (!!q && pChildMatches);
 
                           return (
                             <SidebarMenuItem key={p.href}>
                               {pHasChildren ? (
-                                <SidebarMenuButton asChild className="cursor-pointer" tooltip={p.title}>
+                                <SidebarMenuButton
+                                  asChild
+                                  className="cursor-pointer"
+                                  tooltip={p.title}
+                                >
                                   <button
                                     type="button"
                                     onClick={() => toggleExpand(p.title)}
@@ -293,12 +301,21 @@ export function BrandSidebar() {
                                       {p.icon}
                                       <span>{p.title}</span>
                                     </span>
-                                    <ChevronDown className={`size-4 transition-transform ${pIsOpen ? "rotate-180" : ""}`} />
+                                    <ChevronDown
+                                      className={`size-4 transition-transform ${pIsOpen ? "rotate-180" : ""}`}
+                                    />
                                   </button>
                                 </SidebarMenuButton>
                               ) : (
-                                <SidebarMenuButton asChild isActive={pathname === p.href} tooltip={p.title}>
-                                  <Link href={p.href} onClick={() => setOpenMobile(false)}>
+                                <SidebarMenuButton
+                                  asChild
+                                  isActive={pathname === p.href}
+                                  tooltip={p.title}
+                                >
+                                  <Link
+                                    href={p.href}
+                                    onClick={() => setOpenMobile(false)}
+                                  >
                                     {p.icon}
                                     <span>{p.title}</span>
                                   </Link>
@@ -310,7 +327,10 @@ export function BrandSidebar() {
                                   {p.children!.map((child) => (
                                     <SidebarMenuSubItem key={child.href}>
                                       <SidebarMenuSubButton asChild>
-                                        <Link href={child.href} onClick={() => setOpenMobile(false)}>
+                                        <Link
+                                          href={child.href}
+                                          onClick={() => setOpenMobile(false)}
+                                        >
                                           {child.title}
                                         </Link>
                                       </SidebarMenuSubButton>
@@ -320,8 +340,7 @@ export function BrandSidebar() {
                               )}
                             </SidebarMenuItem>
                           );
-                        })
-                      )}
+                        })}
                     </React.Fragment>
                   );
                 })}

@@ -22,7 +22,10 @@ export default function Summary({
       {/* Mobile horizontal */}
       <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory px-2 -mx-2 ml-[2px] lg:hidden">
         <div className="min-w-72 shrink-0 rounded-md p-4 flex items-center justify-between snap-start relative shadow-md border border-border bg-black text-white dark:bg-[var(--primary)] dark:text-[var(--background)]">
-          <div className="absolute left-0 inset-y-0 w-1 rounded-l-md bg-accent" style={{ color: "var(--input-placeholder)" }}/>
+          <div
+            className="absolute left-0 inset-y-0 w-1 rounded-l-md bg-accent"
+            style={{ color: "var(--input-placeholder)" }}
+          />
           <div>
             <div className="text-sm font-medium">Total</div>
             <div className="text-3xl font-extrabold mt-1">

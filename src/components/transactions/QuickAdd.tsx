@@ -2,11 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createTransaction } from "@/lib/transactions";
-import { toast } from "sonner";
-import { CheckCircle, XCircle } from "lucide-react";
 import type { Currency } from "@/lib/schemas/transaction";
+import { createTransaction } from "@/lib/transactions";
+import { CheckCircle, XCircle } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 function TypeToggle({
   value,
@@ -50,8 +50,14 @@ export default function QuickAdd({ onCreated }: Props) {
     const val = Number.parseFloat(raw);
     if (isNaN(val)) return;
     const amount_cents = Math.round(Math.abs(val) * 100);
-    const rateToUSD: Record<Currency, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
-    const converted_amount_cents = Math.round(amount_cents * (rateToUSD[currency] ?? 1));
+    const rateToUSD: Record<Currency, number> = {
+      USD: 1,
+      EUR: 1.08,
+      BRL: 0.19,
+    };
+    const converted_amount_cents = Math.round(
+      amount_cents * (rateToUSD[currency] ?? 1),
+    );
     try {
       const t = await createTransaction({
         type,
@@ -68,10 +74,14 @@ export default function QuickAdd({ onCreated }: Props) {
       setAmount("");
       setDesc("");
       onCreated(t.id);
-      toast.success("Transaction added", { icon: <CheckCircle style={{ color: 'var(--success)' }} /> });
+      toast.success("Transaction added", {
+        icon: <CheckCircle style={{ color: "var(--success)" }} />,
+      });
     } catch (err) {
       console.error(err);
-      toast.error("Failed to add transaction", { icon: <XCircle style={{ color: 'var(--destructive)' }} /> });
+      toast.error("Failed to add transaction", {
+        icon: <XCircle style={{ color: "var(--destructive)" }} />,
+      });
     }
   }
 

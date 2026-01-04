@@ -1,10 +1,10 @@
 "use client";
 
 import CurrencySelector from "@/components/transactions/CurrencySelector";
-import type { Currency } from "@/lib/schemas/transaction";
 import Summary from "@/components/transactions/Summary";
 import TransactionFormModal from "@/components/transactions/TransactionFormModal";
 import TransactionsTable from "@/components/transactions/TransactionsTable";
+import type { Currency } from "@/lib/schemas/transaction";
 import {
   type Transaction,
   deleteTransaction,
@@ -39,18 +39,38 @@ export default function Page() {
   const incomes = items.reduce((acc, it) => {
     if (it.type !== "income") return acc;
     // if there's a converted snapshot matching displayCurrency, use it
-    if (it.converted_currency === displayCurrency && typeof it.converted_amount_cents === "number") {
+    if (
+      it.converted_currency === displayCurrency &&
+      typeof it.converted_amount_cents === "number"
+    ) {
       return acc + (it.converted_amount_cents || 0) / 100;
     }
-    return acc + convert((it.amount_cents || 0) / 100, it.currency as Currency | undefined, displayCurrency);
+    return (
+      acc +
+      convert(
+        (it.amount_cents || 0) / 100,
+        it.currency as Currency | undefined,
+        displayCurrency,
+      )
+    );
   }, 0);
 
   const expenses = items.reduce((acc, it) => {
     if (it.type !== "expense") return acc;
-    if (it.converted_currency === displayCurrency && typeof it.converted_amount_cents === "number") {
+    if (
+      it.converted_currency === displayCurrency &&
+      typeof it.converted_amount_cents === "number"
+    ) {
       return acc + (it.converted_amount_cents || 0) / 100;
     }
-    return acc + convert((it.amount_cents || 0) / 100, it.currency as Currency | undefined, displayCurrency);
+    return (
+      acc +
+      convert(
+        (it.amount_cents || 0) / 100,
+        it.currency as Currency | undefined,
+        displayCurrency,
+      )
+    );
   }, 0);
   const balance = incomes - expenses;
   const fmt = new Intl.NumberFormat(undefined, {

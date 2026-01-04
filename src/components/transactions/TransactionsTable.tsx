@@ -2,6 +2,7 @@
 
 import { useSearch } from "@/components/search-context";
 import { Button } from "@/components/ui/button";
+import ConfirmModal from "@/components/ui/confirm-modal";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -20,7 +21,6 @@ import {
 } from "@/components/ui/table";
 import type { Transaction } from "@/lib/transactions";
 import { formatCurrencyFromCents } from "@/lib/utils";
-import ConfirmModal from "@/components/ui/confirm-modal";
 import {
   Calendar,
   ChevronDown,
@@ -32,8 +32,8 @@ import {
   Tag,
   Trash2,
 } from "lucide-react";
-import { toast } from "sonner";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 type Props = {
   items: Transaction[];
@@ -177,7 +177,10 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
                     className={`${t.type === "income" ? "text-green-600/80" : "text-red-600/80"} text-left`}
                   >
                     {t.type === "income" ? "+" : "-"}
-                    {formatCurrencyFromCents(t.amount_cents || 0, (t.currency as any) || "USD")}
+                    {formatCurrencyFromCents(
+                      t.amount_cents || 0,
+                      (t.currency as any) || "USD",
+                    )}
                   </TableCell>
                 )}
 
@@ -217,7 +220,11 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
                           }
                         }}
                       >
-                        <Button size="icon" variant="destructive" aria-label="Delete">
+                        <Button
+                          size="icon"
+                          variant="destructive"
+                          aria-label="Delete"
+                        >
                           <Trash2 className="size-4" />
                         </Button>
                       </ConfirmModal>

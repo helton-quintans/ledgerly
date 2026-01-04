@@ -5,7 +5,7 @@ import { HelpCircle, Menu, Search, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSidebar } from "@/components/ui/sidebar";
@@ -80,7 +80,10 @@ export function BrandHeader() {
           <ThemeToggle />
 
           <Avatar className="size-8 shadow-sm">
-            <AvatarImage src="https://github.com/helton-quintans.png" alt="Helton Quintans" />
+            <AvatarImage
+              src="https://github.com/helton-quintans.png"
+              alt="Helton Quintans"
+            />
             <AvatarFallback className="bg-primary text-primary-foreground">
               <span className="text-xs">ME</span>
             </AvatarFallback>
@@ -100,7 +103,10 @@ export function BrandHeader() {
           <ThemeToggle />
 
           <Avatar className="size-8 shadow-sm">
-            <AvatarImage src="https://github.com/helton-quintans.png" alt="Helton Quintans" />
+            <AvatarImage
+              src="https://github.com/helton-quintans.png"
+              alt="Helton Quintans"
+            />
             <AvatarFallback className="bg-primary text-primary-foreground">
               <span className="text-xs">ME</span>
             </AvatarFallback>

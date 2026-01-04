@@ -12,8 +12,8 @@ export type Currency = z.infer<typeof CurrencyCode>;
 const amountToCents = (val: unknown) => {
   if (typeof val === "string") {
     const cleaned = val.replace(/[^0-9,.-]/g, "").replace(",", ".");
-    const n = parseFloat(cleaned);
-    if (Number.isNaN(n)) return NaN;
+    const n = Number.parseFloat(cleaned);
+    if (Number.isNaN(n)) return Number.NaN;
     return Math.round(n * 100);
   }
 
@@ -26,7 +26,10 @@ const amountToCents = (val: unknown) => {
 
 export const transactionFormSchema = z.object({
   // descrição curta opcional para entradas rápidas
-  description: z.string().max(30, "Description too long, limit is 30 characters").optional(),
+  description: z
+    .string()
+    .max(30, "Description too long, limit is 30 characters")
+    .optional(),
   // amount is converted to an integer representing the minor unit (cents)
   amount: z.preprocess(
     amountToCents,
@@ -34,11 +37,16 @@ export const transactionFormSchema = z.object({
       .number()
       .int()
       .positive({ message: "Amount must be greater than zero" })
-      .refine((v) => !Number.isNaN(v) && Number.isFinite(v), { message: "Enter a valid number" }),
+      .refine((v) => !Number.isNaN(v) && Number.isFinite(v), {
+        message: "Enter a valid number",
+      }),
   ),
   currency: CurrencyCode,
   // categoria obrigatória curta
-  category: z.string().min(1, "Category is required").max(30, "Limit is 30 characters"),
+  category: z
+    .string()
+    .min(1, "Category is required")
+    .max(30, "Limit is 30 characters"),
   type: z.enum(["income", "expense"]),
   // date as ISO string (optional)
   date: z.string().optional(),
