@@ -1,7 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Montserrat } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Montserrat } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
@@ -11,8 +11,22 @@ import ShellLayout from "@/layouts/shell-layout";
 
 export const metadata: Metadata = {
   title: "Ledgerly",
-  description: "Starter to help build a Shadcn Registry using Tailwind v4",
+  description:
+    "A minimal dashboard focused on Career, Health & Wellbeing, and Finance.",
   icons: [{ rel: "icon", url: "/favicon.svg", type: "image/svg+xml" }],
+  openGraph: {
+    title: "Ledgerly — Career, Health & Finance",
+    description:
+      "A minimal dashboard focused on Career, Health & Wellbeing, and Finance.",
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ledgerly — Career, Health & Finance",
+    description:
+      "A minimal dashboard focused on Career, Health & Wellbeing, and Finance.",
+    images: ["/opengraph-image"],
+  },
 };
 
 const GeistSans = Geist({
@@ -30,6 +44,13 @@ const MontserratSerif = Montserrat({
   variable: "--font-serif",
 });
 
+const InterFont = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  weight: ["400", "700"],
+  display: "swap",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -42,6 +63,7 @@ export default function RootLayout({
         GeistSans.variable,
         GeistMono.variable,
         MontserratSerif.variable,
+        InterFont.variable,
         "bg-background text-foreground",
       )}
     >
