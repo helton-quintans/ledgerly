@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 
 type Props = {
@@ -37,7 +38,9 @@ export default function ConfirmModal({
         </DialogHeader>
         {description && <div className="py-2 text-sm text-muted-foreground">{description}</div>}
         <DialogFooter className="flex gap-2">
-          <Button variant="outline" onClick={() => { /* close handled by Dialog */ }}>{cancelLabel}</Button>
+          <DialogClose asChild>
+            <Button variant="outline">{cancelLabel}</Button>
+          </DialogClose>
           <Button onClick={onConfirm}>{confirmLabel}</Button>
         </DialogFooter>
       </DialogContent>
