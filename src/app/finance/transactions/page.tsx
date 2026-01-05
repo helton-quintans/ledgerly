@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 
 export default function Page() {
   const [items, setItems] = useState<Transaction[]>([]);
+  const [editing, setEditing] = useState<Transaction | null>(null);
   const [hidden, setHidden] = useState(false);
   const [displayCurrency, setDisplayCurrency] = useState<Currency>("USD");
 
@@ -116,12 +117,19 @@ export default function Page() {
           <div className="rounded-md border p-4 relative">
             <div className="mb-4">
               <div className="flex gap-2 justify-end">
-                <TransactionFormModal onSaved={load} />
+                <TransactionFormModal
+                  onSaved={() => {
+                    load();
+                    setEditing(null);
+                  }}
+                  transaction={editing}
+                  onClose={() => setEditing(null)}
+                />
               </div>
             </div>
             <TransactionsTable
               items={items}
-              onEdit={(t) => console.log("edit", t.id)}
+              onEdit={(t) => setEditing(t)}
               onDelete={async (id) => {
                 await deleteTransaction(id);
                 load();

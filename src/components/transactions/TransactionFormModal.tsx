@@ -32,12 +32,20 @@ import type { Currency } from "@/lib/schemas/transaction";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
+import type { Transaction } from "@/lib/transactions";
+import { updateTransaction } from "@/lib/transactions";
 
 type Props = {
   onSaved?: () => void;
+  transaction?: Transaction | null;
+  onClose?: () => void;
 };
 
-export default function TransactionFormModal({ onSaved }: Props) {
+export default function TransactionFormModal({
+  onSaved,
+  transaction = null,
+  onClose,
+}: Props) {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
 
@@ -81,26 +89,44 @@ export default function TransactionFormModal({ onSaved }: Props) {
     const rate_timestamp = new Date().toISOString();
 
     try {
-      await createTransaction({
-        type: values.type,
-        amount_cents,
-        currency: values.currency,
-        converted_amount_cents,
-        converted_currency: "USD",
-        exchange_rate,
-        rate_timestamp,
-        date: values.date ?? new Date().toISOString(),
-        category: values.category || "Uncategorized",
-        description: values.description || "",
-      });
+      if (transaction) {
+        // update existing
+        await updateTransaction(transaction.id, {
+          type: values.type,
+          amount_cents,
+          currency: values.currency,
+          converted_amount_cents,
+          converted_currency: "USD",
+          exchange_rate,
+          rate_timestamp,
+          date: values.date ?? new Date().toISOString(),
+          category: values.category || "Uncategorized",
+          description: values.description || "",
+        });
+        toast.success("Transaction updated");
+      } else {
+        await createTransaction({
+          type: values.type,
+          amount_cents,
+          currency: values.currency,
+          converted_amount_cents,
+          converted_currency: "USD",
+          exchange_rate,
+          rate_timestamp,
+          date: values.date ?? new Date().toISOString(),
+          category: values.category || "Uncategorized",
+          description: values.description || "",
+        });
+        toast.success("Transaction created");
+      }
 
-      toast.success("Transaction created");
       reset();
       setOpen(false);
       onSaved?.();
+      onClose?.();
     } catch (err) {
       console.error(err);
-      toast.error("Failed to create transaction", {
+      toast.error(transaction ? "Failed to update transaction" : "Failed to create transaction", {
         icon: <XCircle style={{ color: "var(--destructive)" }} />,
       });
     }
@@ -121,16 +147,32 @@ export default function TransactionFormModal({ onSaved }: Props) {
 
   useEffect(() => {
     // clear validation messages when modal opens
-    if (open) {
+    if (transaction) {
+      // if a transaction prop is provided, open and populate
+      setOpen(true);
+      clearErrors();
+      reset({
+        description: transaction.description || "",
+        amount: (transaction.amount_cents || 0) / 100,
+        category: transaction.category || "",
+        type: transaction.type,
+        currency: (transaction.currency as Currency) || "USD",
+        date: transaction.date,
+      } as any);
+      return;
+    }
+
+    if (open && !transaction) {
+      // if creating new, reset to defaults
       clearErrors();
       reset();
     }
-  }, [open, clearErrors]);
+  }, [transaction, open, clearErrors, reset]);
 
   const content = (
     <div>
       <DialogHeader>
-        <DialogTitle>New transaction</DialogTitle>
+        <DialogTitle>{transaction ? "Edit transaction" : "New transaction"}</DialogTitle>
       </DialogHeader>
 
       <div className="flex justify-center items-center gap-2 my-2">
@@ -288,6 +330,7 @@ export default function TransactionFormModal({ onSaved }: Props) {
           onClick={() => {
             setOpen(false);
             reset();
+            onClose?.();
           }}
         >
           Cancel
@@ -298,7 +341,13 @@ export default function TransactionFormModal({ onSaved }: Props) {
 
   if (isMobile) {
     return (
-      <Sheet open={open} onOpenChange={setOpen}>
+      <Sheet
+        open={open}
+        onOpenChange={(val) => {
+          setOpen(val);
+          if (!val) onClose?.();
+        }}
+      >
         <SheetTrigger asChild>{trigger}</SheetTrigger>
         <SheetContent side="bottom" className="p-4">
           {content}
@@ -308,7 +357,13 @@ export default function TransactionFormModal({ onSaved }: Props) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(val) => {
+        setOpen(val);
+        if (!val) onClose?.();
+      }}
+    >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>{content}</DialogContent>
     </Dialog>
