@@ -30,10 +30,10 @@ export default async function Image() {
           : "system-ui, -apple-system, sans-serif",
       }}
     >
-      <div style={{ padding: 80, display: "flex", alignItems: "center" }}>
+      <div style={{ padding: 48, display: "flex", alignItems: "center" }}>
         <svg
-          width={440}
-          height={440}
+          width={260}
+          height={260}
           viewBox="-3 -3 34 34"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +41,7 @@ export default async function Image() {
           <path
             d="M 0 24.249 A 28 28 0 0 0 28 24.249 A 28 28 0 0 0 14 0 A 28 28 0 0 0 0 24.249 Z"
             stroke="#ffffff"
-            strokeWidth="10"
+            strokeWidth="4"
             fill="none"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -54,7 +54,7 @@ export default async function Image() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          paddingRight: 120,
+          paddingRight: 96,
         }}
       >
         <div style={{ fontSize: 72, fontWeight: 700 }}>ledgerly</div>
