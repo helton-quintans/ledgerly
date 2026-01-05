@@ -66,16 +66,18 @@ export default async function Image() {
     </div>,
     {
       ...size,
-      fonts: interData
-        ? [
-            {
-              name: "Inter",
-              data: interData,
-              weight: 700,
-              style: "normal",
-            },
-          ]
-        : [],
+      ...(interData
+        ? {
+            fonts: [
+              {
+                name: "Inter",
+                data: interData,
+                weight: 700,
+                style: "normal",
+              },
+            ],
+          }
+        : {}),
     },
   );
 }
