@@ -177,38 +177,41 @@ export default function TransactionFormModal({ onSaved }: Props) {
                   // support shorthand like 1k, 1M — parse raw input before NumericFormat normalizes
                   onChange={(e: any) => {
                     const raw = String(e.target.value || "");
-                    // keep digits, separators and suffix letters
-                    const cleaned = raw
-                      .replace(
-                        new RegExp(
-                          `[^0-9\\${thousandSep}\\${decimalSep}kKmM-]`,
-                          "g",
-                        ),
-                        "",
-                      )
-                      .trim();
-                    const m = cleaned.match(
-                      /^(-?[0-9${thousandSep}${decimalSep}]+)([kKmM])?$/,
-                    );
+
+                    // allow both comma and dot while typing; keep digits, separators and suffix letters
+                    const cleaned = raw.replace(/[^0-9,\.kKmM-]/g, "").trim();
+                    const m = cleaned.match(/^(-?[0-9,\.]+)([kKmM])?$/);
                     if (m) {
                       let numStr = m[1];
-                      // remove thousand separators and normalize decimal to dot
-                      if (thousandSep) {
-                        const reThousand = new RegExp(`\\${thousandSep}`, "g");
-                        numStr = numStr.replace(reThousand, "");
+
+                      // Decide if the last separator (dot or comma) is a decimal separator
+                      const lastDot = numStr.lastIndexOf('.');
+                      const lastComma = numStr.lastIndexOf(',');
+                      const lastSepPos = Math.max(lastDot, lastComma);
+
+                      if (lastSepPos !== -1) {
+                        const digitsAfter = numStr.length - lastSepPos - 1;
+                        // If there are 1 or 2 digits after the last separator, treat it as decimal
+                        if (digitsAfter > 0 && digitsAfter <= 2) {
+                          const intPart = numStr.slice(0, lastSepPos).replace(/[.,]/g, '');
+                          const fracPart = numStr.slice(lastSepPos + 1).replace(/[.,]/g, '');
+                          numStr = intPart + '.' + fracPart;
+                        } else {
+                          // otherwise treat all separators as thousand separators -> remove them
+                          numStr = numStr.replace(/[.,]/g, '');
+                        }
+                      } else {
+                        numStr = numStr.replace(/[.,]/g, '');
                       }
-                      if (decimalSep && decimalSep !== ".") {
-                        const reDecimal = new RegExp(`\\${decimalSep}`);
-                        numStr = numStr.replace(reDecimal, ".");
-                      }
+
                       const parsed = Number.parseFloat(numStr);
                       if (!Number.isNaN(parsed)) {
                         const suffix = m[2]?.toLowerCase();
                         let value = parsed;
-                        if (suffix === "k") value = value * 1_000;
-                        if (suffix === "m") value = value * 1_000_000;
+                        if (suffix === 'k') value = value * 1_000;
+                        if (suffix === 'm') value = value * 1_000_000;
                         field.onChange(value);
-                        clearErrors("amount");
+                        clearErrors('amount');
                       }
                     }
                   }}
