@@ -17,7 +17,6 @@ import { createTransaction } from "@/lib/transactions";
 import {
   ArrowDown,
   ArrowUp,
-  CheckCircle,
   FileText,
   Plus,
   Tag,
@@ -63,7 +62,6 @@ export default function TransactionFormModal({ onSaved }: Props) {
     watch,
     setValue,
     clearErrors,
-    setError,
     control,
   } = form;
 

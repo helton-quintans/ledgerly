@@ -162,7 +162,6 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
               {columnVisibility.actions && (
                 <TableHead className="text-center">
                   <div className="flex items-center justify-center gap-2">
-                    <MoreHorizontal className="size-4" />
                     <span>Actions</span>
                   </div>
                 </TableHead>
