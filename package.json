@@ -7,10 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "biome check",
-    "lint:fix": "biome check --write"
+    "lint:fix": "biome check --write",
+    "prisma": "prisma",
+    "prisma:generate": "prisma generate",
+    "migrate:dev": "prisma migrate dev --name init",
+    "migrate:reset": "prisma migrate reset --force"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
     "@tanstack/react-table": "^8.21.3",
     "@vercel/analytics": "^1.6.1",
