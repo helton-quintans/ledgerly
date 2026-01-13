@@ -12,7 +12,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
-type Props = {
+type ConfirmModalProps = {
   title?: string;
   description?: string;
   confirmLabel?: string;
@@ -28,7 +28,7 @@ export default function ConfirmModal({
   cancelLabel = "Cancel",
   children,
   onConfirm,
-}: Props) {
+}: ConfirmModalProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
