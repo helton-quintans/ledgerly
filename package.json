@@ -13,7 +13,8 @@
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:db:push": "prisma db push",
     "prisma:studio": "pnpx --allow-build=better-sqlite3 prisma studio",
-    "postinstall": "pnpm exec prisma generate"
+    "postinstall": "pnpm exec prisma generate",
+    "quick-session": "tsx ./scripts/quick-create-session.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
