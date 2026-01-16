@@ -14,14 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { createTransaction } from "@/lib/transactions";
-import {
-  ArrowDown,
-  ArrowUp,
-  FileText,
-  Plus,
-  Tag,
-  XCircle,
-} from "lucide-react";
+import { ArrowDown, ArrowUp, FileText, Plus, Tag, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -29,11 +22,11 @@ import transactionFormSchema, {
   type TransactionFormValues,
 } from "@/lib/schemas/transaction";
 import type { Currency } from "@/lib/schemas/transaction";
+import type { Transaction } from "@/lib/transactions";
+import { updateTransaction } from "@/lib/transactions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
-import type { Transaction } from "@/lib/transactions";
-import { updateTransaction } from "@/lib/transactions";
 
 type Props = {
   onSaved?: () => void;
@@ -126,9 +119,14 @@ export default function TransactionFormModal({
       onClose?.();
     } catch (err) {
       console.error(err);
-      toast.error(transaction ? "Failed to update transaction" : "Failed to create transaction", {
-        icon: <XCircle style={{ color: "var(--destructive)" }} />,
-      });
+      toast.error(
+        transaction
+          ? "Failed to update transaction"
+          : "Failed to create transaction",
+        {
+          icon: <XCircle style={{ color: "var(--destructive)" }} />,
+        },
+      );
     }
   }
 
@@ -172,7 +170,9 @@ export default function TransactionFormModal({
   const content = (
     <div>
       <DialogHeader>
-        <DialogTitle>{transaction ? "Edit transaction" : "New transaction"}</DialogTitle>
+        <DialogTitle>
+          {transaction ? "Edit transaction" : "New transaction"}
+        </DialogTitle>
       </DialogHeader>
 
       <div className="flex justify-center items-center gap-2 my-2">
@@ -225,33 +225,37 @@ export default function TransactionFormModal({
                       let numStr = m[1];
 
                       // Decide if the last separator (dot or comma) is a decimal separator
-                      const lastDot = numStr.lastIndexOf('.');
-                      const lastComma = numStr.lastIndexOf(',');
+                      const lastDot = numStr.lastIndexOf(".");
+                      const lastComma = numStr.lastIndexOf(",");
                       const lastSepPos = Math.max(lastDot, lastComma);
 
                       if (lastSepPos !== -1) {
                         const digitsAfter = numStr.length - lastSepPos - 1;
                         // If there are 1 or 2 digits after the last separator, treat it as decimal
                         if (digitsAfter > 0 && digitsAfter <= 2) {
-                          const intPart = numStr.slice(0, lastSepPos).replace(/[.,]/g, '');
-                          const fracPart = numStr.slice(lastSepPos + 1).replace(/[.,]/g, '');
-                          numStr = intPart + '.' + fracPart;
+                          const intPart = numStr
+                            .slice(0, lastSepPos)
+                            .replace(/[.,]/g, "");
+                          const fracPart = numStr
+                            .slice(lastSepPos + 1)
+                            .replace(/[.,]/g, "");
+                          numStr = intPart + "." + fracPart;
                         } else {
                           // otherwise treat all separators as thousand separators -> remove them
-                          numStr = numStr.replace(/[.,]/g, '');
+                          numStr = numStr.replace(/[.,]/g, "");
                         }
                       } else {
-                        numStr = numStr.replace(/[.,]/g, '');
+                        numStr = numStr.replace(/[.,]/g, "");
                       }
 
                       const parsed = Number.parseFloat(numStr);
                       if (!Number.isNaN(parsed)) {
                         const suffix = m[2]?.toLowerCase();
                         let value = parsed;
-                        if (suffix === 'k') value = value * 1_000;
-                        if (suffix === 'm') value = value * 1_000_000;
+                        if (suffix === "k") value = value * 1_000;
+                        if (suffix === "m") value = value * 1_000_000;
                         field.onChange(value);
-                        clearErrors('amount');
+                        clearErrors("amount");
                       }
                     }
                   }}

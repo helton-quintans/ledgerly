@@ -71,7 +71,7 @@ export default function RootLayout({
         name="robots"
         content="noindex, nofollow, noarchive, nosnippet, noimageindex"
       />
-      <body className="flex grow">
+      <body className="min-h-screen flex flex-col">
         <ShellLayout>{children}</ShellLayout>
         <Analytics />
         <SpeedInsights />
