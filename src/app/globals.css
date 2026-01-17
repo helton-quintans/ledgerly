@@ -369,7 +369,7 @@
   .logo-pulse__text {
     font-weight: 600;
     letter-spacing: 0.08em;
-    text-transform: uppercase;
+    text-transform: none;
     font-size: 0.9rem;
     position: relative;
     z-index: 1;
