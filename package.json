@@ -9,10 +9,11 @@
     "start": "next start",
     "lint": "biome check",
     "lint:fix": "biome check --write",
-    "prisma:generate": "pnpm execprisma generate",
+    "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:db:push": "prisma db push",
-    "prisma:studio": "pnpx --allow-build=better-sqlite3 prisma studio"
+    "prisma:studio": "pnpx --allow-build=better-sqlite3 prisma studio",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
