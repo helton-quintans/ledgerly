@@ -1,0 +1,10 @@
+ignoredBuiltDependencies:
+  - '@prisma/engines'
+  - '@swc/core'
+  - better-sqlite3
+  - esbuild
+  - prisma
+  - sharp
+
+onlyBuiltDependencies:
+  - '@biomejs/biome'
