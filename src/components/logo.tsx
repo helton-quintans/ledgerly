@@ -30,3 +30,19 @@ export function LogoSpinner() {
     </div>
   );
 }
+
+export function LogoPulse() {
+  return (
+    <div className="logo-pulse">
+      <div className="logo-pulse__icon">
+        <ReuleauxTriangle
+          radius={18}
+          variant="outline"
+          stroke="var(--primary)"
+          showLabel={false}
+        />
+      </div>
+      <span className="logo-pulse__text">Ledgerly</span>
+    </div>
+  );
+}

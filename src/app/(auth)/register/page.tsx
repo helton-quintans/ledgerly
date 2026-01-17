@@ -1,15 +1,15 @@
-"use client";
-
 import OAuthButtons from "../components/OAuthButtons";
-import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <div>
       <div className="space-y-4">
-        <h2 className="text-center font-semibold text-lg">Welcome back</h2>
+        <h2 className="text-center font-semibold text-lg">
+          Create your account
+        </h2>
         <p className="text-center text-muted-foreground text-sm">
-          Login with your Google account
+          Sign up with Google or keep going with email
         </p>
       </div>
 
@@ -24,7 +24,7 @@ export default function LoginPage() {
           <div className="h-px flex-1 bg-muted-foreground/30" />
         </div>
 
-        <LoginForm />
+        <RegisterForm />
       </div>
     </div>
   );

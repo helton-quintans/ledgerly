@@ -82,7 +82,11 @@ export default function LoginForm() {
             onClick={() => setShowPassword((prev) => !prev)}
             className="absolute inset-y-0 right-2 flex items-center text-muted-foreground hover:text-foreground"
           >
-            {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            {showPassword ? (
+              <EyeOff className="size-4" />
+            ) : (
+              <Eye className="size-4" />
+            )}
           </button>
         </div>
         {errors.password && (
@@ -92,7 +96,10 @@ export default function LoginForm() {
         )}
       </div>
 
-      <Button type="submit" className={cn(loading ? "opacity-80" : "")}>
+      <Button
+        type="submit"
+        className={cn("w-full justify-center", loading ? "opacity-80" : "")}
+      >
         Login
       </Button>
 
