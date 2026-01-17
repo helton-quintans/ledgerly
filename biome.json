@@ -9,7 +9,8 @@
       ".vercel",
       ".idea",
       "public/r",
-      "components/ui"
+      "components/ui",
+      "generated/prisma"
     ]
   },
   "linter": {
