@@ -19,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import type { Currency } from "@/lib/schemas/transaction";
 import type { Transaction } from "@/lib/transactions";
 import { formatCurrencyFromCents } from "@/lib/utils";
 import {
@@ -69,7 +70,9 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
   }, [items, activeQuery]);
 
   useEffect(() => {
-    setPage(1);
+    if (typeof activeQuery === "string") {
+      setPage(1);
+    }
   }, [activeQuery]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
@@ -178,7 +181,7 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
                     {t.type === "income" ? "+" : "-"}
                     {formatCurrencyFromCents(
                       t.amount_cents || 0,
-                      (t.currency as any) || "USD",
+                      (t.currency ?? "USD") as Currency,
                     )}
                   </TableCell>
                 )}
@@ -245,15 +248,18 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
         >
           ◀
         </Button>
-        {Array.from({ length: totalPages }).map((_, i) => (
-          <Button
-            key={i}
-            variant={page === i + 1 ? "default" : "ghost"}
-            onClick={() => setPage(i + 1)}
-          >
-            {i + 1}
-          </Button>
-        ))}
+        {Array.from({ length: totalPages }).map((_, i) => {
+          const pageNumber = i + 1;
+          return (
+            <Button
+              key={`page-${pageNumber}`}
+              variant={page === pageNumber ? "default" : "ghost"}
+              onClick={() => setPage(pageNumber)}
+            >
+              {pageNumber}
+            </Button>
+          );
+        })}
         <Button
           size="icon"
           variant="ghost"

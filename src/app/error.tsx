@@ -20,6 +20,7 @@ export default function ErrorPage({
         Something went wrong
       </h2>
       <button
+        type="button"
         onClick={reset}
         className="mt-6 rounded-md bg-black px-4 py-2 text-white"
       >

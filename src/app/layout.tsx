@@ -7,7 +7,6 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 import "@/app/globals.css";
-import ShellLayout from "@/layouts/shell-layout";
 
 export const metadata: Metadata = {
   title: "Ledgerly",
@@ -71,8 +70,8 @@ export default function RootLayout({
         name="robots"
         content="noindex, nofollow, noarchive, nosnippet, noimageindex"
       />
-      <body className="flex grow">
-        <ShellLayout>{children}</ShellLayout>
+      <body className="min-h-screen bg-background text-foreground antialiased">
+        {children}
         <Analytics />
         <SpeedInsights />
       </body>

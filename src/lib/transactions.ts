@@ -30,9 +30,9 @@ let items: Transaction[] = [
     type: "income",
     amount_cents: 2500 * 100,
     currency: "USD",
-    converted_amount_cents: Math.round(2500 * 100 * (rateToUSD["USD"] ?? 1)),
+    converted_amount_cents: Math.round(2500 * 100 * (rateToUSD.USD ?? 1)),
     converted_currency: "USD",
-    exchange_rate: rateToUSD["USD"],
+    exchange_rate: rateToUSD.USD,
     rate_timestamp: new Date().toISOString(),
     date: new Date().toISOString(),
     category: "Salary",
@@ -43,9 +43,9 @@ let items: Transaction[] = [
     type: "expense",
     amount_cents: Math.round(45.5 * 100),
     currency: "USD",
-    converted_amount_cents: Math.round(45.5 * 100 * (rateToUSD["USD"] ?? 1)),
+    converted_amount_cents: Math.round(45.5 * 100 * (rateToUSD.USD ?? 1)),
     converted_currency: "USD",
-    exchange_rate: rateToUSD["USD"],
+    exchange_rate: rateToUSD.USD,
     rate_timestamp: new Date().toISOString(),
     date: new Date().toISOString(),
     category: "Food",
@@ -72,7 +72,11 @@ export async function updateTransaction(
 ) {
   items = items.map((it) => (it.id === id ? { ...it, ...patch } : it));
   await new Promise((r) => setTimeout(r, 100));
-  return items.find((i) => i.id === id)!;
+  const updated = items.find((i) => i.id === id);
+  if (!updated) {
+    throw new Error(`Transaction ${id} not found after update.`);
+  }
+  return updated;
 }
 
 export async function deleteTransaction(id: string) {

@@ -48,7 +48,7 @@ export default function QuickAdd({ onCreated }: Props) {
   async function handleCreate() {
     const raw = amount.replace(/[^0-9.,-]/g, "").replace(",", ".");
     const val = Number.parseFloat(raw);
-    if (isNaN(val)) return;
+    if (Number.isNaN(val)) return;
     const amount_cents = Math.round(Math.abs(val) * 100);
     const rateToUSD: Record<Currency, number> = {
       USD: 1,
