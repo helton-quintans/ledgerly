@@ -13,8 +13,10 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <div className="mb-6 flex justify-center">
             <Logo />
           </div>
-          <div className="rounded-xl bg-background/80 p-6 shadow-lg">
-            {children}
+          <div className="auth-neon-frame">
+            <div className="auth-neon-inner rounded-2xl bg-background/80 p-6 shadow-lg">
+              {children}
+            </div>
           </div>
           <p className="mt-6 text-center text-sm text-muted-foreground">
             By continuing, you agree to our Terms of Service and Privacy Policy.
