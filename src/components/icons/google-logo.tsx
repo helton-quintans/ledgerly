@@ -1,7 +1,12 @@
 import type { SVGProps } from "react";
 
 export default function GoogleLogo(props: SVGProps<SVGSVGElement>) {
-  const { width = 20, height = 20, "aria-hidden": ariaHidden = true, ...rest } = props;
+  const {
+    width = 20,
+    height = 20,
+    "aria-hidden": ariaHidden = true,
+    ...rest
+  } = props;
 
   return (
     <svg

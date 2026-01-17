@@ -69,7 +69,9 @@ export default function RegisterForm() {
         </label>
         <Input id={emailId} type="email" {...register("email")} />
         {errors.email && (
-          <p className="mt-1 text-xs text-destructive">{errors.email.message}</p>
+          <p className="mt-1 text-xs text-destructive">
+            {errors.email.message}
+          </p>
         )}
       </div>
 
@@ -90,11 +92,17 @@ export default function RegisterForm() {
             onClick={() => setShowPassword((prev) => !prev)}
             className="absolute inset-y-0 right-2 flex items-center text-muted-foreground hover:text-foreground"
           >
-            {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            {showPassword ? (
+              <EyeOff className="size-4" />
+            ) : (
+              <Eye className="size-4" />
+            )}
           </button>
         </div>
         {errors.password && (
-          <p className="mt-1 text-xs text-destructive">{errors.password.message}</p>
+          <p className="mt-1 text-xs text-destructive">
+            {errors.password.message}
+          </p>
         )}
       </div>
 
@@ -115,7 +123,11 @@ export default function RegisterForm() {
             onClick={() => setShowConfirm((prev) => !prev)}
             className="absolute inset-y-0 right-2 flex items-center text-muted-foreground hover:text-foreground"
           >
-            {showConfirm ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            {showConfirm ? (
+              <EyeOff className="size-4" />
+            ) : (
+              <Eye className="size-4" />
+            )}
           </button>
         </div>
         {errors.confirmPassword && (

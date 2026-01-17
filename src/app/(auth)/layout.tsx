@@ -10,7 +10,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-muted text-foreground">
       <div className="flex min-h-screen items-center justify-center px-4 py-4">
         <div className="w-full max-w-sm px-2">
-          <div className="mb-6 flex justify-center max-h-10">
+          <div className="mb-6 flex max-h-10 justify-center">
             <LogoPulse />
           </div>
           <div className="auth-neon-frame">
@@ -18,7 +18,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               {children}
             </div>
           </div>
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="mt-6 text-center text-muted-foreground text-sm">
             By continuing, you agree to our Terms of Service and Privacy Policy.
           </p>
         </div>
