@@ -9,7 +9,7 @@ export default function LoginPage() {
       <div className="space-y-4">
         <h2 className="text-center text-lg font-semibold">Welcome back</h2>
         <p className="text-center text-sm text-muted-foreground">
-          Login with your Apple or Google account
+          Login with your Google account
         </p>
       </div>
 
