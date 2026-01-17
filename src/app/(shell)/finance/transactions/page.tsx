@@ -11,7 +11,7 @@ import {
   listTransactions,
 } from "@/lib/transactions";
 import { Eye, EyeOff } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function Page() {
   const [items, setItems] = useState<Transaction[]>([]);
@@ -19,14 +19,14 @@ export default function Page() {
   const [hidden, setHidden] = useState(false);
   const [displayCurrency, setDisplayCurrency] = useState<Currency>("USD");
 
-  async function load() {
+  const load = useCallback(async () => {
     const data = await listTransactions();
     setItems(data);
-  }
+  }, []);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   // mock conversion rates to USD (1 unit of currency = x USD)
   const rateToUSD: Record<Currency, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
@@ -89,6 +89,7 @@ export default function Page() {
             onChange={(v) => setDisplayCurrency(v)}
           />
           <button
+            type="button"
             aria-label="Toggle balance visibility"
             onClick={() => setHidden((s) => !s)}
             className="p-1 rounded hover:bg-muted"

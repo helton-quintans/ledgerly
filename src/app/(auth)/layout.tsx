@@ -1,0 +1,26 @@
+import { Logo } from "@/components/logo";
+import type { ReactNode } from "react";
+
+export const metadata = {
+  title: "Login — Ledgerly",
+};
+
+export default function AuthLayout({ children }: { children: ReactNode }) {
+  return (
+    <div className="min-h-screen bg-muted text-foreground">
+      <div className="flex min-h-screen items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md">
+          <div className="mb-6 flex justify-center">
+            <Logo />
+          </div>
+          <div className="rounded-xl bg-background/80 p-6 shadow-lg">
+            {children}
+          </div>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            By continuing, you agree to our Terms of Service and Privacy Policy.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

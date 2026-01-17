@@ -15,8 +15,7 @@ export default function ThemeToggle() {
     } else {
       // follow system preference
       const prefersDark =
-        window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches;
+        window.matchMedia?.("(prefers-color-scheme: dark)")?.matches ?? false;
       setIsDark(prefersDark);
       document.documentElement.classList.toggle("dark", prefersDark);
     }
