@@ -92,7 +92,10 @@ export default function LoginForm() {
         )}
       </div>
 
-      <Button type="submit" className={cn(loading ? "opacity-80" : "")}>
+      <Button
+        type="submit"
+        className={cn("w-full justify-center", loading ? "opacity-80" : "")}
+      >
         Login
       </Button>
 
