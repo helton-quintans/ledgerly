@@ -1,5 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -20,6 +21,7 @@ type FormValues = z.infer<typeof schema>;
 export default function LoginForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const emailId = useId();
   const passwordId = useId();
@@ -31,10 +33,28 @@ export default function LoginForm() {
 
   async function onSubmit(data: FormValues) {
     setLoading(true);
+    setFormError(null);
     try {
-      // TODO: call API route /api/auth/login
-      await new Promise((r) => setTimeout(r, 600));
-      router.push("/");
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        callbackUrl: "/",
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setFormError("Invalid credentials. Please try again.");
+        return;
+      }
+
+      if (result?.url) {
+        router.replace(result.url);
+      } else {
+        router.replace("/");
+      }
+    } catch (error) {
+      console.error("login error", error);
+      setFormError("Unexpected error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -96,11 +116,18 @@ export default function LoginForm() {
         )}
       </div>
 
+      {formError && (
+        <p className="text-center text-sm text-destructive" role="alert">
+          {formError}
+        </p>
+      )}
+
       <Button
         type="submit"
+        disabled={loading}
         className={cn("w-full justify-center", loading ? "opacity-80" : "")}
       >
-        Login
+        {loading ? "Signing in..." : "Sign in"}
       </Button>
 
       <p className="text-center text-sm">

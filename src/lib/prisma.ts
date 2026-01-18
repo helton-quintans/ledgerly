@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import { PrismaClient } from "../../generated/prisma/client";
 
 const globalForPrisma = globalThis as unknown as {
@@ -12,7 +13,11 @@ if (!databaseUrl) {
 	throw new Error("DATABASE_URL is not set");
 }
 
-const adapter = new PrismaPg(databaseUrl);
+const pool = new Pool({
+	connectionString: databaseUrl,
+});
+
+const adapter = new PrismaPg(pool);
 
 export const prisma =
 	globalForPrisma.prisma ??
