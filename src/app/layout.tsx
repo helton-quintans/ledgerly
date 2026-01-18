@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter, Montserrat } from "next/font/google";
 import type { ReactNode } from "react";
 
+import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { cn } from "@/lib/utils";
 
 import "@/app/globals.css";
@@ -71,7 +72,9 @@ export default function RootLayout({
         content="noindex, nofollow, noarchive, nosnippet, noimageindex"
       />
       <body className="min-h-screen bg-background text-foreground antialiased">
-        {children}
+        <AuthSessionProvider>
+          {children}
+        </AuthSessionProvider>
         <Analytics />
         <SpeedInsights />
       </body>

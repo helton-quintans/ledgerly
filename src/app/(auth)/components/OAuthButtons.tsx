@@ -1,12 +1,35 @@
 "use client";
+
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+
 import GoogleLogo from "@/components/icons/google-logo";
 import { Button } from "@/components/ui/button";
 
 export default function OAuthButtons() {
+  const [loading, setLoading] = useState(false);
+
+  async function handleGoogle() {
+    setLoading(true);
+    try {
+      await signIn("google", {
+        callbackUrl: "/",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <Button variant="outline" className="w-full justify-center gap-3">
+    <Button
+      type="button"
+      variant="outline"
+      className="w-full justify-center gap-3"
+      onClick={handleGoogle}
+      disabled={loading}
+    >
       <GoogleLogo />
-      Continue with Google
+      {loading ? "Redirecting..." : "Continue with Google"}
     </Button>
   );
 }

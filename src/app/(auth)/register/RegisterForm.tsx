@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -28,6 +29,7 @@ type FormValues = z.infer<typeof schema>;
 export default function RegisterForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const nameId = useId();
@@ -42,10 +44,47 @@ export default function RegisterForm() {
 
   async function onSubmit(data: FormValues) {
     setLoading(true);
+    setServerError(null);
     try {
-      // TODO: call API route /api/auth/register
-      await new Promise((r) => setTimeout(r, 800));
-      router.push("/login");
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          password: data.password,
+        }),
+      });
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        setServerError(payload?.message ?? "Unable to create account.");
+        return;
+      }
+
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        callbackUrl: "/",
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setServerError("Account created but automatic sign-in failed. Please login manually.");
+        router.push("/login");
+        return;
+      }
+
+      if (result?.url) {
+        router.replace(result.url);
+      } else {
+        router.replace("/");
+      }
+    } catch (error) {
+      console.error("register error", error);
+      setServerError("Unexpected error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -137,11 +176,18 @@ export default function RegisterForm() {
         )}
       </div>
 
+      {serverError && (
+        <p className="text-center text-sm text-destructive" role="alert">
+          {serverError}
+        </p>
+      )}
+
       <Button
         type="submit"
+        disabled={loading}
         className={cn("w-full justify-center", loading ? "opacity-80" : "")}
       >
-        Create account
+        {loading ? "Creating..." : "Create account"}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
