@@ -1,9 +1,12 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
-const defaultDatabaseUrl =
+const databaseUrl =
   process.env.DATABASE_URL ??
   "postgresql://postgres:postgres@localhost:5432/ledgerly?schema=public";
+
+const directUrl =
+  process.env.DIRECT_URL ?? databaseUrl;
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -11,6 +14,6 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: defaultDatabaseUrl,
+    url: directUrl, // use DIRECT_URL for migrations
   },
 });
