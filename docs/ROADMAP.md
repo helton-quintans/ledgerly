@@ -29,6 +29,7 @@ Future plans and upcoming features for Ledgerly.
 - [ ] Notifications system
 - [ ] Toast notifications
 - [ ] Loading states and skeletons
+- [ ] PWA Support - Offline access, installable, push notifications
 
 ### Developer Experience
 - [ ] Comprehensive test coverage
