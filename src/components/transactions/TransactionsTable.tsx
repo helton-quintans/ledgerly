@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/table";
 import type { Currency } from "@/lib/schemas/transaction";
 import type { Transaction } from "@/lib/transactions";
+import { getCategoryByLabel } from "@/lib/categories";
 import { formatCurrencyFromCents } from "@/lib/utils";
 import {
   Calendar,
@@ -52,7 +53,7 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
   >({
     amount: true,
     description: true,
-    label: true,
+    category: true,
     date: true,
     actions: true,
   });
@@ -77,6 +78,22 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
   const pageItems = filtered.slice((page - 1) * perPage, page * perPage);
+
+  const columnIcons: Record<string, React.ReactNode> = {
+    amount: <DollarSign className="size-4" />,
+    description: <FileText className="size-4" />,
+    category: <Tag className="size-4" />,
+    date: <Calendar className="size-4" />,
+    actions: <MoreHorizontal className="size-4" />,
+  };
+
+  const columnLabels: Record<string, string> = {
+    amount: "Amount",
+    description: "Description",
+    category: "Category",
+    date: "Date",
+    actions: "Actions",
+  };
 
   return (
     <div className="space-y-2">
@@ -107,7 +124,6 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
             ).map((col) => (
               <DropdownMenuCheckboxItem
                 key={col}
-                className="capitalize"
                 checked={!!columnVisibility[col]}
                 onCheckedChange={(value) =>
                   setColumnVisibility((prev) => ({
@@ -116,7 +132,10 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
                   }))
                 }
               >
-                {col}
+                <div className="flex items-center gap-2">
+                  {columnIcons[col]}
+                  <span>{columnLabels[col]}</span>
+                </div>
               </DropdownMenuCheckboxItem>
             ))}
           </DropdownMenuContent>
@@ -146,11 +165,11 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
                   </div>
                 </TableHead>
               )}
-              {columnVisibility.label && (
+              {columnVisibility.category && (
                 <TableHead>
                   <div className="flex items-center gap-2">
                     <Tag className="size-4" />
-                    <span>Label</span>
+                    <span>Category</span>
                   </div>
                 </TableHead>
               )}
@@ -190,7 +209,16 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
                   <TableCell>{t.description || t.category}</TableCell>
                 )}
 
-                {columnVisibility.label && <TableCell>{t.category}</TableCell>}
+                {columnVisibility.category && (
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">
+                        {getCategoryByLabel(t.category)?.icon || "📦"}
+                      </span>
+                      <span>{t.category}</span>
+                    </div>
+                  </TableCell>
+                )}
 
                 {columnVisibility.date && (
                   <TableCell>{new Date(t.date).toLocaleString()}</TableCell>

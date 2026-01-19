@@ -146,13 +146,36 @@ export default function CategorySelector({ value, onChange, type }: CategorySele
             </div>
             <div className="grid gap-2">
               <Label htmlFor="category-icon">Icon (emoji)</Label>
-              <Input
-                id="category-icon"
-                value={newIcon}
-                onChange={(e) => setNewIcon(e.target.value)}
-                placeholder="📌"
-                maxLength={2}
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="category-icon"
+                  value={newIcon}
+                  onChange={(e) => setNewIcon(e.target.value)}
+                  placeholder="📌"
+                  maxLength={2}
+                  className="w-20 text-center text-xl"
+                />
+                <div className="flex-1 grid grid-cols-8 gap-1 p-2 border rounded-md max-h-32 overflow-y-auto">
+                  {[
+                    "💼", "💻", "📈", "🎁", "🎉", "💵", "💰", "📊",
+                    "🍔", "🚗", "🛍️", "📄", "🏥", "📚", "🎮", "✈️",
+                    "🏠", "💡", "🛡️", "🏋️", "☕", "🍕", "🎬", "🎵",
+                    "📱", "💳", "🎯", "🔧", "🎨", "📦", "🌟", "❤️",
+                    "🔥", "⚡", "🌈", "🎪", "🎭", "🎸", "📌", "🔑"
+                  ].map((emoji) => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      onClick={() => setNewIcon(emoji)}
+                      className={`text-xl hover:bg-muted rounded p-1 transition-colors cursor-pointer ${
+                        newIcon === emoji ? "bg-muted" : ""
+                      }`}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
             <div className="grid gap-2">
               <Label>Type</Label>
