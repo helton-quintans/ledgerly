@@ -5,6 +5,7 @@ import Summary from "@/components/transactions/Summary";
 import TransactionFormModal from "@/components/transactions/TransactionFormModal";
 import TransactionsTable from "@/components/transactions/TransactionsTable";
 import type { Currency } from "@/lib/schemas/transaction";
+import { fetchExchangeRates } from "@/lib/exchange-rates";
 import {
   type Transaction,
   deleteTransaction,
@@ -18,23 +19,30 @@ export default function Page() {
   const [editing, setEditing] = useState<Transaction | null>(null);
   const [hidden, setHidden] = useState(false);
   const [displayCurrency, setDisplayCurrency] = useState<Currency>("USD");
+  const [exchangeRates, setExchangeRates] = useState<Record<Currency, number>>({
+    USD: 1,
+    EUR: 0.92,
+    BRL: 5.0,
+  });
 
   const load = useCallback(async () => {
     const data = await listTransactions();
     setItems(data);
   }, []);
 
+  // Load exchange rates on mount and when display currency changes
+  useEffect(() => {
+    fetchExchangeRates().then(setExchangeRates);
+  }, []);
+
   useEffect(() => {
     load();
   }, [load]);
 
-  // mock conversion rates to USD (1 unit of currency = x USD)
-  const rateToUSD: Record<Currency, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
-
   function convert(amount: number, from: Currency | undefined, to: Currency) {
-    const f = rateToUSD[from || "USD"] ?? 1;
-    const t = rateToUSD[to] ?? 1;
-    return (amount * f) / t;
+    const fromRate = exchangeRates[from || "USD"] ?? 1;
+    const toRate = exchangeRates[to] ?? 1;
+    return (amount * fromRate) / toRate;
   }
 
   const incomes = items.reduce((acc, it) => {

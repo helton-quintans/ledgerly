@@ -1,6 +1,8 @@
 "use client";
 
+import CategorySelector from "@/components/transactions/CategorySelector";
 import CurrencySelector from "@/components/transactions/CurrencySelector";
+import TransactionsTypeToggle from "@/components/transactions/TransactionsTypeToggle";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,10 +13,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { convertCurrency } from "@/lib/exchange-rates";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { createTransaction } from "@/lib/transactions";
-import { ArrowDown, ArrowUp, FileText, Plus, Tag, XCircle } from "lucide-react";
+import { FileText, Plus, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -28,7 +32,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 
-type Props = {
+type TransactionFormModalProps = {
   onSaved?: () => void;
   transaction?: Transaction | null;
   onClose?: () => void;
@@ -38,7 +42,7 @@ export default function TransactionFormModal({
   onSaved,
   transaction = null,
   onClose,
-}: Props) {
+}: TransactionFormModalProps) {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
 
@@ -67,30 +71,37 @@ export default function TransactionFormModal({
   } = form;
 
   const watchedCurrency = (watch("currency") || "USD") as Currency;
+  const watchedType = watch("type");
+
+  // Reset category when transaction type changes
+  useEffect(() => {
+    if (open && !transaction) {
+      // Only reset category for new transactions (not when editing)
+      setValue("category", "");
+    }
+  }, [watchedType, open, transaction, setValue]);
 
   async function onSubmit(values: TransactionFormValues) {
     // values.amount is the integer cents thanks to the zod preprocess
     const amount_cents = Math.abs(values.amount as number);
 
-    // mock rates to USD
-    const rateToUSD: Record<string, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
-    const exchange_rate =
-      (rateToUSD[values.currency] ?? 1) / (rateToUSD["USD"] ?? 1);
-    const converted_amount_cents = Math.round(
-      amount_cents * (rateToUSD[values.currency] ?? 1),
-    );
-    const rate_timestamp = new Date().toISOString();
-
     try {
+      const { convertedAmountCents, exchangeRate } = await convertCurrency(
+        amount_cents,
+        values.currency,
+        "USD",
+      );
+      const rate_timestamp = new Date().toISOString();
+
       if (transaction) {
         // update existing
         await updateTransaction(transaction.id, {
           type: values.type,
           amount_cents,
           currency: values.currency,
-          converted_amount_cents,
+          converted_amount_cents: convertedAmountCents,
           converted_currency: "USD",
-          exchange_rate,
+          exchange_rate: exchangeRate,
           rate_timestamp,
           date: values.date ?? new Date().toISOString(),
           category: values.category || "Uncategorized",
@@ -102,9 +113,9 @@ export default function TransactionFormModal({
           type: values.type,
           amount_cents,
           currency: values.currency,
-          converted_amount_cents,
+          converted_amount_cents: convertedAmountCents,
           converted_currency: "USD",
-          exchange_rate,
+          exchange_rate: exchangeRate,
           rate_timestamp,
           date: values.date ?? new Date().toISOString(),
           category: values.category || "Uncategorized",
@@ -175,155 +186,127 @@ export default function TransactionFormModal({
         </DialogTitle>
       </DialogHeader>
 
-      <div className="flex justify-center items-center gap-2 my-2">
-        <CurrencySelector
-          value={watchedCurrency}
-          onChange={(v) => setValue("currency", v)}
-        />
-      </div>
+      <div className="grid gap-4 py-4">
+        <div className="grid gap-2">
+          <Label>Currency</Label>
+          <CurrencySelector
+            value={watchedCurrency}
+            onChange={(v) => setValue("currency", v)}
+          />
+        </div>
 
-      <div className="grid gap-3 py-2">
-        <div className="relative">
-          <Controller
-            name="amount"
-            control={control}
-            render={({ field }) => {
-              const thousandSep =
-                watchedCurrency === "BRL" || watchedCurrency === "EUR"
-                  ? "."
-                  : ",";
-              const decimalSep =
-                watchedCurrency === "BRL" || watchedCurrency === "EUR"
-                  ? ","
-                  : ".";
+        <div className="grid gap-2">
+          <Label>Type</Label>
+          <TransactionsTypeToggle
+            value={watch("type")}
+            onChange={(value) => setValue("type", value)}
+          />
+        </div>
 
-              return (
-                <NumericFormat
-                  {...field}
-                  customInput={Input}
-                  thousandSeparator={thousandSep}
-                  decimalSeparator={decimalSep}
-                  decimalScale={2}
-                  allowNegative={false}
-                  prefix={currencySymbolMap[watchedCurrency] || ""}
-                  // numeric-proper changes (no suffix) provide floatValue
-                  onValueChange={(values) => {
-                    if (values.floatValue != null) {
-                      // pass number to RHF so zod preprocess handles it
-                      field.onChange(values.floatValue);
-                      clearErrors("amount");
-                    }
-                  }}
-                  // support shorthand like 1k, 1M — parse raw input before NumericFormat normalizes
-                  onChange={(e: any) => {
-                    const raw = String(e.target.value || "");
+        <div className="grid gap-2">
+          <Label htmlFor="amount">Amount</Label>
+          <div className="relative">
+            <Controller
+              name="amount"
+              control={control}
+              render={({ field }) => {
+                const thousandSep =
+                  watchedCurrency === "BRL" || watchedCurrency === "EUR"
+                    ? "."
+                    : ",";
+                const decimalSep =
+                  watchedCurrency === "BRL" || watchedCurrency === "EUR"
+                    ? ","
+                    : ".";
 
-                    // allow both comma and dot while typing; keep digits, separators and suffix letters
-                    const cleaned = raw.replace(/[^0-9,\.kKmM-]/g, "").trim();
-                    const m = cleaned.match(/^(-?[0-9,\.]+)([kKmM])?$/);
-                    if (m) {
-                      let numStr = m[1];
-
-                      // Decide if the last separator (dot or comma) is a decimal separator
-                      const lastDot = numStr.lastIndexOf(".");
-                      const lastComma = numStr.lastIndexOf(",");
-                      const lastSepPos = Math.max(lastDot, lastComma);
-
-                      if (lastSepPos !== -1) {
-                        const digitsAfter = numStr.length - lastSepPos - 1;
-                        // If there are 1 or 2 digits after the last separator, treat it as decimal
-                        if (digitsAfter > 0 && digitsAfter <= 2) {
-                          const intPart = numStr
-                            .slice(0, lastSepPos)
-                            .replace(/[.,]/g, "");
-                          const fracPart = numStr
-                            .slice(lastSepPos + 1)
-                            .replace(/[.,]/g, "");
-                          numStr = intPart + "." + fracPart;
-                        } else {
-                          // otherwise treat all separators as thousand separators -> remove them
-                          numStr = numStr.replace(/[.,]/g, "");
-                        }
-                      } else {
-                        numStr = numStr.replace(/[.,]/g, "");
-                      }
-
-                      const parsed = Number.parseFloat(numStr);
-                      if (!Number.isNaN(parsed)) {
-                        const suffix = m[2]?.toLowerCase();
-                        let value = parsed;
-                        if (suffix === "k") value = value * 1_000;
-                        if (suffix === "m") value = value * 1_000_000;
-                        field.onChange(value);
+                return (
+                  <NumericFormat
+                    {...field}
+                    id="amount"
+                    customInput={Input}
+                    thousandSeparator={thousandSep}
+                    decimalSeparator={decimalSep}
+                    decimalScale={2}
+                    allowNegative={false}
+                    prefix={currencySymbolMap[watchedCurrency] || ""}
+                    onValueChange={(values) => {
+                      if (values.floatValue != null) {
+                        field.onChange(values.floatValue);
                         clearErrors("amount");
                       }
-                    }
-                  }}
-                  className="pl-9"
-                />
-              );
+                    }}
+                    onChange={(e: any) => {
+                      const raw = String(e.target.value || "");
+                      
+                      const withoutSymbol = raw.replace(currencySymbolMap[watchedCurrency] || "", "").trim();
+
+                      const suffixMatch = withoutSymbol.match(/([0-9.,]+)\s*([kKmM])\s*$/);
+                      
+                      if (suffixMatch) {
+                        let numStr = suffixMatch[1].replace(/[.,]/g, "");
+                        const parsed = Number.parseFloat(numStr);
+                        
+                        if (!Number.isNaN(parsed)) {
+                          const suffix = suffixMatch[2].toLowerCase();
+                          let value = parsed;
+                          if (suffix === "k") value = value * 1_000;
+                          if (suffix === "m") value = value * 1_000_000;
+                          field.onChange(value);
+                          clearErrors("amount");
+                        }
+                        return;
+                      }
+                    }}
+                    className="pl-9"
+                  />
+                );
+              }}
+            />
+            <div className="absolute left-2 top-2 text-neutral-500">
+              {currencySymbolMap[watchedCurrency] || "$"}
+            </div>
+          </div>
+          {errors.amount?.message && (
+            <p className="text-sm text-red-400">{errors.amount.message as string}</p>
+          )}
+        </div>
+
+        <div className="grid gap-2">
+          <Label htmlFor="category">Category</Label>
+          <CategorySelector
+            value={watch("category") || ""}
+            onChange={(v) => {
+              setValue("category", v);
+              clearErrors("category");
             }}
+            type={watch("type")}
           />
-          <div className="absolute left-2 top-2 text-neutral-500">
-            {currencySymbolMap[watchedCurrency] || "$"}
-          </div>
-          <div className="h-5 mt-1 text-sm text-red-400">
-            {errors.amount?.message as string}
-          </div>
+          {errors.category?.message && (
+            <p className="text-sm text-red-400">{errors.category.message as string}</p>
+          )}
         </div>
 
-        <div className="relative">
-          <Input
-            placeholder="Description"
-            {...register("description")}
-            className="pl-9"
-          />
-          <FileText
-            className="absolute left-2 top-2 size-4"
-            style={{ color: "var(--input-placeholder)" }}
-          />
-          <div className="h-5 mt-1 text-sm text-red-400">
-            {errors.description?.message as string}
+        <div className="grid gap-2">
+          <Label htmlFor="description">Description (optional)</Label>
+          <div className="relative">
+            <Input
+              id="description"
+              placeholder="e.g., Monthly groceries"
+              {...register("description")}
+              className="pl-9"
+            />
+            <FileText
+              className="absolute left-2 top-2 size-4"
+              style={{ color: "var(--input-placeholder)" }}
+            />
           </div>
-        </div>
-
-        <div className="relative">
-          <Input
-            placeholder="Category / Label"
-            {...register("category")}
-            className="pl-9"
-          />
-          <Tag
-            className="absolute left-2 top-2 size-4"
-            style={{ color: "var(--input-placeholder)" }}
-          />
-          <div className="h-5 mt-1 text-sm text-red-400">
-            {errors.category?.message as string}
-          </div>
-        </div>
-
-        <div className="flex gap-2">
-          <button
-            type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "income" ? "bg-green-200 text-green-800 border-green-300" : "text-green-600 border-neutral-200"}`}
-            onClick={() => setValue("type", "income")}
-          >
-            <ArrowUp className="size-4" />
-            <span>In</span>
-          </button>
-
-          <button
-            type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "expense" ? "bg-red-200 text-red-800 border-red-300" : "text-red-400 border-neutral-200"}`}
-            onClick={() => setValue("type", "expense")}
-          >
-            <ArrowDown className="size-4" />
-            <span>Out</span>
-          </button>
+          {errors.description?.message && (
+            <p className="text-sm text-red-400">{errors.description.message as string}</p>
+          )}
         </div>
       </div>
 
-      <DialogFooter className="flex flex-col gap-2 sm:flex-col">
+      <DialogFooter className="flex flex-col gap-2 sm:flex-col mt-2">
         <Button size="lg" className="w-full" onClick={handleSubmit(onSubmit)}>
           Save
         </Button>

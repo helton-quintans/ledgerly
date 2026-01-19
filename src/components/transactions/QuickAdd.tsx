@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Currency } from "@/lib/schemas/transaction";
+import { convertCurrency } from "@/lib/exchange-rates";
 import { createTransaction } from "@/lib/transactions";
 import { CheckCircle, XCircle } from "lucide-react";
 import { useState } from "react";
@@ -50,22 +51,21 @@ export default function QuickAdd({ onCreated }: Props) {
     const val = Number.parseFloat(raw);
     if (Number.isNaN(val)) return;
     const amount_cents = Math.round(Math.abs(val) * 100);
-    const rateToUSD: Record<Currency, number> = {
-      USD: 1,
-      EUR: 1.08,
-      BRL: 0.19,
-    };
-    const converted_amount_cents = Math.round(
-      amount_cents * (rateToUSD[currency] ?? 1),
-    );
+    
     try {
-      const t = await createTransaction({
+      const { convertedAmountCents, exchangeRate } = await convertCurrency(
+        amount_cents,
+        currency,
+        "USD",
+      );
+      
+      const transaction = await createTransaction({
         type,
         amount_cents,
         currency,
-        converted_amount_cents,
+        converted_amount_cents: convertedAmountCents,
         converted_currency: "USD",
-        exchange_rate: rateToUSD[currency] ?? 1,
+        exchange_rate: exchangeRate,
         rate_timestamp: new Date().toISOString(),
         date: new Date().toISOString(),
         category: "Quick",
@@ -73,7 +73,7 @@ export default function QuickAdd({ onCreated }: Props) {
       });
       setAmount("");
       setDesc("");
-      onCreated(t.id);
+      onCreated(transaction.id);
       toast.success("Transaction added", {
         icon: <CheckCircle style={{ color: "var(--success)" }} />,
       });

@@ -17,22 +17,15 @@ export type Transaction = {
   description?: string;
 };
 
-// mock conversion rates to USD
-const rateToUSD: Record<import("./schemas/transaction").Currency, number> = {
-  USD: 1,
-  EUR: 1.08,
-  BRL: 0.19,
-};
-
 let items: Transaction[] = [
   {
     id: generateId(),
     type: "income",
     amount_cents: 2500 * 100,
     currency: "USD",
-    converted_amount_cents: Math.round(2500 * 100 * (rateToUSD.USD ?? 1)),
+    converted_amount_cents: 2500 * 100,
     converted_currency: "USD",
-    exchange_rate: rateToUSD.USD,
+    exchange_rate: 1,
     rate_timestamp: new Date().toISOString(),
     date: new Date().toISOString(),
     category: "Salary",
@@ -43,9 +36,9 @@ let items: Transaction[] = [
     type: "expense",
     amount_cents: Math.round(45.5 * 100),
     currency: "USD",
-    converted_amount_cents: Math.round(45.5 * 100 * (rateToUSD.USD ?? 1)),
+    converted_amount_cents: Math.round(45.5 * 100),
     converted_currency: "USD",
-    exchange_rate: rateToUSD.USD,
+    exchange_rate: 1,
     rate_timestamp: new Date().toISOString(),
     date: new Date().toISOString(),
     category: "Food",
