@@ -1,4 +1,9 @@
-import "dotenv/config";
+import dotenv from 'dotenv';
+// Load .env.local first so local development overrides take effect,
+// then fallback to .env. This ensures the shared `prisma` instance
+// points to the local DB when developers run the seed script.
+dotenv.config({ path: '.env.local' });
+dotenv.config();
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { PrismaClient } from "@prisma/client";

@@ -17,7 +17,7 @@ export async function POST(request: Request) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { message: "Dados inválidos" },
+        { message: "Invalid data" },
         { status: 400 },
       );
     }
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { message: "Este email já está em uso." },
+        { message: "This email is already in use." },
         { status: 409 },
       );
     }
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("register route error", error);
     return NextResponse.json(
-      { message: "Erro inesperado. Tente novamente." },
+      { message: "Unexpected error. Please try again." },
       { status: 500 },
     );
   }

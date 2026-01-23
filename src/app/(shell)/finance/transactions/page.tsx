@@ -143,6 +143,7 @@ export default function Page() {
                 await deleteTransaction(id);
                 load();
               }}
+              onSaved={load}
             />
           </div>
         </section>

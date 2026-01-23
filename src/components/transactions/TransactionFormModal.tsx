@@ -82,8 +82,8 @@ export default function TransactionFormModal({
   }, [watchedType, open, transaction, setValue]);
 
   async function onSubmit(values: TransactionFormValues) {
-    // values.amount is the integer cents thanks to the zod preprocess
-    const amount_cents = Math.abs(values.amount as number);
+    // Sempre converter o valor digitado para centavos
+    let amount_cents = Math.round(Math.abs(values.amount_cents as number) * 100);
 
     try {
       const { convertedAmountCents, exchangeRate } = await convertCurrency(
@@ -207,7 +207,7 @@ export default function TransactionFormModal({
           <Label htmlFor="amount">Amount</Label>
           <div className="relative">
             <Controller
-              name="amount"
+              name="amount_cents"
               control={control}
               render={({ field }) => {
                 const thousandSep =
@@ -232,7 +232,7 @@ export default function TransactionFormModal({
                     onValueChange={(values) => {
                       if (values.floatValue != null) {
                         field.onChange(values.floatValue);
-                        clearErrors("amount");
+                        clearErrors("amount_cents");
                       }
                     }}
                     onChange={(e: any) => {
@@ -252,7 +252,7 @@ export default function TransactionFormModal({
                           if (suffix === "k") value = value * 1_000;
                           if (suffix === "m") value = value * 1_000_000;
                           field.onChange(value);
-                          clearErrors("amount");
+                          clearErrors("amount_cents");
                         }
                         return;
                       }
@@ -266,8 +266,8 @@ export default function TransactionFormModal({
               {currencySymbolMap[watchedCurrency] || "$"}
             </div>
           </div>
-          {errors.amount?.message && (
-            <p className="text-sm text-red-400">{errors.amount.message as string}</p>
+          {errors.amount_cents?.message && (
+            <p className="text-sm text-red-400">{errors.amount_cents.message as string}</p>
           )}
         </div>
 

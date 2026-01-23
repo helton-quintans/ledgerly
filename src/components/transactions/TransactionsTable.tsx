@@ -23,6 +23,7 @@ import type { Currency } from "@/lib/schemas/transaction";
 import type { Transaction } from "@/lib/transactions";
 import { getCategoryByLabel } from "@/lib/categories";
 import { formatCurrencyFromCents } from "@/lib/utils";
+import TransactionFormModal from "@/components/transactions/TransactionFormModal";
 import {
   Calendar,
   ChevronDown,
@@ -41,9 +42,25 @@ type Props = {
   items: Transaction[];
   onEdit: (t: Transaction) => void;
   onDelete: (id: string) => void;
+  onSaved?: () => void;
 };
 
-export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
+export default function TransactionsTable({ items, onEdit, onDelete, onSaved }: Props) {
+  // Se não houver transações, exibe UI informativa e botão para cadastrar
+  if (!items || items.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 gap-4 border rounded-md bg-muted/40">
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-5xl">💸</span>
+          <h2 className="text-xl font-semibold text-muted-foreground">No transactions yet</h2>
+          <p className="text-muted-foreground text-center max-w-xs">
+            You don't have any transactions registered. Start by adding your first transaction to track your finances!
+          </p>
+        </div>
+        <TransactionFormModal onSaved={onSaved} />
+      </div>
+    );
+  }
   const { query, setQuery } = useSearch();
   const activeQuery = query ?? "";
   const [page, setPage] = useState(1);

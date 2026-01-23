@@ -25,14 +25,18 @@ const amountToCents = (val: unknown) => {
 };
 
 export const transactionFormSchema = z.object({
-  // descrição curta opcional para entradas rápidas
   description: z
     .string()
     .max(30, "Description too long, limit is 30 characters")
     .optional(),
-  // amount is converted to an integer representing the minor unit (cents)
-  amount: z.preprocess(
-    amountToCents,
+  // Accepts either 'amount' or 'amount_cents' for compatibility
+  amount_cents: z.preprocess(
+    (val) => {
+      if (typeof val === "number") return val;
+      if (typeof val === "string") return Number(val);
+      if (typeof val === "object" && val !== null && "amount" in val) return Number(val.amount);
+      return val;
+    },
     z
       .number()
       .int()
@@ -42,13 +46,11 @@ export const transactionFormSchema = z.object({
       }),
   ),
   currency: CurrencyCode,
-  // categoria obrigatória curta
   category: z
     .string()
     .min(1, "Category is required")
     .max(30, "Limit is 30 characters"),
   type: z.enum(["income", "expense"]),
-  // date as ISO string (optional)
   date: z.string().optional(),
 });
 
