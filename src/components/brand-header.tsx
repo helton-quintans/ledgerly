@@ -9,12 +9,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSidebar } from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
 
 import ThemeToggle from "@/components/theme-toggle";
+import { signOut, useSession } from "next-auth/react";
 
 import { Logo } from "./logo";
 
 export function BrandHeader() {
+  const { data: session } = useSession();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
@@ -79,15 +88,30 @@ export function BrandHeader() {
 
           <ThemeToggle />
 
-          <Avatar className="size-8 shadow-sm">
-            <AvatarImage
-              src="https://github.com/helton-quintans.png"
-              alt="Helton Quintans"
-            />
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              <span className="text-xs">ME</span>
-            </AvatarFallback>
-          </Avatar>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="size-8 shadow-sm">
+                <AvatarImage
+                  src={session?.user?.image ?? "https://github.com/helton-quintans.png"}
+                  alt={session?.user?.name ?? "User"}
+                />
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  <span className="text-xs">ME</span>
+                </AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>
+                {session?.user?.name ?? "Conta"}
+                {session?.user?.email ? (
+                  <div className="text-xs text-muted-foreground">{session.user.email}</div>
+                ) : null}
+              </DropdownMenuLabel>
+              <DropdownMenuItem onSelect={() => signOut({ callbackUrl: "/login" })} data-variant="destructive">
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div className="flex gap-2 md:hidden items-center">
@@ -102,15 +126,30 @@ export function BrandHeader() {
 
           <ThemeToggle />
 
-          <Avatar className="size-8 shadow-sm">
-            <AvatarImage
-              src="https://github.com/helton-quintans.png"
-              alt="Helton Quintans"
-            />
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              <span className="text-xs">ME</span>
-            </AvatarFallback>
-          </Avatar>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="size-8 shadow-sm">
+                <AvatarImage
+                  src={session?.user?.image ?? "https://github.com/helton-quintans.png"}
+                  alt={session?.user?.name ?? "User"}
+                />
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  <span className="text-xs">ME</span>
+                </AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>
+                {session?.user?.name ?? "Conta"}
+                {session?.user?.email ? (
+                  <div className="text-xs text-muted-foreground">{session.user.email}</div>
+                ) : null}
+              </DropdownMenuLabel>
+              <DropdownMenuItem onSelect={() => signOut({ callbackUrl: "/login" })} data-variant="destructive">
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         {isSearchOpen && (
           <div className="fixed inset-0 z-50 bg-background/90 md:hidden p-4">
