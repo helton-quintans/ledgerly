@@ -33,8 +33,8 @@ export function LogoSpinner() {
 
 export function LogoPulse() {
   return (
-    <div className="logo-pulse">
-      <div className="logo-pulse__icon">
+    <div className="flex items-center gap-2">
+      <div className="">
         <ReuleauxTriangle
           radius={18}
           variant="outline"
@@ -42,7 +42,7 @@ export function LogoPulse() {
           showLabel={false}
         />
       </div>
-      <span className="logo-pulse__text">Ledgerly</span>
+      <span className="">Ledgerly</span>
     </div>
   );
 }
