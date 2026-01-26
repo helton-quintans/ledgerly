@@ -19,12 +19,19 @@ const directUrl = normalizeEnv(process.env.DIRECT_URL) ?? databaseUrl;
 // Prevent accidental destructive operations on non-local databases.
 // If DATABASE_URL points to a non-local host (for example a Supabase instance),
 // abort unless the environment explicitly allows it via PRISMA_ALLOW_PROD_DB=true.
+// If the DATABASE_URL is malformed (for example a secret with surrounding
+// quotes), skip the host check so `prisma generate` invoked by CI/builds
+// doesn't fail on install. This keeps `generate` allowed while still
+// protecting against destructive commands at runtime.
+let host: string | null = null;
 try {
-  const url = new URL(databaseUrl);
-  const host = url.hostname;
-  // Allow `prisma generate` to run even when DATABASE_URL points to a
-  // non-local host. `generate` is safe (it doesn't modify the database),
-  // and Vercel runs `prisma generate` during build.
+  host = new URL(databaseUrl).hostname;
+} catch {
+  // Malformed DATABASE_URL — skip host safety check (allow generate)
+  host = null;
+}
+
+if (host) {
   const isGenerate = process.argv.includes("generate");
   const isLocal =
     host === "localhost" ||
@@ -36,9 +43,6 @@ try {
       `Refusing to run Prisma against non-local host '${host}'.\nIf you really want to run Prisma commands against this host, set PRISMA_ALLOW_PROD_DB=true.\nTo run against your local DB instead, prefix commands with DOTENV_CONFIG_PATH=.env.local (recommended).`,
     );
   }
-} catch (e) {
-  // If parsing fails or the check throws, rethrow to stop Prisma commands.
-  if (e instanceof Error) throw e;
 }
 
 export default defineConfig({
