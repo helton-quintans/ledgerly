@@ -14,7 +14,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             <LogoPulse />
           </div>
           <div className="">
-            <div className="auth-neon-inner rounded-2xl bg-background/80 p-6 shadow-lg">
+            <div className="auth-neon-inner rounded-2xl bg-background/80 p-6 shadow-lg border border-gray-400">
               {children}
             </div>
           </div>
