@@ -13,7 +13,16 @@ if (fs.existsSync(envLocal)) {
   dotenv.config({ path: envDefault });
 }
 
-const databaseUrl = process.env.DATABASE_URL;
+function normalizeEnv(v) {
+  if (!v) return v;
+  const s = String(v).trim();
+  if ((s.startsWith("\"") && s.endsWith("\"")) || (s.startsWith("'") && s.endsWith("'"))) {
+    return s.slice(1, -1).trim();
+  }
+  return s;
+}
+
+const databaseUrl = normalizeEnv(process.env.DATABASE_URL);
 if (databaseUrl) {
   try {
     const url = new URL(databaseUrl);
