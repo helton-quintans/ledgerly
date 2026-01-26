@@ -52,7 +52,10 @@ GOOGLE_CLIENT_SECRET=""
 
 ### 4. Setup Database
 
-#### Option A: Using Supabase (Recommended)
+#### Option A — Production (Supabase, recommended for deployment)
+
+> Recommended for production and preview deployments. Do NOT use your production Supabase database
+> for local development. For local development, use the `Local PostgreSQL` (docker-compose) option below.
 
 1. Create a free account at [Supabase](https://supabase.com/)
 2. Create a new project
@@ -61,23 +64,72 @@ GOOGLE_CLIENT_SECRET=""
 
 #### Option B: Local PostgreSQL
 
-```bash
-# Create database
-createdb ledgerly
+Option B: Local PostgreSQL (recommended via docker-compose)
 
-# Update DATABASE_URL in .env.local
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ledgerly?schema=public"
+We provide a `docker-compose.yml` to standardize the local database for all contributors.
+
+1. Start the database with Docker Compose:
+
+```bash
+docker compose up -d
 ```
+
+This will start a Postgres 15 container named `ledgerly-pg` and create a persistent volume `ledgerly-pg-data`.
+
+2. Export or set your local `DATABASE_URL` (matches `.env.example` development settings):
+
+```bash
+export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres?schema=public"
+# or add to .env.local:
+# DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres?schema=public"
+```
+
+3. Apply schema and generate the Prisma Client (run from project root):
+
+```bash
+# Recommended for local development (safe):
+pnpm prisma:generate
+pnpm prisma:push:local
+
+# or explicitly:
+DOTENV_CONFIG_PATH=.env.local npx prisma db push
+```
+
+4. (Optional) Seed development data (creates a dev user)
+
+```bash
+# runs prisma/seed.ts and creates a dev user (defaults to helton.quit@gmail.com)
+pnpm prisma:seed:local
+# to customize email/password:
+SEED_EMAIL=me@local.test SEED_PASSWORD=MyPass123 pnpm prisma:seed:local
+```
+
+Notes:
+- Use `docker compose down` to stop the container.
+- If you prefer not to use Docker, you may install Postgres locally and create the `ledgerly` database, but Docker ensures consistent environment across contributors.
 
 ### 5. Run Database Migrations
 
-If using Supabase, execute the SQL from `prisma/migrations/20260118014654_auth_infra/migration.sql` in the SQL Editor.
+Migration workflow recommendation:
 
-Then generate the Prisma Client:
+- Local development: use `npx prisma migrate dev` to create and apply migrations while developing. This updates the `prisma/migrations` folder.
+- Production / CI: apply migrations with `npx prisma migrate deploy` (never use `db push` in production).
+
+Example local:
 
 ```bash
-pnpm prisma generate
+pnpm prisma:migrate:dev:local
 ```
+
+Example CI / deploy (run in CI with `DATABASE_URL` from secrets):
+
+```bash
+pnpm prisma:migrate:deploy
+```
+
+Notes:
+- `db push` is useful for prototyping, but it can be destructive in production. Prefer migrations (`migrate dev` / `migrate deploy`) for production workflows.
+- We provide an example GitHub Actions workflow `.github/workflows/deploy-migrations.yml` that demonstrates running `prisma migrate deploy` using a secret `DATABASE_URL`.
 
 ### 6. Start Development Server
 

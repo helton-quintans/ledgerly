@@ -8,6 +8,9 @@ import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
 
+// Use the adapter's declared parameter type to perform a narrow, maintainable cast.
+type AdapterPrismaArg = Parameters<typeof PrismaAdapter>[0];
+
 const credentialsSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
@@ -56,8 +59,10 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   );
 }
 
+const _adapter = PrismaAdapter(prisma as unknown as AdapterPrismaArg);
+
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: _adapter,
   session: {
     strategy: "jwt",
   },

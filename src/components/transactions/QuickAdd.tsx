@@ -19,14 +19,14 @@ function TypeToggle({
     <div className="inline-flex rounded-md bg-muted p-1">
       <button
         type="button"
-        className={`px-3 py-1 rounded ${value === "income" ? "bg-primary text-primary-foreground" : ""}`}
+        className={`rounded px-3 py-1 ${value === "income" ? "bg-primary text-primary-foreground" : ""}`}
         onClick={() => onChange("income")}
       >
         In
       </button>
       <button
         type="button"
-        className={`px-3 py-1 rounded ${value === "expense" ? "bg-destructive text-destructive-foreground" : ""}`}
+        className={`rounded px-3 py-1 ${value === "expense" ? "bg-destructive text-destructive-foreground" : ""}`}
         onClick={() => onChange("expense")}
       >
         Out
@@ -88,7 +88,7 @@ export default function QuickAdd({ onCreated }: Props) {
   return (
     <div className="w-full">
       <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2 justify-center w-full">
+        <div className="flex w-full items-center justify-center gap-2">
           <TypeToggle value={type} onChange={setType} />
           <select
             value={currency}

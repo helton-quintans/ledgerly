@@ -17,6 +17,7 @@ export default function GoogleLogo(props: SVGProps<SVGSVGElement>) {
       focusable="false"
       {...rest}
     >
+      <title>Google logo</title>
       <path
         fill="#EA4335"
         d="M24 9.5c3.35 0 5.64 1.45 6.93 2.66l5.07-5.07C33.93 4.04 29.76 2 24 2 14.82 2 6.77 7.58 3.2 15.44l6.94 5.39C11.69 13.45 17.28 9.5 24 9.5z"

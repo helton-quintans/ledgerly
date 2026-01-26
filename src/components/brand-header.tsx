@@ -1,21 +1,31 @@
 "use client";
 
 import { useSearch } from "@/components/search-context";
-import { HelpCircle, Menu, Search, X } from "lucide-react";
+import { ChevronDown, Menu, Search, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { useSidebar } from "@/components/ui/sidebar";
 
 import ThemeToggle from "@/components/theme-toggle";
+import { signOut, useSession } from "next-auth/react";
 
 import { Logo } from "./logo";
 
 export function BrandHeader() {
+  const { data: session } = useSession();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { query, setQuery } = useSearch();
@@ -79,18 +89,54 @@ export function BrandHeader() {
 
           <ThemeToggle />
 
-          <Avatar className="size-8 shadow-sm">
-            <AvatarImage
-              src="https://github.com/helton-quintans.png"
-              alt="Helton Quintans"
-            />
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              <span className="text-xs">ME</span>
-            </AvatarFallback>
-          </Avatar>
+          <div onMouseEnter={() => setMenuOpen(true)}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <Avatar className="size-8 shadow-sm">
+                    <AvatarImage
+                      src={
+                        session?.user?.image ??
+                        "https://github.com/helton-quintans.png"
+                      }
+                      alt={session?.user?.name ?? ""}
+                    />
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      <span className="text-xs">ME</span>
+                    </AvatarFallback>
+                  </Avatar>
+                  <ChevronDown className="size-3 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                onMouseEnter={() => setMenuOpen(true)}
+                onMouseLeave={() => setMenuOpen(false)}
+              >
+                <DropdownMenuLabel>
+                  {session?.user?.name ?? "Conta"}
+                  {session?.user?.email ? (
+                    <div className="text-muted-foreground text-xs">
+                      {session.user.email}
+                    </div>
+                  ) : null}
+                </DropdownMenuLabel>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onSelect={() => signOut({ callbackUrl: "/login" })}
+                  data-variant="destructive"
+                >
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
-        <div className="flex gap-2 md:hidden items-center">
+        <div className="flex items-center gap-2 md:hidden">
           <Button
             variant="ghost"
             size="sm"
@@ -102,18 +148,49 @@ export function BrandHeader() {
 
           <ThemeToggle />
 
-          <Avatar className="size-8 shadow-sm">
-            <AvatarImage
-              src="https://github.com/helton-quintans.png"
-              alt="Helton Quintans"
-            />
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              <span className="text-xs">ME</span>
-            </AvatarFallback>
-          </Avatar>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <Avatar className="size-8 shadow-sm">
+                  <AvatarImage
+                    src={
+                      session?.user?.image ??
+                      "https://github.com/helton-quintans.png"
+                    }
+                    alt={session?.user?.name ?? "User"}
+                  />
+                  <AvatarFallback className="bg-primary text-primary-foreground">
+                    <span className="text-xs">ME</span>
+                  </AvatarFallback>
+                </Avatar>
+                <ChevronDown className="size-3 text-muted-foreground" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>
+                {session?.user?.name ?? "Conta"}
+                {session?.user?.email ? (
+                  <div className="text-muted-foreground text-xs">
+                    {session.user.email}
+                  </div>
+                ) : null}
+              </DropdownMenuLabel>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onSelect={() => signOut({ callbackUrl: "/login" })}
+                data-variant="destructive"
+              >
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         {isSearchOpen && (
-          <div className="fixed inset-0 z-50 bg-background/90 md:hidden p-4">
+          <div className="fixed inset-0 z-50 bg-background/90 p-4 md:hidden">
             <div className="max-w-full">
               <div className="relative">
                 <Input
@@ -128,7 +205,7 @@ export function BrandHeader() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-2 top-2"
+                  className="absolute top-2 right-2"
                   onClick={() => setIsSearchOpen(false)}
                 >
                   <X className="size-5" />

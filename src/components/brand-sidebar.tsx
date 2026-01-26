@@ -158,8 +158,8 @@ export function BrandSidebar() {
 
         {!isCollapsed && (
           <div className="px-2 pt-2">
-            <div className="pb-2 relative">
-              <Search className="absolute left-3 top-2.5 size-4 text-foreground" />
+            <div className="relative pb-2">
+              <Search className="absolute top-2.5 left-3 size-4 text-foreground" />
               <Input
                 type="search"
                 placeholder="Search"
@@ -192,7 +192,7 @@ export function BrandSidebar() {
                 .map((item) => {
                   const hasChildren = Boolean(item.children?.length);
                   const childMatches = hasChildren
-                    ? item.children!.some((c) =>
+                    ? item.children?.some((c) =>
                         c.title.toLowerCase().includes(q),
                       )
                     : false;
@@ -243,8 +243,8 @@ export function BrandSidebar() {
 
                         {hasChildren && isOpen && (
                           <SidebarMenuSub>
-                            {item
-                              .children!.filter((c) => {
+                            {item.children
+                              ?.filter((c) => {
                                 if (!q) return true;
                                 return c.title.toLowerCase().includes(q);
                               })
@@ -275,7 +275,7 @@ export function BrandSidebar() {
                         pillarNavItems.map((p) => {
                           const pHasChildren = Boolean(p.children?.length);
                           const pChildMatches = pHasChildren
-                            ? p.children!.some((c) =>
+                            ? p.children?.some((c) =>
                                 c.title.toLowerCase().includes(q),
                               )
                             : false;
@@ -324,7 +324,7 @@ export function BrandSidebar() {
 
                               {pHasChildren && pIsOpen && (
                                 <SidebarMenuSub>
-                                  {p.children!.map((child) => (
+                                  {p.children?.map((child) => (
                                     <SidebarMenuSubItem key={child.href}>
                                       <SidebarMenuSubButton asChild>
                                         <Link
@@ -368,7 +368,7 @@ export function BrandSidebar() {
                 .map((item) => {
                   const hasChildren = Boolean(item.children?.length);
                   const childMatches = hasChildren
-                    ? item.children!.some((c) =>
+                    ? item.children?.some((c) =>
                         c.title.toLowerCase().includes(q),
                       )
                     : false;
@@ -418,8 +418,8 @@ export function BrandSidebar() {
 
                       {hasChildren && isOpen && (
                         <SidebarMenuSub>
-                          {item
-                            .children!.filter((c) => {
+                          {item.children
+                            ?.filter((c) => {
                               if (!q) return true;
                               return c.title.toLowerCase().includes(q);
                             })

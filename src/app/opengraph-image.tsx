@@ -38,6 +38,7 @@ export default async function Image() {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <title>Ledgerly logo</title>
           <path
             d="M 0 24.249 A 28 28 0 0 0 28 24.249 A 28 28 0 0 0 14 0 A 28 28 0 0 0 0 24.249 Z"
             stroke="#ffffff"
