@@ -1,11 +1,20 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
+function normalizeEnv(v: string | undefined | null) {
+  if (!v) return v;
+  const s = String(v).trim();
+  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+    return s.slice(1, -1).trim();
+  }
+  return s;
+}
+
 const databaseUrl =
-  process.env.DATABASE_URL ??
+  normalizeEnv(process.env.DATABASE_URL) ??
   "postgresql://postgres:postgres@localhost:5432/ledgerly?schema=public";
 
-const directUrl = process.env.DIRECT_URL ?? databaseUrl;
+const directUrl = normalizeEnv(process.env.DIRECT_URL) ?? databaseUrl;
 
 // Prevent accidental destructive operations on non-local databases.
 // If DATABASE_URL points to a non-local host (for example a Supabase instance),
