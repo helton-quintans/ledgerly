@@ -72,9 +72,7 @@ export default function RootLayout({
         content="noindex, nofollow, noarchive, nosnippet, noimageindex"
       />
       <body className="min-h-screen bg-background text-foreground antialiased">
-        <AuthSessionProvider>
-          {children}
-        </AuthSessionProvider>
+        <AuthSessionProvider>{children}</AuthSessionProvider>
         <Analytics />
         <SpeedInsights />
       </body>

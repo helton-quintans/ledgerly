@@ -75,7 +75,7 @@ export default function TransactionFormModal({
     // mock rates to USD
     const rateToUSD: Record<string, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
     const exchange_rate =
-      (rateToUSD[values.currency] ?? 1) / (rateToUSD["USD"] ?? 1);
+      (rateToUSD[values.currency] ?? 1) / (rateToUSD.USD ?? 1);
     const converted_amount_cents = Math.round(
       amount_cents * (rateToUSD[values.currency] ?? 1),
     );
@@ -175,7 +175,7 @@ export default function TransactionFormModal({
         </DialogTitle>
       </DialogHeader>
 
-      <div className="flex justify-center items-center gap-2 my-2">
+      <div className="my-2 flex items-center justify-center gap-2">
         <CurrencySelector
           value={watchedCurrency}
           onChange={(v) => setValue("currency", v)}
@@ -239,7 +239,7 @@ export default function TransactionFormModal({
                           const fracPart = numStr
                             .slice(lastSepPos + 1)
                             .replace(/[.,]/g, "");
-                          numStr = intPart + "." + fracPart;
+                          numStr = `${intPart}.${fracPart}`;
                         } else {
                           // otherwise treat all separators as thousand separators -> remove them
                           numStr = numStr.replace(/[.,]/g, "");
@@ -264,10 +264,10 @@ export default function TransactionFormModal({
               );
             }}
           />
-          <div className="absolute left-2 top-2 text-neutral-500">
+          <div className="absolute top-2 left-2 text-neutral-500">
             {currencySymbolMap[watchedCurrency] || "$"}
           </div>
-          <div className="h-5 mt-1 text-sm text-red-400">
+          <div className="mt-1 h-5 text-red-400 text-sm">
             {errors.amount?.message as string}
           </div>
         </div>
@@ -279,10 +279,10 @@ export default function TransactionFormModal({
             className="pl-9"
           />
           <FileText
-            className="absolute left-2 top-2 size-4"
+            className="absolute top-2 left-2 size-4"
             style={{ color: "var(--input-placeholder)" }}
           />
-          <div className="h-5 mt-1 text-sm text-red-400">
+          <div className="mt-1 h-5 text-red-400 text-sm">
             {errors.description?.message as string}
           </div>
         </div>
@@ -294,10 +294,10 @@ export default function TransactionFormModal({
             className="pl-9"
           />
           <Tag
-            className="absolute left-2 top-2 size-4"
+            className="absolute top-2 left-2 size-4"
             style={{ color: "var(--input-placeholder)" }}
           />
-          <div className="h-5 mt-1 text-sm text-red-400">
+          <div className="mt-1 h-5 text-red-400 text-sm">
             {errors.category?.message as string}
           </div>
         </div>
@@ -305,7 +305,7 @@ export default function TransactionFormModal({
         <div className="flex gap-2">
           <button
             type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "income" ? "bg-green-200 text-green-800 border-green-300" : "text-green-600 border-neutral-200"}`}
+            className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded border px-3 py-2 ${watch("type") === "income" ? "border-green-300 bg-green-200 text-green-800" : "border-neutral-200 text-green-600"}`}
             onClick={() => setValue("type", "income")}
           >
             <ArrowUp className="size-4" />
@@ -314,7 +314,7 @@ export default function TransactionFormModal({
 
           <button
             type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "expense" ? "bg-red-200 text-red-800 border-red-300" : "text-red-400 border-neutral-200"}`}
+            className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded border px-3 py-2 ${watch("type") === "expense" ? "border-red-300 bg-red-200 text-red-800" : "border-neutral-200 text-red-400"}`}
             onClick={() => setValue("type", "expense")}
           >
             <ArrowDown className="size-4" />

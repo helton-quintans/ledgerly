@@ -1,7 +1,7 @@
 #!/usr/bin/env -S node
+import fs from "node:fs";
+import path from "node:path";
 import bcrypt from "bcryptjs";
-import fs from "fs";
-import path from "path";
 import dotenv from "dotenv";
 
 // Load `.env.local` automatically if it exists, fallback to `.env`
@@ -15,7 +15,7 @@ if (fs.existsSync(envLocal)) {
 
 if (!process.env.DATABASE_URL) {
   console.error(
-    "Missing DATABASE_URL. Create a .env.local or export DATABASE_URL before running the seed."
+    "Missing DATABASE_URL. Create a .env.local or export DATABASE_URL before running the seed.",
   );
   process.exit(1);
 }

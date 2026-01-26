@@ -72,7 +72,9 @@ export default function RegisterForm() {
       });
 
       if (result?.error) {
-        setServerError("Account created but automatic sign-in failed. Please login manually.");
+        setServerError(
+          "Account created but automatic sign-in failed. Please login manually.",
+        );
         router.push("/login");
         return;
       }
@@ -93,29 +95,29 @@ export default function RegisterForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <label className="mb-1 block text-sm font-medium" htmlFor={nameId}>
+        <label className="mb-1 block font-medium text-sm" htmlFor={nameId}>
           Name
         </label>
         <Input id={nameId} type="text" {...register("name")} />
         {errors.name && (
-          <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>
+          <p className="mt-1 text-destructive text-xs">{errors.name.message}</p>
         )}
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium" htmlFor={emailId}>
+        <label className="mb-1 block font-medium text-sm" htmlFor={emailId}>
           Email
         </label>
         <Input id={emailId} type="email" {...register("email")} />
         {errors.email && (
-          <p className="mt-1 text-xs text-destructive">
+          <p className="mt-1 text-destructive text-xs">
             {errors.email.message}
           </p>
         )}
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium" htmlFor={passwordId}>
+        <label className="mb-1 block font-medium text-sm" htmlFor={passwordId}>
           Password
         </label>
         <div className="relative">
@@ -139,14 +141,14 @@ export default function RegisterForm() {
           </button>
         </div>
         {errors.password && (
-          <p className="mt-1 text-xs text-destructive">
+          <p className="mt-1 text-destructive text-xs">
             {errors.password.message}
           </p>
         )}
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium" htmlFor={confirmId}>
+        <label className="mb-1 block font-medium text-sm" htmlFor={confirmId}>
           Confirm password
         </label>
         <div className="relative">
@@ -170,14 +172,14 @@ export default function RegisterForm() {
           </button>
         </div>
         {errors.confirmPassword && (
-          <p className="mt-1 text-xs text-destructive">
+          <p className="mt-1 text-destructive text-xs">
             {errors.confirmPassword.message}
           </p>
         )}
       </div>
 
       {serverError && (
-        <p className="text-center text-sm text-destructive" role="alert">
+        <p className="text-center text-destructive text-sm" role="alert">
           {serverError}
         </p>
       )}
@@ -190,7 +192,7 @@ export default function RegisterForm() {
         {loading ? "Creating..." : "Create account"}
       </Button>
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-center text-muted-foreground text-sm">
         Already have an account?{" "}
         <a className="text-primary hover:underline" href="/login">
           Sign in

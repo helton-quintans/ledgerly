@@ -63,12 +63,12 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-1" htmlFor={emailId}>
+        <label className="mb-1 block font-medium text-sm" htmlFor={emailId}>
           Email
         </label>
         <Input id={emailId} type="email" {...register("email")} />
         {errors.email && (
-          <p className="mt-1 text-xs text-destructive">
+          <p className="mt-1 text-destructive text-xs">
             {errors.email.message}
           </p>
         )}
@@ -77,13 +77,13 @@ export default function LoginForm() {
       <div>
         <div className="flex items-center justify-between">
           <label
-            className="block text-sm font-medium mb-1"
+            className="mb-1 block font-medium text-sm"
             htmlFor={passwordId}
           >
             Password
           </label>
           <a
-            className="text-sm text-primary hover:underline"
+            className="text-primary text-sm hover:underline"
             href="/forgot-password"
           >
             Forgot your password?
@@ -110,14 +110,14 @@ export default function LoginForm() {
           </button>
         </div>
         {errors.password && (
-          <p className="mt-1 text-xs text-destructive">
+          <p className="mt-1 text-destructive text-xs">
             {errors.password.message}
           </p>
         )}
       </div>
 
       {formError && (
-        <p className="text-center text-sm text-destructive" role="alert">
+        <p className="text-center text-destructive text-sm" role="alert">
           {formError}
         </p>
       )}

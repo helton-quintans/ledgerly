@@ -41,7 +41,7 @@ export default function ForgotPasswordForm() {
   if (sent) {
     return (
       <div className="space-y-4">
-        <div className="rounded-2xl border border-primary/20 bg-muted/60 p-4 text-sm text-muted-foreground">
+        <div className="rounded-2xl border border-primary/20 bg-muted/60 p-4 text-muted-foreground text-sm">
           <p className="font-medium text-foreground">Check your inbox</p>
           <p className="mt-1">
             We emailed reset instructions to{" "}
@@ -71,7 +71,7 @@ export default function ForgotPasswordForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <label className="mb-1 block text-sm font-medium" htmlFor={emailId}>
+        <label className="mb-1 block font-medium text-sm" htmlFor={emailId}>
           Email address
         </label>
         <Input
@@ -81,7 +81,7 @@ export default function ForgotPasswordForm() {
           {...register("email")}
         />
         {errors.email && (
-          <p className="mt-1 text-xs text-destructive">
+          <p className="mt-1 text-destructive text-xs">
             {errors.email.message}
           </p>
         )}
@@ -91,7 +91,7 @@ export default function ForgotPasswordForm() {
         {loading ? "Sending..." : "Send reset link"}
       </Button>
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-center text-muted-foreground text-sm">
         Remembered your password?{" "}
         <Link className="text-primary hover:underline" href="/login">
           Back to login

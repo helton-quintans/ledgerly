@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import fs from "fs";
-import path from "path";
+import { spawnSync } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
 import dotenv from "dotenv";
-import { spawnSync } from "child_process";
 
 // Load .env.local first if present, fallback to .env
 const envLocal = path.resolve(process.cwd(), ".env.local");
@@ -19,11 +19,13 @@ if (databaseUrl) {
     const url = new URL(databaseUrl);
     const host = url.hostname;
     const isLocal =
-      host === "localhost" || host === "127.0.0.1" || host === "::1" || host.endsWith(".local");
+      host === "localhost" ||
+      host === "127.0.0.1" ||
+      host === "::1" ||
+      host.endsWith(".local");
     if (!isLocal && process.env.PRISMA_ALLOW_PROD_DB !== "true") {
       console.log(
-        `Skipping prisma generate: DATABASE_URL points to non-local host '${host}'. ` +
-          `Set PRISMA_ALLOW_PROD_DB=true to override, or provide a .env.local for local generation.`
+        `Skipping prisma generate: DATABASE_URL points to non-local host '${host}'. Set PRISMA_ALLOW_PROD_DB=true to override, or provide a .env.local for local generation.`,
       );
       process.exit(0);
     }

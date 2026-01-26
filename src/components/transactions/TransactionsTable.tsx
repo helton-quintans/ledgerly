@@ -89,7 +89,7 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
             className="max-w-sm pl-9"
           />
           <Search
-            className="absolute left-2 top-2 size-4"
+            className="absolute top-2 left-2 size-4"
             style={{ color: "var(--input-placeholder)" }}
           />
         </div>
@@ -122,7 +122,7 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="text-sm text-muted-foreground">
+        <div className="text-muted-foreground text-sm">
           {filtered.length} results
         </div>
       </div>
@@ -239,7 +239,7 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
         </Table>
       </div>
 
-      <div className="flex items-center justify-center gap-2 mt-2">
+      <div className="mt-2 flex items-center justify-center gap-2">
         <Button
           size="icon"
           variant="ghost"

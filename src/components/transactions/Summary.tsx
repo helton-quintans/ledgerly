@@ -18,37 +18,37 @@ export default function Summary({
   fmt,
 }: Props) {
   return (
-    <div className="grid grid-cols-1 gap-4 mb-4">
+    <div className="mb-4 grid grid-cols-1 gap-4">
       {/* Mobile horizontal */}
-      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory px-2 -mx-2 ml-[2px] lg:hidden">
-        <div className="min-w-72 shrink-0 rounded-md p-4 flex items-center justify-between snap-start relative shadow-md border border-border bg-black text-white dark:bg-[var(--primary)] dark:text-[var(--background)]">
+      <div className="-mx-2 ml-[2px] flex snap-x snap-mandatory gap-4 overflow-x-auto px-2 lg:hidden">
+        <div className="relative flex min-w-72 shrink-0 snap-start items-center justify-between rounded-md border border-border bg-black p-4 text-white shadow-md dark:bg-[var(--primary)] dark:text-[var(--background)]">
           <div
-            className="absolute left-0 inset-y-0 w-1 rounded-l-md bg-accent"
+            className="absolute inset-y-0 left-0 w-1 rounded-l-md bg-accent"
             style={{ color: "var(--input-placeholder)" }}
           />
           <div>
-            <div className="text-sm font-medium">Total</div>
-            <div className="text-3xl font-extrabold mt-1">
+            <div className="font-medium text-sm">Total</div>
+            <div className="mt-1 font-extrabold text-3xl">
               {hidden ? "......" : fmt(balance)}
             </div>
           </div>
           <DollarSign className="size-5" />
         </div>
 
-        <div className="min-w-60 shrink-0 rounded-md p-4 bg-muted flex items-center justify-between snap-start">
+        <div className="flex min-w-60 shrink-0 snap-start items-center justify-between rounded-md bg-muted p-4">
           <div>
-            <div className="text-sm text-green-500">In</div>
-            <div className="text-2xl font-semibold mt-1">
+            <div className="text-green-500 text-sm">In</div>
+            <div className="mt-1 font-semibold text-2xl">
               {hidden ? "......" : fmt(incomes)}
             </div>
           </div>
           <ArrowUp className="size-5 text-green-500" />
         </div>
 
-        <div className="min-w-60 shrink-0 rounded-md p-4 bg-muted flex items-center justify-between snap-start">
+        <div className="flex min-w-60 shrink-0 snap-start items-center justify-between rounded-md bg-muted p-4">
           <div>
-            <div className="text-sm text-red-500">Out</div>
-            <div className="text-2xl font-semibold mt-1">
+            <div className="text-red-500 text-sm">Out</div>
+            <div className="mt-1 font-semibold text-2xl">
               {hidden ? "......" : fmt(expenses)}
             </div>
           </div>
@@ -57,32 +57,32 @@ export default function Summary({
       </div>
 
       {/* Desktop aligned left */}
-      <div className="hidden lg:flex gap-4 lg:flex-row lg:col-span-3 justify-start items-center">
-        <div className="w-64 rounded-md p-4 flex items-center justify-between relative shadow-md border border-border bg-black text-white dark:bg-[var(--primary)] dark:text-[var(--background)]">
-          <div className="absolute left-0 inset-y-0 w-1 rounded-l-md bg-accent" />
+      <div className="hidden items-center justify-start gap-4 lg:col-span-3 lg:flex lg:flex-row">
+        <div className="relative flex w-64 items-center justify-between rounded-md border border-border bg-black p-4 text-white shadow-md dark:bg-[var(--primary)] dark:text-[var(--background)]">
+          <div className="absolute inset-y-0 left-0 w-1 rounded-l-md bg-accent" />
           <div>
-            <div className="text-sm font-medium">Total</div>
-            <div className="text-xl font-extrabold mt-1">
+            <div className="font-medium text-sm">Total</div>
+            <div className="mt-1 font-extrabold text-xl">
               {hidden ? "......" : fmt(balance)}
             </div>
           </div>
           <DollarSign className="size-5" />
         </div>
 
-        <div className="w-64 rounded-md p-4 bg-muted flex items-center justify-between">
+        <div className="flex w-64 items-center justify-between rounded-md bg-muted p-4">
           <div>
-            <div className="text-sm text-green-500">In</div>
-            <div className="text-xl font-semibold mt-1">
+            <div className="text-green-500 text-sm">In</div>
+            <div className="mt-1 font-semibold text-xl">
               {hidden ? "......" : fmt(incomes)}
             </div>
           </div>
           <ArrowUp className="size-5 text-green-500" />
         </div>
 
-        <div className="w-64 rounded-md p-4 bg-muted flex items-center justify-between">
+        <div className="flex w-64 items-center justify-between rounded-md bg-muted p-4">
           <div>
-            <div className="text-sm text-red-500">Out</div>
-            <div className="text-xl font-semibold mt-1">
+            <div className="text-red-500 text-sm">Out</div>
+            <div className="mt-1 font-semibold text-xl">
               {hidden ? "......" : fmt(expenses)}
             </div>
           </div>

@@ -81,9 +81,9 @@ export default function Page() {
 
   return (
     <main className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Transactions</h1>
-        <div className="flex items-center justify-end gap-2 mb-3">
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="font-bold text-2xl">Transactions</h1>
+        <div className="mb-3 flex items-center justify-end gap-2">
           <CurrencySelector
             value={displayCurrency}
             onChange={(v) => setDisplayCurrency(v)}
@@ -92,12 +92,12 @@ export default function Page() {
             type="button"
             aria-label="Toggle balance visibility"
             onClick={() => setHidden((s) => !s)}
-            className="p-1 rounded hover:bg-muted"
+            className="rounded p-1 hover:bg-muted"
           >
             {hidden ? (
-              <EyeOff className="w-5 h-5" />
+              <EyeOff className="h-5 w-5" />
             ) : (
-              <Eye className="w-5 h-5" />
+              <Eye className="h-5 w-5" />
             )}
           </button>
         </div>
@@ -113,11 +113,11 @@ export default function Page() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <section className="lg:col-span-2 space-y-4">
-          <div className="rounded-md border p-4 relative">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <section className="space-y-4 lg:col-span-2">
+          <div className="relative rounded-md border p-4">
             <div className="mb-4">
-              <div className="flex gap-2 justify-end">
+              <div className="flex justify-end gap-2">
                 <TransactionFormModal
                   onSaved={() => {
                     load();
@@ -141,8 +141,8 @@ export default function Page() {
 
         <aside className="space-y-4">
           <div className="rounded-md border p-4">
-            <h3 className="text-sm font-medium">Resumo</h3>
-            <div className="text-sm text-muted-foreground">
+            <h3 className="font-medium text-sm">Resumo</h3>
+            <div className="text-muted-foreground text-sm">
               Receitas e despesas recentes
             </div>
           </div>

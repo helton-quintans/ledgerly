@@ -5,8 +5,7 @@ const databaseUrl =
   process.env.DATABASE_URL ??
   "postgresql://postgres:postgres@localhost:5432/ledgerly?schema=public";
 
-const directUrl =
-  process.env.DIRECT_URL ?? databaseUrl;
+const directUrl = process.env.DIRECT_URL ?? databaseUrl;
 
 // Prevent accidental destructive operations on non-local databases.
 // If DATABASE_URL points to a non-local host (for example a Supabase instance),
@@ -15,12 +14,13 @@ try {
   const url = new URL(databaseUrl);
   const host = url.hostname;
   const isLocal =
-    host === "localhost" || host === "127.0.0.1" || host === "::1" || host.endsWith(".local");
+    host === "localhost" ||
+    host === "127.0.0.1" ||
+    host === "::1" ||
+    host.endsWith(".local");
   if (!isLocal && process.env.PRISMA_ALLOW_PROD_DB !== "true") {
     throw new Error(
-      `Refusing to run Prisma against non-local host '${host}'.\n` +
-        `If you really want to run Prisma commands against this host, set PRISMA_ALLOW_PROD_DB=true.\n` +
-        `To run against your local DB instead, prefix commands with DOTENV_CONFIG_PATH=.env.local (recommended).`
+      `Refusing to run Prisma against non-local host '${host}'.\nIf you really want to run Prisma commands against this host, set PRISMA_ALLOW_PROD_DB=true.\nTo run against your local DB instead, prefix commands with DOTENV_CONFIG_PATH=.env.local (recommended).`,
     );
   }
 } catch (e) {
