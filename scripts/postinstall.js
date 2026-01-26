@@ -39,8 +39,18 @@ if (databaseUrl) {
       process.exit(0);
     }
   } catch (e) {
-    console.log("Skipping prisma generate: invalid DATABASE_URL");
-    process.exit(0);
+    // If DATABASE_URL is malformed, avoid failing the install on CI.
+    // Use a local SQLite fallback so `prisma generate` can run without a real DB.
+    try {
+      const fallback = "file:./.prisma_build.db";
+      console.log(
+        "DATABASE_URL appears invalid; using local SQLite fallback for prisma generate.",
+      );
+      process.env.DATABASE_URL = fallback;
+    } catch (err) {
+      console.log("Skipping prisma generate: invalid DATABASE_URL");
+      process.exit(0);
+    }
   }
 }
 
