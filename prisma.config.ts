@@ -13,12 +13,16 @@ const directUrl = process.env.DIRECT_URL ?? databaseUrl;
 try {
   const url = new URL(databaseUrl);
   const host = url.hostname;
+  // Allow `prisma generate` to run even when DATABASE_URL points to a
+  // non-local host. `generate` is safe (it doesn't modify the database),
+  // and Vercel runs `prisma generate` during build.
+  const isGenerate = process.argv.includes("generate");
   const isLocal =
     host === "localhost" ||
     host === "127.0.0.1" ||
     host === "::1" ||
     host.endsWith(".local");
-  if (!isLocal && process.env.PRISMA_ALLOW_PROD_DB !== "true") {
+  if (!isLocal && process.env.PRISMA_ALLOW_PROD_DB !== "true" && !isGenerate) {
     throw new Error(
       `Refusing to run Prisma against non-local host '${host}'.\nIf you really want to run Prisma commands against this host, set PRISMA_ALLOW_PROD_DB=true.\nTo run against your local DB instead, prefix commands with DOTENV_CONFIG_PATH=.env.local (recommended).`,
     );
