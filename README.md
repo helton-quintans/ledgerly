@@ -1,3 +1,71 @@
+# Ledgerly
+
+Pequeno app de finanças pessoais usado para demonstrações técnicas e entrevistas.
+
+## Tech stack
+- Next.js (App Router) + TypeScript
+- Prisma (Postgres)
+- NextAuth
+- pnpm, Docker
+
+## Rápido (local) — recomendado para desenvolvimento
+Pré-requisitos: Docker Desktop, Node.js >= 22, pnpm
+
+1. Levantar Postgres local:
+
+```bash
+docker compose up -d
+```
+
+2. Instalar dependências e gerar client Prisma:
+
+```bash
+pnpm install
+pnpm prisma:generate
+```
+
+3. Aplicar schema local (recomendado usar `.env.local`):
+
+```bash
+pnpm prisma:push:local
+# ou
+DOTENV_CONFIG_PATH=.env.local npx prisma db push
+```
+
+4. Rodar seed (popula uma conta de demo):
+
+```bash
+pnpm prisma:seed:local
+```
+
+5. Iniciar servidor de desenvolvimento:
+
+```bash
+pnpm dev
+```
+
+## Credenciais de demo (apenas para dev)
+- Email: `helton.quit@gmail.com`
+- Senha: `devpass123`
+
+> Não usar essas credenciais em produção.
+
+## Scripts úteis
+- `pnpm dev` — servidor dev
+- `pnpm build` / `pnpm start` — build/produção
+- `pnpm prisma:push:local` — aplica `schema.prisma` contra `.env.local`
+- `pnpm prisma:seed:local` — executa seed contra `.env.local`
+- `pnpm prisma:studio:local` — abre Prisma Studio apontando para `.env.local`
+- `pnpm ci` — rotina curta usada no CI (generate, typecheck, lint, build)
+
+## Segurança / notas sobre Prisma
+O projeto contém uma checagem em `prisma.config.ts` que impede comandos Prisma de serem executados contra hosts não-locais (ex.: Supabase) a menos que `PRISMA_ALLOW_PROD_DB=true` seja definido. Use sempre as variantes `*:local` ou prefixe com `DOTENV_CONFIG_PATH=.env.local` para garantir que os comandos ajustem apenas o banco local.
+
+## Contribuindo
+Veja `docs/HOW_TO_RUN.md` para mais detalhes sobre onboarding e fluxo de desenvolvimento.
+
+---
+Se quiser, eu também adiciono um `CONTRIBUTING.md` com checklist para entrevistas (o que destacar no README, screenshots e um pequeno vídeo de demo). Deseja isso agora?
 # 📊 Ledgerly
 
 > Your personal life management system - Track finances, projects, career, and wellness in one unified platform.

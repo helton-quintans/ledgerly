@@ -8,12 +8,32 @@ const databaseUrl =
 const directUrl =
   process.env.DIRECT_URL ?? databaseUrl;
 
+// Prevent accidental destructive operations on non-local databases.
+// If DATABASE_URL points to a non-local host (for example a Supabase instance),
+// abort unless the environment explicitly allows it via PRISMA_ALLOW_PROD_DB=true.
+try {
+  const url = new URL(databaseUrl);
+  const host = url.hostname;
+  const isLocal =
+    host === "localhost" || host === "127.0.0.1" || host === "::1" || host.endsWith(".local");
+  if (!isLocal && process.env.PRISMA_ALLOW_PROD_DB !== "true") {
+    throw new Error(
+      `Refusing to run Prisma against non-local host '${host}'.\n` +
+        `If you really want to run Prisma commands against this host, set PRISMA_ALLOW_PROD_DB=true.\n` +
+        `To run against your local DB instead, prefix commands with DOTENV_CONFIG_PATH=.env.local (recommended).`
+    );
+  }
+} catch (e) {
+  // If parsing fails or the check throws, rethrow to stop Prisma commands.
+  if (e instanceof Error) throw e;
+}
+
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
   },
   datasource: {
-    url: databaseUrl, // Use DATABASE_URL for runtime
+    url: databaseUrl,
   },
 });

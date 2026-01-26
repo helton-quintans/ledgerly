@@ -1,0 +1,38 @@
+name: Deploy Prisma Migrations
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Enable Corepack and install pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm prisma:generate
+
+      - name: Run migrations (deploy)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: pnpm prisma:migrate:deploy
+
+# Notes:
+# - Set your production DATABASE_URL in the repository secrets as `DATABASE_URL` before running this workflow.
+# - This workflow demonstrates running migrations in CI; adjust triggers and permissions to your needs.
