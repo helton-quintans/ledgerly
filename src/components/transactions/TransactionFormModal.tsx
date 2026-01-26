@@ -15,7 +15,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { createTransaction } from "@/lib/transactions";
 import { ArrowDown, ArrowUp, FileText, Plus, Tag, XCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { type ChangeEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import transactionFormSchema, {
@@ -25,7 +25,7 @@ import type { Currency } from "@/lib/schemas/transaction";
 import type { Transaction } from "@/lib/transactions";
 import { updateTransaction } from "@/lib/transactions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, type Resolver, useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 
 type Props = {
@@ -43,7 +43,9 @@ export default function TransactionFormModal({
   const [open, setOpen] = useState(false);
 
   const form = useForm<TransactionFormValues>({
-    resolver: zodResolver(transactionFormSchema) as any,
+    resolver: zodResolver(
+      transactionFormSchema,
+    ) as unknown as Resolver<TransactionFormValues>,
     defaultValues: {
       description: "",
       // `amount` is stored as integer cents by the schema preprocess — keep input empty initially
@@ -52,7 +54,7 @@ export default function TransactionFormModal({
       type: "income",
       currency: "USD" as Currency,
       date: undefined,
-    } as any,
+    } as Partial<TransactionFormValues>,
   });
 
   const {
@@ -156,7 +158,7 @@ export default function TransactionFormModal({
         type: transaction.type,
         currency: (transaction.currency as Currency) || "USD",
         date: transaction.date,
-      } as any);
+      } as Partial<TransactionFormValues>);
       return;
     }
 
@@ -215,7 +217,7 @@ export default function TransactionFormModal({
                     }
                   }}
                   // support shorthand like 1k, 1M — parse raw input before NumericFormat normalizes
-                  onChange={(e: any) => {
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     const raw = String(e.target.value || "");
 
                     // allow both comma and dot while typing; keep digits, separators and suffix letters
