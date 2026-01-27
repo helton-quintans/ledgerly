@@ -5,7 +5,7 @@ import { Geist, Geist_Mono, Inter, Montserrat } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { AuthSessionProvider } from "@/components/providers/session-provider";
-import { cn } from "@/lib/utils";
+import { cn } from "@ledgerly/utils";
 
 import "@/app/globals.css";
 
