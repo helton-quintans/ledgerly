@@ -28,7 +28,6 @@ import {
   DollarSign,
   Edit,
   FileText,
-  MoreHorizontal,
   Search,
   Tag,
   Trash2,
