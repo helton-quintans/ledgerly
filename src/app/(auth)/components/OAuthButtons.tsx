@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { LogoSpinner } from "@/components/logo";
+import { GoogleLogo } from "@ledgerly/ui";
 
 export default function OAuthButtons() {
   const [loading, setLoading] = useState(false);
@@ -28,6 +29,7 @@ export default function OAuthButtons() {
       onClick={handleGoogle}
       disabled={loading}
     >
+      <GoogleLogo />
       {loading ? <LogoSpinner /> : "Continue with Google"}
     </Button>
   );
