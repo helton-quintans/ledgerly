@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@ledgerly/hooks/use-mobile";
 import { createTransaction } from "@/lib/transactions";
 import { ArrowDown, ArrowUp, FileText, Plus, Tag, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
