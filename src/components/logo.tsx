@@ -1,5 +1,5 @@
+import Spinner from "@ledgerly/ui/components/Spinner";
 import ReuleauxTriangle from "./ui/ReuleauxTriangle";
-import Spinner from "./ui/Spinner";
 
 export function Logo() {
   return (

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
+    "baseUrl": ".",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -13,7 +14,21 @@
     "jsx": "react-jsx",
     "incremental": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@ledgerly/ui": ["packages/ui"],
+      "@ledgerly/ui/*": ["packages/ui/*"],
+      "@ledgerly/hooks": ["packages/hooks"],
+      "@ledgerly/hooks/*": ["packages/hooks/*"],
+      "@ledgerly/utils": ["packages/utils"],
+      "@ledgerly/utils/*": ["packages/utils/*"],
+      "@ledgerly/schemas": ["packages/schemas"],
+      "@ledgerly/schemas/*": ["packages/schemas/*"],
+      "@ledgerly/types": ["packages/types"],
+      "@ledgerly/types/*": ["packages/types/*"],
+      "@ledgerly/api-client": ["packages/api-client"],
+      "@ledgerly/api-client/*": ["packages/api-client/*"],
+      "@ledgerly/config": ["packages/config"],
+      "@ledgerly/config/*": ["packages/config/*"]
     },
     "plugins": [
       {

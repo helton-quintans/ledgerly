@@ -3,8 +3,8 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 
-import GoogleLogo from "@/components/icons/google-logo";
 import { Button } from "@/components/ui/button";
+import GoogleLogo from "@ledgerly/ui/icons/google-logo";
 
 export default function OAuthButtons() {
   const [loading, setLoading] = useState(false);
