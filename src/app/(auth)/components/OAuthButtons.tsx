@@ -4,7 +4,7 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import GoogleLogo from "@ledgerly/ui/icons/google-logo";
+import { LogoSpinner } from "@/components/logo";
 
 export default function OAuthButtons() {
   const [loading, setLoading] = useState(false);
@@ -28,8 +28,7 @@ export default function OAuthButtons() {
       onClick={handleGoogle}
       disabled={loading}
     >
-      <GoogleLogo />
-      {loading ? "Redirecting..." : "Continue with Google"}
+      {loading ? <LogoSpinner /> : "Continue with Google"}
     </Button>
   );
 }
