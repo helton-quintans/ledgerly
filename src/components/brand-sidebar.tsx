@@ -38,7 +38,7 @@ import {
   SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
+import { cn } from "@ledgerly/utils";
 
 interface NavItem {
   title: string;
