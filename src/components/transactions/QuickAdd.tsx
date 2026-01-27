@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { Currency } from "@ledgerly/schemas/transaction";
+import type { Currency } from "@ledgerly/schemas";
 import { createTransaction } from "@/lib/transactions";
 import { CheckCircle, XCircle } from "lucide-react";
 import { useState } from "react";
