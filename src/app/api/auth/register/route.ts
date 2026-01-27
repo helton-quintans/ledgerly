@@ -47,7 +47,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("register route error", error);
     return NextResponse.json(
-      { message: "Erro inesperado. Tente novamente." },
+      { message: "Please try again later." },
       { status: 500 },
     );
   }

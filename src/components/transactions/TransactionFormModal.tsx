@@ -20,8 +20,8 @@ import { toast } from "sonner";
 
 import transactionFormSchema, {
   type TransactionFormValues,
-} from "@/lib/schemas/transaction";
-import type { Currency } from "@/lib/schemas/transaction";
+} from "@ledgerly/schemas/transaction";
+import type { Currency } from "@ledgerly/schemas/transaction";
 import type { Transaction } from "@/lib/transactions";
 import { updateTransaction } from "@/lib/transactions";
 import { zodResolver } from "@hookform/resolvers/zod";

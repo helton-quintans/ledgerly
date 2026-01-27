@@ -19,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Currency } from "@/lib/schemas/transaction";
+import type { Currency } from "@ledgerly/schemas/transaction";
 import type { Transaction } from "@/lib/transactions";
 import { formatCurrencyFromCents } from "@/lib/utils";
 import {

@@ -4,7 +4,7 @@ import CurrencySelector from "@/components/transactions/CurrencySelector";
 import Summary from "@/components/transactions/Summary";
 import TransactionFormModal from "@/components/transactions/TransactionFormModal";
 import TransactionsTable from "@/components/transactions/TransactionsTable";
-import type { Currency } from "@/lib/schemas/transaction";
+import type { Currency } from "@ledgerly/schemas/transaction";
 import {
   type Transaction,
   deleteTransaction,

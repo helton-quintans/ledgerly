@@ -6,5 +6,8 @@
     "declarationMap": true,
     "outDir": "dist"
   },
-  "include": ["./index.ts", "./**/*.ts"]
+  "include": ["./index.ts", "./**/*.ts"],
+  "references": [
+    { "path": "../schemas" }
+  ]
 }

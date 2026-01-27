@@ -6,10 +6,10 @@ export type Transaction = {
   id: string;
   type: "income" | "expense";
   amount_cents: number;
-  currency?: import("./schemas/transaction").Currency;
+  currency?: import("../../packages/schemas/transaction").Currency;
   // optional converted snapshot (stored at creation time)
   converted_amount_cents?: number;
-  converted_currency?: import("./schemas/transaction").Currency;
+  converted_currency?: import("../../packages/schemas/transaction").Currency;
   exchange_rate?: number;
   rate_timestamp?: string;
   date: string;
@@ -18,7 +18,7 @@ export type Transaction = {
 };
 
 // mock conversion rates to USD
-const rateToUSD: Record<import("./schemas/transaction").Currency, number> = {
+const rateToUSD: Record<import("../../packages/schemas/transaction").Currency, number> = {
   USD: 1,
   EUR: 1.08,
   BRL: 0.19,

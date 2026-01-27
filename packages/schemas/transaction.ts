@@ -25,7 +25,6 @@ const amountToCents = (val: unknown) => {
 };
 
 export const transactionFormSchema = z.object({
-  // descrição curta opcional para entradas rápidas
   description: z
     .string()
     .max(30, "Description too long, limit is 30 characters")
@@ -42,13 +41,11 @@ export const transactionFormSchema = z.object({
       }),
   ),
   currency: CurrencyCode,
-  // categoria obrigatória curta
   category: z
     .string()
     .min(1, "Category is required")
     .max(30, "Limit is 30 characters"),
   type: z.enum(["income", "expense"]),
-  // date as ISO string (optional)
   date: z.string().optional(),
 });
 

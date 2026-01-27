@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import type { Currency } from "@/lib/schemas/transaction";
+import type { Currency } from "@ledgerly/schemas/transaction";
 
 type Props = {
   value: Currency;
