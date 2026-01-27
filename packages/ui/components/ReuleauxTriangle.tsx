@@ -2,7 +2,7 @@
 
 import React from "react";
 
-type Props = React.SVGProps<SVGSVGElement> & {
+type ReuleauxTriangleProps = React.SVGProps<SVGSVGElement> & {
 	radius?: number;
 	fill?: string;
 	stroke?: string;
@@ -16,7 +16,7 @@ type Props = React.SVGProps<SVGSVGElement> & {
 	showLabel?: boolean;
 };
 
-export default function ReuleauxTriangle({ radius = 48, fill = "currentColor", variant = "filled", stroke, strokeWidth, arcRadius, label, labelFill, labelFontSize, labelFontFamily, showLabel = true, ...props }: Props) {
+export function ReuleauxTriangle({ radius = 48, fill = "currentColor", variant = "filled", stroke, strokeWidth, arcRadius, label, labelFill, labelFontSize, labelFontFamily, showLabel = true, ...props }: ReuleauxTriangleProps) {
 	const s = radius;
 	const h = (Math.sqrt(3) / 2) * s;
 	const R = arcRadius ?? s;
@@ -65,4 +65,3 @@ export default function ReuleauxTriangle({ radius = 48, fill = "currentColor", v
 		</svg>
 	);
 }
-// Moved from src/components/ui/ReuleauxTriangle.tsx

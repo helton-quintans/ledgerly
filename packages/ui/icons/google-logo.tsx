@@ -1,6 +1,6 @@
 import type { SVGProps } from "react";
 
-export default function GoogleLogo(props: SVGProps<SVGSVGElement>) {
+export function GoogleLogo(props: SVGProps<SVGSVGElement>) {
 	const {
 		width = 20,
 		height = 20,

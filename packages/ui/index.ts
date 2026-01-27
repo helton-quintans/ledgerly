@@ -1,1 +1,2 @@
-// Export shared UI components here
+export * from "./components";
+export * from "./icons";
