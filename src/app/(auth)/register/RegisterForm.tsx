@@ -9,7 +9,7 @@ import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { cn } from "@ledgerly/utils";
 import { Eye, EyeOff } from "lucide-react";
 
 const schema = z
