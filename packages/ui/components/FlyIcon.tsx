@@ -32,6 +32,3 @@ export default function FlyIcon({ size = 32, color = "currentColor", strokeWidth
 		</svg>
 	);
 }
-
-// Moved from src/components/ui/FlyIcon.tsx
-// Moved from src/components/ui/FlyIcon.tsx
