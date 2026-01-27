@@ -11,9 +11,19 @@
 
 ## ✨ Overview
 
-Ledgerly is a comprehensive personal ledger application that helps you manage all aspects of your life in one place. Built with modern web technologies, it provides a seamless experience for tracking finances, managing projects, monitoring career progress, and maintaining wellness habits.
+Ledgerly is a comprehensive personal life management system, unifying finances, projects, career, and wellness in a single modern platform.
 
-The platform features a modular architecture with independent dashboards for each life area, powered by AI assistance and backed by a robust authentication system with PostgreSQL database.
+The project is built with a modular and scalable architecture, focused on code reuse, automation, and best development practices. It uses a monorepo approach with shared packages (see the `packages/` directory) for UI components, hooks, utilities, schemas, types, and integrations, making maintenance and continuous evolution easier.
+
+**Timeless project principles:**
+- Modularity and separation of concerns
+- Code reuse across frontend, backend, and libraries
+- Contextual and automated documentation
+- Automated testing, builds, and deployments
+- Easy onboarding for new developers
+- Cloud readiness and scalability
+
+For details about architectural decisions, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## 🚀 Key Features
 
@@ -66,12 +76,12 @@ Visit [http://localhost:3000](http://localhost:3000) to see the app.
 
 ## 📚 Documentation
 
-- 📖 [How to Run](docs/HOW_TO_RUN.md) - Detailed installation and setup guide
-- 🏗️ [Architecture](docs/ARCHITECTURE.md) - Project structure and design decisions
-- 🤝 [Contributing](docs/CONTRIBUTING.md) - Guidelines for contributors
-- 🔐 [Environment Variables](docs/ENV_VARIABLES.md) - Complete list of env variables
-- 🚀 [Deployment](docs/DEPLOYMENT.md) - Deploy to Vercel and production setup
-- 📋 [Roadmap](docs/ROADMAP.md) - Upcoming features and future plans
+- 📖 [How to Run](docs/HOW_TO_RUN.md) — Complete installation and setup guide
+- 🏗️ [Architecture](docs/ARCHITECTURE.md) — Design decisions and long-term vision
+- 🤝 [Contributing](docs/CONTRIBUTING.md) — How to contribute
+- 🔐 [Environment Variables](docs/ENV_VARIABLES.md) — Full list of environment variables
+- 🚀 [Deployment](docs/DEPLOYMENT.md) — Production and Vercel deployment
+- 📋 [Roadmap](docs/ROADMAP.md) — Project future and upcoming features
 
 ## 🤝 Contributing
 
