@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/table";
 import type { Currency } from "@ledgerly/schemas";
 import type { Transaction } from "@/lib/transactions";
-import { formatCurrencyFromCents } from "@/lib/utils";
+import { formatCurrencyFromCents } from "@ledgerly/utils";
 import {
   Calendar,
   ChevronDown,
