@@ -8,8 +8,9 @@ import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { Eye, EyeOff } from "lucide-react";
+import { LogoSpinner } from "@/components/logo";
+import { cn } from "@ledgerly/utils";
 
 const schema = z.object({
   email: z.string().email(),
@@ -127,12 +128,12 @@ export default function LoginForm() {
         disabled={loading}
         className={cn("w-full justify-center", loading ? "opacity-80" : "")}
       >
-        {loading ? "Signing in..." : "Sign in"}
+        {loading ? <LogoSpinner color="#fff" /> : "Sign in"}
       </Button>
 
       <p className="text-center text-sm">
         Don’t have an account?{" "}
-        <a className="text-primary hover:underline" href="/register">
+        <a className="text-primary underline hover:underline hover:opacity-80" href="/register">
           Sign up
         </a>
       </p>

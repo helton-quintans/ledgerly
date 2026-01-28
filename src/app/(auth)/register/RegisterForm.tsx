@@ -9,7 +9,7 @@ import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { cn } from "@ledgerly/utils";
 import { Eye, EyeOff } from "lucide-react";
 
 const schema = z
@@ -192,7 +192,7 @@ export default function RegisterForm() {
 
       <p className="text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <a className="text-primary hover:underline" href="/login">
+        <a className="text-primary underline hover:underline hover:opacity-80" href="/login">
           Sign in
         </a>
       </p>

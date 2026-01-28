@@ -19,16 +19,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Currency } from "@/lib/schemas/transaction";
+import type { Currency } from "@ledgerly/schemas";
 import type { Transaction } from "@/lib/transactions";
-import { formatCurrencyFromCents } from "@/lib/utils";
+import { formatCurrencyFromCents } from "@ledgerly/utils";
 import {
   Calendar,
   ChevronDown,
   DollarSign,
   Edit,
   FileText,
-  MoreHorizontal,
   Search,
   Tag,
   Trash2,

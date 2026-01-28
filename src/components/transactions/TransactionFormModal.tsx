@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@ledgerly/hooks/use-mobile";
 import { createTransaction } from "@/lib/transactions";
 import { ArrowDown, ArrowUp, FileText, Plus, Tag, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -20,8 +20,8 @@ import { toast } from "sonner";
 
 import transactionFormSchema, {
   type TransactionFormValues,
-} from "@/lib/schemas/transaction";
-import type { Currency } from "@/lib/schemas/transaction";
+} from "@ledgerly/schemas/transaction";
+import type { Currency } from "@ledgerly/schemas";
 import type { Transaction } from "@/lib/transactions";
 import { updateTransaction } from "@/lib/transactions";
 import { zodResolver } from "@hookform/resolvers/zod";

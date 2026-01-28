@@ -1,11 +1,5 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-import type { Currency } from "@/lib/schemas/transaction";
+import type { Currency } from "@ledgerly/schemas";
 
 export function formatCurrencyFromCents(
   amount_cents: number,

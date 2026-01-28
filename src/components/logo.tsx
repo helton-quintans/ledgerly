@@ -1,5 +1,5 @@
-import ReuleauxTriangle from "./ui/ReuleauxTriangle";
-import Spinner from "./ui/Spinner";
+import { ReuleauxTriangle, Spinner } from "@ledgerly/ui";
+
 
 export function Logo() {
   return (
@@ -18,13 +18,17 @@ export function Logo() {
   );
 }
 
-export function LogoSpinner() {
+type LogoSpinnerProps = {
+  color?: string;
+};
+
+export function LogoSpinner({ color = "var(--primary)" }: LogoSpinnerProps) {
   return (
     <div className="flex items-center gap-2">
       <Spinner
         size={28}
         triangleScale={0.6}
-        color="var(--primary)"
+        color={color}
         speed={0.4}
       />
     </div>

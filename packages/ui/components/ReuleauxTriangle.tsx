@@ -2,22 +2,22 @@
 
 import React from "react";
 
-type Props = React.SVGProps<SVGSVGElement> & {
-  radius?: number;
-  fill?: string;
-  stroke?: string;
-  strokeWidth?: number;
-  variant?: "filled" | "outline";
-  arcRadius?: number;
-  label?: string;
-  labelFill?: string;
-  labelFontSize?: number;
-  labelFontFamily?: string;
-  showLabel?: boolean;
+type ReuleauxTriangleProps = React.SVGProps<SVGSVGElement> & {
+	radius?: number;
+	fill?: string;
+	stroke?: string;
+	strokeWidth?: number;
+	variant?: "filled" | "outline";
+	arcRadius?: number;
+	label?: string;
+	labelFill?: string;
+	labelFontSize?: number;
+	labelFontFamily?: string;
+	showLabel?: boolean;
 };
 
-export default function ReuleauxTriangle({ radius = 48, fill = "currentColor", variant = "filled", stroke, strokeWidth, arcRadius, label, labelFill, labelFontSize, labelFontFamily, showLabel = true, ...props }: Props) {
-  const s = radius;
+export function ReuleauxTriangle({ radius = 48, fill = "currentColor", variant = "filled", stroke, strokeWidth, arcRadius, label, labelFill, labelFontSize, labelFontFamily, showLabel = true, ...props }: ReuleauxTriangleProps) {
+	const s = radius;
   const h = (Math.sqrt(3) / 2) * s;
   const R = arcRadius ?? s;
 
