@@ -5,8 +5,8 @@ const databaseUrl =
   process.env.DATABASE_URL ??
   "postgresql://postgres:postgres@localhost:5432/ledgerly?schema=public";
 
-const directUrl =
-  process.env.DIRECT_URL ?? databaseUrl;
+// const directUrl =
+//   process.env.DIRECT_URL ?? databaseUrl;
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -14,6 +14,6 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: databaseUrl, // Use DATABASE_URL for runtime
+    url: databaseUrl,
   },
 });
