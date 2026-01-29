@@ -1,7 +1,6 @@
 setup:
 	cp .env.example .env.local
 
-# Comandos úteis para dev
 migrate:
 	pnpm prisma migrate dev
 
