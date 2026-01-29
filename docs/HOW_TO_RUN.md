@@ -59,15 +59,29 @@ GOOGLE_CLIENT_SECRET=""
 3. Copy the **Session Pooler** connection string from **Database Settings**
 4. Update `DATABASE_URL` and `DIRECT_URL` in `.env.local`
 
-#### Option B: Local PostgreSQL
+#### Option B: Local PostgreSQL (Recommended for Development)
+
+You can run a local Postgres database easily using Docker Compose:
 
 ```bash
-# Create database
-createdb ledgerly
-
-# Update DATABASE_URL in .env.local
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ledgerly?schema=public"
+# Start the local Postgres container
+docker compose up -d
 ```
+
+This will create a database called `ledgerly` accessible at:
+
+```
+postgresql://postgres:postgres@localhost:5432/ledgerly?schema=public
+```
+
+Make sure your `.env.local` has:
+
+```
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ledgerly?schema=public"
+DIRECT_URL="postgresql://postgres:postgres@localhost:5432/ledgerly?schema=public"
+```
+
+No need to create the database manually—the container will handle it.
 
 ### 5. Run Database Migrations
 
