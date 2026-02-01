@@ -16,10 +16,10 @@ seed:
 
 # ──────────────── Local Database ────────────────
 db-up:
-    docker compose up -d
+		docker compose up -d
 
 db-down:
-    docker compose down
+		docker compose down
 
 # ──────────────── Application ────────────────
 dev:
