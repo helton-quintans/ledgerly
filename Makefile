@@ -1,35 +1,34 @@
 # ──────────────── Environment ────────────────
 setup:
-    cp .env.example .env.local
+		cp .env.example .env.local
 
 # ──────────────── Prisma ────────────────
 migrate:
-    pnpm prisma migrate dev
+		pnpm prisma migrate dev
 generate:
-    pnpm prisma generate
+		pnpm prisma generate
 studio:
-    pnpm prisma studio
+		pnpm prisma studio
 reset-db:
-    pnpm prisma migrate reset --force
+		pnpm prisma migrate reset --force
 seed:
-    pnpm prisma db seed
+		pnpm prisma db seed
 
 # ──────────────── Application ────────────────
 dev:
-    pnpm dev
+		pnpm dev
 build:
-    pnpm build
+	pnpm build
 start:
-    pnpm start
-
+		pnpm start
 # ──────────────── Testing ────────────────
 test:
-    pnpm test
+		pnpm test
 
 # ──────────────── Code Quality ────────────────
 lint:
-    pnpm biome lint .
+		pnpm biome lint .
 lint-fix:
-    pnpm biome lint . --apply
+	pnpm biome lint . --apply
 format:
-    pnpm biome format .
+		pnpm biome format .
