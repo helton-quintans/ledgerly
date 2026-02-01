@@ -29,8 +29,7 @@ export default function OAuthButtons() {
       onClick={handleGoogle}
       disabled={loading}
     >
-      <GoogleLogo />
-      {loading ? <LogoSpinner /> : "Continue with Google"}
+      {loading ? <LogoSpinner /> : <><GoogleLogo /> Continue with Google</>}
     </Button>
   );
 }
