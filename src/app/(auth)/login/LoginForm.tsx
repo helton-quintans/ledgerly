@@ -10,8 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { LogoSpinner } from "@/components/logo";
 import { cn } from "@ledgerly/utils";
-import { useSearchParams } from "next/navigation";
-
 const schema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
@@ -19,7 +17,11 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export default function LoginForm() {
+interface LoginFormProps {
+  error?: string | null;
+}
+
+export default function LoginForm({ error }: LoginFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -31,8 +33,6 @@ export default function LoginForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
-  const searchParams = useSearchParams();
-  const error = searchParams.get("error");
 
 
   async function onSubmit(data: FormValues) {
