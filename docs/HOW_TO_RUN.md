@@ -28,13 +28,13 @@ pnpm install
 
 ### 3. Setup Environment Variables
 
-Copy the example environment file:
+This project provides a Makefile to simplify onboarding. To automatically create your `.env.local` file, just run:
 
 ```bash
-cp .env.example .env.local
+make setup
 ```
 
-Edit `.env.local` and configure the following variables (see [Environment Variables](ENV_VARIABLES.md) for details):
+This will copy `.env.example` to `.env.local`. Edit `.env.local` and configure the required variables (see [Environment Variables](ENV_VARIABLES.md) for details):
 
 ```env
 # Database
@@ -59,15 +59,29 @@ GOOGLE_CLIENT_SECRET=""
 3. Copy the **Session Pooler** connection string from **Database Settings**
 4. Update `DATABASE_URL` and `DIRECT_URL` in `.env.local`
 
-#### Option B: Local PostgreSQL
+#### Option B: Local PostgreSQL (Recommended for Development)
+
+You can run a local Postgres database easily using Docker Compose:
 
 ```bash
-# Create database
-createdb ledgerly
-
-# Update DATABASE_URL in .env.local
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ledgerly?schema=public"
+# Start the local Postgres container
+docker compose up -d
 ```
+
+This will create a database called `ledgerly` accessible at:
+
+```
+postgresql://postgres:postgres@localhost:5432/ledgerly?schema=public
+```
+
+Make sure your `.env.local` has:
+
+```
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ledgerly?schema=public"
+DIRECT_URL="postgresql://postgres:postgres@localhost:5432/ledgerly?schema=public"
+```
+
+No need to create the database manually—the container will handle it.
 
 ### 5. Run Database Migrations
 
@@ -90,19 +104,20 @@ The application will be available at [http://localhost:3000](http://localhost:30
 ## Available Scripts
 
 ```bash
+# Onboarding
+make setup            # Copies .env.example to .env.local
+
 # Development
-pnpm dev              # Start dev server with Turbopack
-pnpm build            # Build for production
-pnpm start            # Start production server
+make dev              # Starts the development server
+make build            # Builds the project for production
 
 # Database
-pnpm prisma:generate  # Generate Prisma Client
-pnpm prisma:studio    # Open Prisma Studio (database GUI)
-pnpm prisma:migrate:dev # Create and apply migrations (dev only)
+make migrate          # Runs Prisma migrations
+make generate         # Generates the Prisma client
 
 # Code Quality
-pnpm lint             # Check code with Biome
-pnpm lint:fix         # Fix code issues automatically
+pnpm lint             # Checks code with Biome
+pnpm lint:fix         # Automatically fixes code issues
 ```
 
 ## Troubleshooting

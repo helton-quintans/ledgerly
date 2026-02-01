@@ -1,11 +1,18 @@
 "use client";
 
 import { useSearch } from "@/components/search-context";
-import { HelpCircle, Menu, Search, X } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { signOut, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSidebar } from "@/components/ui/sidebar";
@@ -16,6 +23,7 @@ import { Logo } from "./logo";
 
 export function BrandHeader() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { data: session } = useSession();
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { query, setQuery } = useSearch();
@@ -78,16 +86,21 @@ export function BrandHeader() {
           )}
 
           <ThemeToggle />
-
-          <Avatar className="size-8 shadow-sm">
-            <AvatarImage
-              src="https://github.com/helton-quintans.png"
-              alt="Helton Quintans"
-            />
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              <span className="text-xs">ME</span>
-            </AvatarFallback>
-          </Avatar>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="size-8 shadow-sm cursor-pointer">
+                <AvatarImage src={session?.user?.image ?? undefined} alt={session?.user?.name ?? undefined} />
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  {session?.user?.name?.[0] ?? "?"}
+                </AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
+                <span className="text-destructive hover:bg-destructive/10 hover:text-destructive">Logout</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div className="flex gap-2 md:hidden items-center">
@@ -101,16 +114,21 @@ export function BrandHeader() {
           </Button>
 
           <ThemeToggle />
-
-          <Avatar className="size-8 shadow-sm">
-            <AvatarImage
-              src="https://github.com/helton-quintans.png"
-              alt="Helton Quintans"
-            />
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              <span className="text-xs">ME</span>
-            </AvatarFallback>
-          </Avatar>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="size-8 shadow-sm cursor-pointer">
+                <AvatarImage src={session?.user?.image ?? undefined} alt={session?.user?.name ?? undefined} />
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  {session?.user?.name?.[0] ?? "?"}
+                </AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
+                <span className="text-destructive hover:bg-destructive/10 hover:text-destructive">Logout</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         {isSearchOpen && (
           <div className="fixed inset-0 z-50 bg-background/90 md:hidden p-4">

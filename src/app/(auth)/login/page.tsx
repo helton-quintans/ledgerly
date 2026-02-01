@@ -1,7 +1,7 @@
-"use client";
 
 import OAuthButtons from "../components/OAuthButtons";
-import LoginForm from "./LoginForm";
+import { Suspense } from "react";
+import LoginClient from "./LoginClient";
 
 export default function LoginPage() {
   return (
@@ -24,7 +24,9 @@ export default function LoginPage() {
           <div className="h-px flex-1 bg-muted-foreground/30" />
         </div>
 
-        <LoginForm />
+        <Suspense fallback={<div>Loading...</div>}>
+          <LoginClient />
+        </Suspense>
       </div>
     </div>
   );
