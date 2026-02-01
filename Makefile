@@ -14,6 +14,13 @@ reset-db:
 seed:
 		pnpm prisma db seed
 
+# ──────────────── Local Database ────────────────
+db-up:
+    docker compose up -d
+
+db-down:
+    docker compose down
+
 # ──────────────── Application ────────────────
 dev:
 		pnpm dev
