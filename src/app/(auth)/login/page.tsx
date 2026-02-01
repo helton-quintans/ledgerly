@@ -1,8 +1,7 @@
-import OAuthButtons from "../components/OAuthButtons";
-import dynamic from "next/dynamic";
-import { Suspense } from "react";
 
-const LoginForm = dynamic(() => import("./LoginForm"), { ssr: false });
+"use client";
+import OAuthButtons from "../components/OAuthButtons";
+import LoginForm from "./LoginForm";
 
 export default function LoginPage() {
   return (
@@ -25,9 +24,7 @@ export default function LoginPage() {
           <div className="h-px flex-1 bg-muted-foreground/30" />
         </div>
 
-        <Suspense fallback={<div>Carregando...</div>}>
-          <LoginForm />
-        </Suspense>
+        <LoginForm />
       </div>
     </div>
   );
