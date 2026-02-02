@@ -9,6 +9,7 @@ const STATIC_PATH_PREFIXES = [
   "/robots",
   "/sitemap",
   "/opengraph-image",
+  "/api",
 ];
 
 function isPublicRoute(pathname: string) {
