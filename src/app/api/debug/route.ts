@@ -3,7 +3,8 @@ export async function GET() {
   const allEnvVars = Object.keys(process.env)
     .filter(key => key.includes('GOOGLE') || key.includes('NEXTAUTH'))
     .reduce((acc, key) => {
-      acc[key] = process.env[key] ? `${process.env[key].substring(0, 10)}...` : 'undefined';
+      const value = process.env[key];
+      acc[key] = value ? `${value.substring(0, 10)}...` : 'undefined';
       return acc;
     }, {} as Record<string, string>);
 
