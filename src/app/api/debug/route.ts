@@ -1,7 +1,7 @@
 export async function GET() {
   // Lista TODAS as variáveis de ambiente que começam com GOOGLE ou NEXTAUTH
   const allEnvVars = Object.keys(process.env)
-    .filter(key => key.includes('GOOGLE') || key.includes('NEXTAUTH'))
+    .filter(key => key.includes('GOOGLE') || key.includes('NEXTAUTH') || key.includes('NEXT_PUBLIC'))
     .reduce((acc, key) => {
       const value = process.env[key];
       acc[key] = value ? `${value.substring(0, 10)}...` : 'undefined';
@@ -17,5 +17,6 @@ export async function GET() {
     googleIdLength: process.env.GOOGLE_CLIENT_ID?.length || 0,
     googleSecretLength: process.env.GOOGLE_CLIENT_SECRET?.length || 0,
     allEnvVars,
+    publicGoogleId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.substring(0, 10) + '...',
   });
 }
