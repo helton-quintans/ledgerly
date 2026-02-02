@@ -5,5 +5,7 @@ export async function GET() {
     hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
     hasNextAuthUrl: !!process.env.NEXTAUTH_URL,
     nodeEnv: process.env.NODE_ENV,
+    googleIdLength: process.env.GOOGLE_CLIENT_ID?.length || 0,
+    googleSecretLength: process.env.GOOGLE_CLIENT_SECRET?.length || 0,
   });
 }
