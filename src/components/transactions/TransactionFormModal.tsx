@@ -217,6 +217,7 @@ export default function TransactionFormModal({
                   decimalScale={2}
                   allowNegative={false}
                   prefix={currencySymbolMap[watchedCurrency] || ""}
+                  inputMode="decimal"
                   // numeric-proper changes (no suffix) provide floatValue
                   onValueChange={(values) => {
                     if (values.floatValue != null) {
