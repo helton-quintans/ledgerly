@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import type React from "react";
 
 type ReuleauxTriangleProps = React.SVGProps<SVGSVGElement> & {
 	radius?: number;
