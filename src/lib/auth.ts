@@ -7,6 +7,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
+import { getGoogleOAuthConfig } from "@/lib/google-oauth-config";
 
 const credentialsSchema = z.object({
   email: z.string().email(),
@@ -47,24 +48,14 @@ const providers: NextAuthOptions["providers"] = [
   }),
 ];
 
-// Try multiple ways to load Google OAuth credentials
-const googleClientId = 
-  process.env.GOOGLE_CLIENT_ID || 
-  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
-  process.env.AUTH_GOOGLE_ID ||
-  process.env.GOOGLE_ID;
+// Use Google OAuth config loader with multiple fallback methods
+const googleConfig = getGoogleOAuthConfig();
 
-const googleClientSecret = 
-  process.env.GOOGLE_CLIENT_SECRET || 
-  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET ||
-  process.env.AUTH_GOOGLE_SECRET ||
-  process.env.GOOGLE_SECRET;
-
-if (googleClientId && googleClientSecret) {
+if (googleConfig.clientId && googleConfig.clientSecret) {
   providers.push(
     GoogleProvider({
-      clientId: googleClientId,
-      clientSecret: googleClientSecret,
+      clientId: googleConfig.clientId,
+      clientSecret: googleConfig.clientSecret,
       authorization: {
         params: {
           scope: "openid email profile",
