@@ -65,6 +65,13 @@ if (googleClientId && googleClientSecret) {
     GoogleProvider({
       clientId: googleClientId,
       clientSecret: googleClientSecret,
+      authorization: {
+        params: {
+          scope: "openid email profile",
+          access_type: "offline",
+          prompt: "consent"
+        }
+      }
     }),
   );
 }
