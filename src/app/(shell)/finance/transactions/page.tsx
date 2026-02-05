@@ -83,7 +83,7 @@ export default function Page() {
     <main className="p-6">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Transactions</h1>
-        <div className="flex items-center justify-end gap-2 mb-3">
+        <div className="flex items-center justify-end gap-2">
           <CurrencySelector
             value={displayCurrency}
             onChange={(v) => setDisplayCurrency(v)}
