@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import { ReuleauxTriangle } from "./ReuleauxTriangle";
 
 type SpinnerProps = {

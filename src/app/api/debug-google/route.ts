@@ -30,6 +30,17 @@ export async function GET() {
       firstChar: process.env[varName]?.charAt(0) || null
     })),
     
+    // Test the same logic used in auth.ts
+    resolvedGoogleId: process.env.GOOGLE_CLIENT_ID || 
+                      process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
+                      process.env.AUTH_GOOGLE_ID ||
+                      process.env.GOOGLE_ID || null,
+    
+    resolvedGoogleSecret: process.env.GOOGLE_CLIENT_SECRET || 
+                          process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET ||
+                          process.env.AUTH_GOOGLE_SECRET ||
+                          process.env.GOOGLE_SECRET || null,
+    
     // Show all environment variable keys that contain 'google' (case insensitive)
     allGoogleLikeVars: allEnvVars.filter(key => 
       key.toLowerCase().includes('google') || 
