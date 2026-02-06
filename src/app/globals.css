@@ -42,7 +42,6 @@
 
   /* Interaction tokens */
   --hover: #3f3f46; /* updated hover color */
-  --hover-icon: var(--foreground); /* icon color on hover - maintains dark color */
   --border: #e5e7eb; /* lighter border for cleaner look */
   --input: #f8f9fa; /* better contrast input background with subtle border */
   --input-shadow: 0 1px 0 rgba(16, 24, 40, 0.04);
@@ -115,8 +114,7 @@
   --warning: #f59e0b;
 
   /* Interaction tokens */
-  --hover: #efefef;
-  --hover-icon: #0f1724; /* dark icon color on hover for contrast */
+  --hover: #3f3f46;
   --border: #1a1a1a;
   --input: #0a0a0a;
   --ring: #6b7280;
@@ -167,7 +165,6 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-hover: var(--hover);
-  --color-hover-icon: var(--hover-icon);
 
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
@@ -234,28 +231,76 @@
     color: var(--input-placeholder);
   }
 
-  /* Icon hover colors for all interactive elements */
-  button:hover svg,
-  [role="button"]:hover svg,
-  a:hover svg,
-  .hover\:bg-accent:hover svg,
-  /* Sidebar specific selectors */
-  [data-sidebar="menu-button"]:hover svg,
-  .hover\:bg-sidebar-accent:hover svg,
-  [data-slot="sidebar-menu-button"]:hover svg {
-    color: var(--color-hover-icon) !important;
+  .hover\:bg-accent:hover {
+    color: var(--foreground) !important;
   }
 
-  /* Ensure sidebar components maintain proper color on hover */
+  .hover\:bg-accent:hover svg {
+    color: var(--foreground) !important;
+  }
+
+  /* Sidebar icons contrast fix */
   [data-sidebar] button:hover svg,
-  [data-sidebar] a:hover svg,
-  [data-sidebar] [data-sidebar="menu-button"]:hover svg {
-    color: var(--color-hover-icon) !important;
+  [data-sidebar="menu-button"]:hover svg {
+    color: var(--foreground) !important;
   }
 
-  /* Special handling for submenu buttons */
-  [data-sidebar] [data-sidebar="menu-sub-button"]:hover svg {
-    color: var(--color-hover-icon) !important;
+  /* Sidebar - same color as icons */
+  [data-sidebar] button:hover,
+  [data-sidebar] button:hover span,
+  [data-sidebar="menu-button"]:hover,
+  [data-sidebar="menu-button"]:hover span {
+    color: var(--foreground) !important;
+  }
+
+  /* Dark theme sidebar hover - light text/icons on dark hover background */
+  .dark [data-sidebar] button:hover,
+  .dark [data-sidebar] button:hover span,
+  .dark [data-sidebar="menu-button"]:hover,
+  .dark [data-sidebar="menu-button"]:hover span,
+  .dark [data-sidebar] button:hover svg,
+  .dark [data-sidebar="menu-button"]:hover svg,
+  .dark [data-sidebar] a:hover,
+  .dark [data-sidebar] a:hover span,
+  .dark [data-sidebar] a:hover svg {
+    color: #0f1724 !important;
+  }
+
+  /* Cursor pointer for dropdown items */
+  [role="menuitem"],
+  [role="option"],
+  [data-radix-collection-item],
+  [data-state="checked"],
+  [data-radix-dropdown-menu-item],
+  [data-radix-select-item],
+  [data-radix-menubar-item],
+  [cmdk-item],
+  [data-radix-dropdown-menu-checkbox-item],
+  [data-radix-dropdown-menu-radio-item],
+  .dropdown-menu-item,
+  .select-item,
+  .cursor-pointer {
+    cursor: pointer !important;
+  }
+
+  /* Dropdown items hover contrast - light theme */
+  [role="menuitem"]:hover,
+  [role="option"]:hover,
+  [data-radix-collection-item]:hover,
+  [data-state="checked"]:hover,
+  [data-highlighted],
+  .hover\:bg-accent:hover {
+    color: var(--foreground) !important;
+  }
+
+  /* Dropdown items hover contrast - dark theme */
+  .dark [role="menuitem"]:hover,
+  .dark [role="option"]:hover,
+  .dark [data-radix-collection-item]:hover,
+  .dark [data-state="checked"]:hover,
+  .dark [data-highlighted],
+  .dark .hover\:bg-accent:hover {
+    color: #0f1724 !important;
   }
 }
 
