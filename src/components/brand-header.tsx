@@ -95,7 +95,15 @@ export function BrandHeader() {
                 </AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="w-56">
+              <div className="px-3 py-2 border-b border-border">
+                <p className="text-sm font-medium text-foreground truncate">
+                  {session?.user?.name || "Usuário"}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {session?.user?.email || "email@example.com"}
+                </p>
+              </div>
               <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
                 <span className="text-destructive hover:bg-destructive/10 hover:text-destructive">Logout</span>
               </DropdownMenuItem>
@@ -123,7 +131,15 @@ export function BrandHeader() {
                 </AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="w-56">
+              <div className="px-3 py-2 border-b border-border">
+                <p className="text-sm font-medium text-foreground truncate">
+                  {session?.user?.name || "Usuário"}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {session?.user?.email || "email@example.com"}
+                </p>
+              </div>
               <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
                 <span className="text-destructive hover:bg-destructive/10 hover:text-destructive">Logout</span>
               </DropdownMenuItem>
