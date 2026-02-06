@@ -188,6 +188,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                 const count = monthCounts[index] || 0;
                 const isSelected = filter.month === index;
                 const hasTransactions = count > 0;
+                const isCurrentMonth = filter.year === currentYear && index === currentMonth;
 
                 return (
                   <Button
@@ -196,11 +197,13 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                     size="sm"
                     className={`h-7 px-2 text-xs shrink-0 min-w-[44px] ${
                       !hasTransactions ? "opacity-50" : ""
+                    } ${
+                      isCurrentMonth && !isSelected ? "ring-2 ring-primary/20 border-primary/40 font-semibold" : ""
                     }`}
                     onClick={() => handleMonthChange(index)}
                     disabled={!hasTransactions}
                   >
-                    <span className="font-medium">{name}</span>
+                    <span className={`font-medium ${isCurrentMonth ? "font-semibold" : ""}`}>{name}</span>
                     {hasTransactions && count > 0 && (
                       <span className="ml-1 text-[10px] opacity-70">
                         {count}
@@ -269,6 +272,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                 const count = monthCounts[index] || 0;
                 const isSelected = filter.month === index;
                 const hasTransactions = count > 0;
+                const isCurrentMonth = filter.year === currentYear && index === currentMonth;
 
                 return (
                   <Button
@@ -277,11 +281,13 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                     size="sm"
                     className={`h-8 px-2 text-xs ${
                       !hasTransactions ? "opacity-50" : ""
+                    } ${
+                      isCurrentMonth && !isSelected ? "ring-2 ring-primary/20 border-primary/40 font-semibold" : ""
                     }`}
                     onClick={() => handleMonthChange(index)}
                     disabled={!hasTransactions}
                   >
-                    <span className="font-medium">{name}</span>
+                    <span className={`font-medium ${isCurrentMonth ? "font-semibold" : ""}`}>{name}</span>
                     {hasTransactions && count > 0 && (
                       <span className="ml-1 text-[10px] opacity-70">
                         {count}

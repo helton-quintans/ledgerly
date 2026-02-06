@@ -34,12 +34,14 @@ type Props = {
   onSaved?: () => void;
   transaction?: Transaction | null;
   onClose?: () => void;
+  className?: string;
 };
 
 export default function TransactionFormModal({
   onSaved,
   transaction = null,
   onClose,
+  className,
 }: Props) {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
@@ -133,7 +135,11 @@ export default function TransactionFormModal({
   }
 
   const trigger = (
-    <Button onClick={() => setOpen(true)} variant="default">
+    <Button 
+      onClick={() => setOpen(true)} 
+      variant="default" 
+      className={`shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 font-medium ${className}`}
+    >
       <Plus className="size-4" />
       New transaction
     </Button>

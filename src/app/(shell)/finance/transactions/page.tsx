@@ -146,29 +146,21 @@ export default function Page() {
         />
       </div>
 
-      <div className="rounded-md border p-4 relative">
-        <div className="mb-4">
-          <div className="flex gap-2 justify-end">
-            <TransactionFormModal
-              onSaved={() => {
-                load();
-                setEditing(null);
-              }}
-              transaction={editing}
-              onClose={() => setEditing(null)}
-            />
-          </div>
-        </div>
-        <TransactionsList
-          items={filteredItems}
-          displayCurrency={displayCurrency}
-          onEdit={(t) => setEditing(t)}
-          onDelete={async (id) => {
-            await deleteTransaction(id);
-            load();
-          }}
-        />
-      </div>
+      <TransactionsList
+        items={filteredItems}
+        displayCurrency={displayCurrency}
+        editing={editing}
+        onSaved={() => {
+          load();
+          setEditing(null);
+        }}
+        onClose={() => setEditing(null)}
+        onEdit={(t) => setEditing(t)}
+        onDelete={async (id) => {
+          await deleteTransaction(id);
+          load();
+        }}
+      />
     </main>
   );
 }
