@@ -2,7 +2,6 @@
 
 import CurrencySelector from "@/components/transactions/CurrencySelector";
 import DateFilter from "@/components/transactions/DateFilter";
-import Summary from "@/components/transactions/Summary";
 import TransactionFormModal from "@/components/transactions/TransactionFormModal";
 import TransactionsList from "@/components/transactions/TransactionsList";
 import type { Currency } from "@ledgerly/schemas";
@@ -11,13 +10,11 @@ import {
   deleteTransaction,
   listTransactions,
 } from "@/lib/transactions";
-import { Eye, EyeOff } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 export default function Page() {
   const [items, setItems] = useState<Transaction[]>([]);
   const [editing, setEditing] = useState<Transaction | null>(null);
-  const [hidden, setHidden] = useState(false);
   const [displayCurrency, setDisplayCurrency] = useState<Currency>("USD");
   const [dateFilter, setDateFilter] = useState<{
     year: number | null;
@@ -38,15 +35,6 @@ export default function Page() {
     load();
   }, [load]);
 
-  // mock conversion rates to USD (1 unit of currency = x USD)
-  const rateToUSD: Record<Currency, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
-
-  function convert(amount: number, from: Currency | undefined, to: Currency) {
-    const f = rateToUSD[from || "USD"] ?? 1;
-    const t = rateToUSD[to] ?? 1;
-    return (amount * f) / t;
-  }
-
   // Filter items based on date filter
   const filteredItems = items.filter(item => {
     if (dateFilter.preset === "all") return true;
@@ -64,48 +52,6 @@ export default function Page() {
     return true;
   });
 
-  const incomes = filteredItems.reduce((acc, it) => {
-    if (it.type !== "income") return acc;
-    // if there's a converted snapshot matching displayCurrency, use it
-    if (
-      it.converted_currency === displayCurrency &&
-      typeof it.converted_amount_cents === "number"
-    ) {
-      return acc + (it.converted_amount_cents || 0) / 100;
-    }
-    return (
-      acc +
-      convert(
-        (it.amount_cents || 0) / 100,
-        it.currency as Currency | undefined,
-        displayCurrency,
-      )
-    );
-  }, 0);
-
-  const expenses = filteredItems.reduce((acc, it) => {
-    if (it.type !== "expense") return acc;
-    if (
-      it.converted_currency === displayCurrency &&
-      typeof it.converted_amount_cents === "number"
-    ) {
-      return acc + (it.converted_amount_cents || 0) / 100;
-    }
-    return (
-      acc +
-      convert(
-        (it.amount_cents || 0) / 100,
-        it.currency as Currency | undefined,
-        displayCurrency,
-      )
-    );
-  }, 0);
-  const balance = incomes - expenses;
-  const fmt = new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: displayCurrency || "USD",
-  });
-
   return (
     <main className="p-6">
       <div className="flex items-center justify-between mb-4">
@@ -115,29 +61,7 @@ export default function Page() {
             value={displayCurrency}
             onChange={(v) => setDisplayCurrency(v)}
           />
-          <button
-            type="button"
-            aria-label="Toggle balance visibility"
-            onClick={() => setHidden((s) => !s)}
-            className="p-1 rounded hover:bg-muted"
-          >
-            {hidden ? (
-              <EyeOff className="w-5 h-5" />
-            ) : (
-              <Eye className="w-5 h-5" />
-            )}
-          </button>
         </div>
-      </div>
-
-      <div className="mb-4">
-        <Summary
-          incomes={incomes}
-          expenses={expenses}
-          balance={balance}
-          hidden={hidden}
-          fmt={(v) => fmt.format(v)}
-        />
       </div>
 
       <div className="mb-6">
@@ -148,41 +72,28 @@ export default function Page() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <section className="lg:col-span-2 space-y-4">
-          <div className="rounded-md border p-4 relative">
-            <div className="mb-4">
-              <div className="flex gap-2 justify-end">
-                <TransactionFormModal
-                  onSaved={() => {
-                    load();
-                    setEditing(null);
-                  }}
-                  transaction={editing}
-                  onClose={() => setEditing(null)}
-                />
-              </div>
-            </div>
-            <TransactionsList
-              items={filteredItems}
-              displayCurrency={displayCurrency}
-              onEdit={(t) => setEditing(t)}
-              onDelete={async (id) => {
-                await deleteTransaction(id);
+      <div className="rounded-md border p-4 relative">
+        <div className="mb-4">
+          <div className="flex gap-2 justify-end">
+            <TransactionFormModal
+              onSaved={() => {
                 load();
+                setEditing(null);
               }}
+              transaction={editing}
+              onClose={() => setEditing(null)}
             />
           </div>
-        </section>
-
-        <aside className="space-y-4">
-          <div className="rounded-md border p-4">
-            <h3 className="text-sm font-medium">Resumo</h3>
-            <div className="text-sm text-muted-foreground">
-              Receitas e despesas recentes
-            </div>
-          </div>
-        </aside>
+        </div>
+        <TransactionsList
+          items={filteredItems}
+          displayCurrency={displayCurrency}
+          onEdit={(t) => setEditing(t)}
+          onDelete={async (id) => {
+            await deleteTransaction(id);
+            load();
+          }}
+        />
       </div>
     </main>
   );
