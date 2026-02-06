@@ -10,7 +10,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { useIsMobile } from "@ledgerly/hooks/use-mobile";
 import {
   Table,
@@ -29,7 +29,6 @@ import {
   DollarSign,
   Edit,
   FileText,
-  Search,
   Tag,
   Trash2,
 } from "lucide-react";
@@ -84,18 +83,12 @@ export default function TransactionsList({ items, displayCurrency, onEdit, onDel
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <div className="relative">
-          <Input
-            placeholder="Search"
-            value={activeQuery}
-            onChange={(e) => setQuery(e.target.value)}
-            className="max-w-sm pl-9"
-          />
-          <Search
-            className="absolute left-2 top-2 size-4"
-            style={{ color: "var(--input-placeholder)" }}
-          />
-        </div>
+        <SearchInput
+          placeholder="Search"
+          value={activeQuery}
+          onChange={(e) => setQuery(e.target.value)}
+          className="max-w-sm"
+        />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

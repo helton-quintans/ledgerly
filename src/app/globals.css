@@ -43,9 +43,10 @@
   /* Interaction tokens */
   --hover: #3f3f46; /* updated hover color */
   --border: #e5e7eb; /* lighter border for cleaner look */
-  --input: #f8f9fa; /* better contrast input background with subtle border */
+  --input: #ffffff; /* input background */
+  --input-border: #9ca3af;
   --input-shadow: 0 1px 0 rgba(16, 24, 40, 0.04);
-  --input-placeholder: #94a3b8;
+  --input-placeholder: #6b7280;
   --ring: #111827; /* focus ring */
 
   /* Charts / tonal helpers */
@@ -85,7 +86,7 @@
 }
 
 .dark {
-  --background: #0c1117;
+  --background: #000000;
   --foreground: #f8fafc;
 
   --card: #0c1117;
@@ -116,7 +117,8 @@
   /* Interaction tokens */
   --hover: #3f3f46;
   --border: #1a1a1a;
-  --input: #0a0a0a;
+  --input: #111827;
+  --input-border: #374151;
   --ring: #6b7280;
 
   /* Charts */
@@ -163,6 +165,7 @@
 
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-input-border: var(--input-border);
   --color-ring: var(--ring);
   --color-hover: var(--hover);
 
@@ -221,9 +224,20 @@
   select,
   .input {
     background-color: var(--color-input);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-input-border) !important;
     box-shadow: var(--input-shadow);
     color: var(--color-foreground);
+  }
+
+  /* Force visible border on all inputs for better contrast */
+  input[type="text"],
+  input[type="search"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  textarea {
+    border: 1px solid var(--color-input-border) !important;
+    background-color: var(--color-input) !important;
   }
 
   input::placeholder,

@@ -12,8 +12,6 @@ import {
   Home,
   LayoutGrid,
   MessageSquareText,
-  Plus,
-  Search,
   Table,
 } from "lucide-react";
 import Link from "next/link";
@@ -21,7 +19,7 @@ import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import {
   Sidebar,
   SidebarContent,
@@ -158,12 +156,11 @@ export function BrandSidebar() {
 
         {!isCollapsed && (
           <div className="px-2 pt-2">
-            <div className="pb-2 relative">
-              <Search className="absolute left-3 top-2.5 size-4 text-foreground" />
-              <Input
+            <div className="pb-2">
+              <SearchInput
                 type="search"
                 placeholder="Search"
-                className="h-8 pl-9"
+                className="h-8"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 aria-label="Search sidebar"
