@@ -3,7 +3,7 @@
 import CurrencySelector from "@/components/transactions/CurrencySelector";
 import Summary from "@/components/transactions/Summary";
 import TransactionFormModal from "@/components/transactions/TransactionFormModal";
-import TransactionsTable from "@/components/transactions/TransactionsTable";
+import TransactionsList from "@/components/transactions/TransactionsList";
 import type { Currency } from "@ledgerly/schemas";
 import {
   type Transaction,
@@ -128,7 +128,7 @@ export default function Page() {
                 />
               </div>
             </div>
-            <TransactionsTable
+            <TransactionsList
               items={items}
               onEdit={(t) => setEditing(t)}
               onDelete={async (id) => {

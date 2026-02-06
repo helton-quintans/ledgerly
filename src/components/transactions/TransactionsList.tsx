@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { useIsMobile } from "@ledgerly/hooks/use-mobile";
 import {
   Table,
   TableBody,
@@ -34,6 +35,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import TransactionCard from "./TransactionCard";
 
 type Props = {
   items: Transaction[];
@@ -41,7 +43,8 @@ type Props = {
   onDelete: (id: string) => void;
 };
 
-export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
+export default function TransactionsList({ items, onEdit, onDelete }: Props) {
+  const isMobile = useIsMobile();
   const { query, setQuery } = useSearch();
   const activeQuery = query ?? "";
   const [page, setPage] = useState(1);
@@ -96,11 +99,11 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
+              {isMobile ? "Card Fields" : "Columns"} <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Columns</DropdownMenuLabel>
+            <DropdownMenuLabel>{isMobile ? "Card Fields" : "Columns"}</DropdownMenuLabel>
             {(
               Object.keys(columnVisibility) as (keyof typeof columnVisibility)[]
             ).map((col) => (
@@ -125,8 +128,26 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
           {filtered.length} results
         </div>
       </div>
-      <div className="overflow-hidden rounded-md border accent-shadow">
-        <Table>
+
+      {/* Mobile Cards Layout */}
+      {isMobile && (
+        <div className="space-y-3">
+          {pageItems.map((t) => (
+            <TransactionCard
+              key={t.id}
+              transaction={t}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              columnVisibility={columnVisibility}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Desktop Table Layout */}
+      {!isMobile && (
+        <div className="overflow-hidden rounded-md border accent-shadow">
+          <Table>
           <TableHeader>
             <TableRow>
               {columnVisibility.amount && (
@@ -236,8 +257,10 @@ export default function TransactionsTable({ items, onEdit, onDelete }: Props) {
             ))}
           </TableBody>
         </Table>
-      </div>
+        </div>
+      )}
 
+      {/* Pagination - compartilhada entre mobile e desktop */}
       <div className="flex items-center justify-center gap-2 mt-2">
         <Button
           size="icon"
