@@ -23,7 +23,11 @@ export default function Page() {
     year: number | null;
     month: number | null;
     preset: "all" | "this-month" | "last-month" | "this-year" | "custom";
-  }>({ year: null, month: null, preset: "all" });
+  }>({ 
+    year: new Date().getFullYear(), 
+    month: null, 
+    preset: "this-year" 
+  });
 
   const load = useCallback(async () => {
     const data = await listTransactions();

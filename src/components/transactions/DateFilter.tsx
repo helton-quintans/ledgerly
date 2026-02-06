@@ -2,13 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { Transaction } from "@/lib/transactions";
+import { useIsMobile } from "@ledgerly/hooks/use-mobile";
+import { Calendar, ChevronDown, Filter } from "lucide-react";
 import { useMemo } from "react";
 
 type DateFilter = {
@@ -29,6 +31,7 @@ const monthNames = [
 ];
 
 export default function DateFilter({ transactions, filter, onChange }: Props) {
+  const isMobile = useIsMobile();
   const now = new Date();
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth();
@@ -98,73 +101,88 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
   };
 
   const handleMonthChange = (month: number) => {
+    // When selecting a month, ensure we have a year selected
+    const targetYear = filter.year || currentYear;
+    
     onChange({
-      ...filter,
+      year: targetYear,
       month: filter.month === month ? null : month, // Toggle selection
       preset: "custom"
     });
   };
 
+  const getFilterDisplayText = () => {
+    switch (filter.preset) {
+      case "all": return "All Transactions";
+      case "this-month": return "This Month";
+      case "last-month": return "Last Month";
+      case "this-year": return "This Year";
+      case "custom":
+        if (filter.year && filter.month !== null) {
+          return `${monthNames[filter.month]} ${filter.year}`;
+        }
+        if (filter.year) {
+          return `Year ${filter.year}`;
+        }
+        return "Custom Filter";
+      default: return "Select Filter";
+    }
+  };
+
   return (
-    <div className="space-y-3 mt-8">
-      <hr />
-      {/* Quick filters */}
-      <div className="flex flex-wrap gap-2">
-        <Button
-          variant={filter.preset === "all" ? "default" : "outline"}
-          size="sm"
-          onClick={() => handlePresetChange("all")}
-        >
-          All
-        </Button>
-        <Button
-          variant={filter.preset === "this-month" ? "default" : "outline"}
-          size="sm"
-          onClick={() => handlePresetChange("this-month")}
-        >
-          This Month
-        </Button>
-        <Button
-          variant={filter.preset === "last-month" ? "default" : "outline"}
-          size="sm"
-          onClick={() => handlePresetChange("last-month")}
-        >
-          Last Month
-        </Button>
-        <Button
-          variant={filter.preset === "this-year" ? "default" : "outline"}
-          size="sm"
-          onClick={() => handlePresetChange("this-year")}
-        >
-          This Year
-        </Button>
-      </div>
+    <div className="space-y-3">
+      {isMobile ? (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2 flex-1">
+                  <Calendar className="h-4 w-4" />
+                  Year: {filter.year || "Select"}
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuLabel>Select Year</DropdownMenuLabel>
+                {availableYears.map(year => (
+                  <DropdownMenuItem 
+                    key={year} 
+                    onClick={() => handleYearChange(year.toString())}
+                  >
+                    {year} {year === currentYear && "(Current)"}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-      {/* Year selector */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">Year:</span>
-          <Select
-            value={filter.year?.toString() || ""}
-            onValueChange={handleYearChange}
-          >
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Select year" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableYears.map(year => (
-                <SelectItem key={year} value={year.toString()}>
-                  {year}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+            {/* Quick filters dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2 flex-1">
+                  <Filter className="h-4 w-4" />
+                  <span className="truncate">{getFilterDisplayText()}</span>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                <DropdownMenuLabel>Quick Filters</DropdownMenuLabel>
+                <DropdownMenuItem onClick={() => handlePresetChange("all")}>
+                  All Transactions
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handlePresetChange("this-month")}>
+                  This Month
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handlePresetChange("last-month")}>
+                  Last Month
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handlePresetChange("this-year")}>
+                  This Year
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
-        {/* Month grid */}
-        {filter.year && (
-          <div className="space-y-1">
-            <span className="text-sm font-medium">Month:</span>
+          {filter.year && (
             <div className="grid grid-cols-4 gap-1">
               {monthNames.map((name, index) => {
                 const count = monthCounts[index] || 0;
@@ -176,7 +194,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                     key={index}
                     variant={isSelected ? "default" : hasTransactions ? "outline" : "ghost"}
                     size="sm"
-                    className={`h-9 px-2 flex flex-col items-center justify-center text-xs ${
+                    className={`h-9 px-1 text-xs flex flex-col items-center justify-center ${
                       !hasTransactions ? "opacity-50" : ""
                     }`}
                     onClick={() => handleMonthChange(index)}
@@ -192,9 +210,90 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                 );
               })}
             </div>
+          )}
+        </div>
+      ) : (
+        // Desktop layout
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <Calendar className="h-4 w-4" />
+                  Year: {filter.year || "Select"}
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuLabel>Select Year</DropdownMenuLabel>
+                {availableYears.map(year => (
+                  <DropdownMenuItem 
+                    key={year} 
+                    onClick={() => handleYearChange(year.toString())}
+                  >
+                    {year} {year === currentYear && "(Current)"}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <Filter className="h-4 w-4" />
+                  {getFilterDisplayText()}
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                <DropdownMenuLabel>Quick Filters</DropdownMenuLabel>
+                <DropdownMenuItem onClick={() => handlePresetChange("all")}>
+                  All Transactions
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handlePresetChange("this-month")}>
+                  This Month
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handlePresetChange("last-month")}>
+                  Last Month
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handlePresetChange("this-year")}>
+                  This Year
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-        )}
-      </div>
+
+          {filter.year && (
+            <div className="flex flex-wrap gap-1">
+              {monthNames.map((name, index) => {
+                const count = monthCounts[index] || 0;
+                const isSelected = filter.month === index;
+                const hasTransactions = count > 0;
+
+                return (
+                  <Button
+                    key={index}
+                    variant={isSelected ? "default" : hasTransactions ? "outline" : "ghost"}
+                    size="sm"
+                    className={`h-8 px-2 text-xs ${
+                      !hasTransactions ? "opacity-50" : ""
+                    }`}
+                    onClick={() => handleMonthChange(index)}
+                    disabled={!hasTransactions}
+                  >
+                    <span className="font-medium">{name}</span>
+                    {hasTransactions && count > 0 && (
+                      <span className="ml-1 text-[10px] opacity-70">
+                        {count}
+                      </span>
+                    )}
+                  </Button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

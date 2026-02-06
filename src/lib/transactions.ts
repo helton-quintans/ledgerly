@@ -51,6 +51,32 @@ let items: Transaction[] = [
     category: "Food",
     description: "Lunch",
   },
+  {
+    id: generateId(),
+    type: "expense",
+    amount_cents: Math.round(100.5 * 100),
+    currency: "USD",
+    converted_amount_cents: Math.round(100.5 * 100 * (rateToUSD.USD ?? 1)),
+    converted_currency: "USD",
+    exchange_rate: rateToUSD.USD,
+    rate_timestamp: new Date("2025-12-15").toISOString(),
+    date: new Date("2025-12-15").toISOString(),
+    category: "Food",
+    description: "Lunch",
+  },
+   {
+    id: generateId(),
+    type: "expense",
+    amount_cents: Math.round(100.5 * 100),
+    currency: "USD",
+    converted_amount_cents: Math.round(100.5 * 100 * (rateToUSD.USD ?? 1)),
+    converted_currency: "USD",
+    exchange_rate: rateToUSD.USD,
+    rate_timestamp: new Date("2025-12-15").toISOString(),
+    date: new Date("2026-12-15").toISOString(),
+    category: "Food",
+    description: "Lunch",
+  },
 ];
 
 export async function listTransactions(): Promise<Transaction[]> {

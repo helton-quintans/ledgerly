@@ -177,7 +177,7 @@ export default function TransactionFormModal({
         </DialogTitle>
       </DialogHeader>
 
-      <div className="grid gap-3 py-2">
+      <div className="grid gap-3 py-4">
         <div className="space-y-2">
           <Label htmlFor="currency" className="flex items-center gap-2">
             <Coins className="size-4" />
