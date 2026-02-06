@@ -49,6 +49,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import TransactionCard from "./TransactionCard";
 import TransactionFormModal from "./TransactionFormModal";
+import EmptyState from "./EmptyState";
 
 // Category icons mapping
 const getCategoryIcon = (category: string) => {
@@ -196,8 +197,21 @@ export default function TransactionsList({
         </div>
       </div>
 
+      {items.length === 0 && (
+        <EmptyState
+          type="no-transactions"
+          onSaved={onSaved}
+          onClose={onClose}
+          editing={editing}
+        />
+      )}
+
+      {items.length > 0 && filtered.length === 0 && (
+        <EmptyState type="no-results" />
+      )}
+
       {/* Mobile Cards Layout */}
-      {isMobile && (
+      {isMobile && filtered.length > 0 && (
         <div className="space-y-3">
           {pageItems.map((t) => (
             <TransactionCard
@@ -213,7 +227,7 @@ export default function TransactionsList({
       )}
 
       {/* Desktop Table Layout */}
-      {!isMobile && (
+      {!isMobile && filtered.length > 0 && (
         <div className="overflow-hidden rounded-md border accent-shadow">
           <Table>
             <TableHeader>
@@ -336,36 +350,38 @@ export default function TransactionsList({
       )}
 
       {/* Pagination - compartilhada entre mobile e desktop */}
-      <div className="flex items-center justify-center gap-2 mt-2">
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-          aria-label="Prev"
-        >
-          ◀
-        </Button>
-        {Array.from({ length: totalPages }).map((_, i) => {
-          const pageNumber = i + 1;
-          return (
-            <Button
-              key={`page-${pageNumber}`}
-              variant={page === pageNumber ? "default" : "ghost"}
-              onClick={() => setPage(pageNumber)}
-            >
-              {pageNumber}
-            </Button>
-          );
-        })}
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-          aria-label="Next"
-        >
-          ▶
-        </Button>
-      </div>
+      {filtered.length > 0 && (
+        <div className="flex items-center justify-center gap-2 mt-2">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            aria-label="Prev"
+          >
+            ◀
+          </Button>
+          {Array.from({ length: totalPages }).map((_, i) => {
+            const pageNumber = i + 1;
+            return (
+              <Button
+                key={`page-${pageNumber}`}
+                variant={page === pageNumber ? "default" : "ghost"}
+                onClick={() => setPage(pageNumber)}
+              >
+                {pageNumber}
+              </Button>
+            );
+          })}
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            aria-label="Next"
+          >
+            ▶
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
