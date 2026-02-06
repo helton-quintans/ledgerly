@@ -102,7 +102,7 @@ export function BrandSidebar() {
     {
       title: "Health & Wellbeing",
       href: "/health-wellbeing",
-      icon: <Heart className="size-4" />,
+      icon: <Heart className="size-4 shrink-0" />,
       children: [
         { title: "Overview", href: "/health-wellbeing/overview" },
         { title: "Habits", href: "/health-wellbeing/habits" },

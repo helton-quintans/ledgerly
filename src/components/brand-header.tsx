@@ -29,7 +29,7 @@ export function BrandHeader() {
   const { query, setQuery } = useSearch();
 
   return (
-    <header className="fixed z-50 w-full border-border border-b bg-background">
+    <header className="fixed z-50 w-full border-b bg-(--color-header) border-(--color-header-border)">
       <div className="flex h-16 items-center justify-between px-2">
         <div className="flex items-center space-x-4">
           <Button

@@ -26,7 +26,7 @@
   --muted-foreground-small: #52565f; /* stronger for small text/labels */
 
   /* Accent palette (choose one for primary accents) */
-  --accent-1: #3f3f46; /* darker neutral gray */
+  --accent-1: #EBEBEB; /* darker neutral gray */
   --accent-2: #7c3aed; /* violet */
   --accent-3: #f97316; /* orange */
   --accent-4: #06b6d4; /* cyan */
@@ -41,9 +41,10 @@
   --warning: #f59e0b;
 
   /* Interaction tokens */
-  --hover: #efefef; /* shared hover/tile color (same in both themes) */
-  --border: #c1c5cc; /* stronger border for better contrast */
-  --input: #f3f4f6; /* light gray input background for better contrast on light mode */
+  --hover: #3f3f46; /* updated hover color */
+  --hover-icon: var(--foreground); /* icon color on hover - maintains dark color */
+  --border: #e5e7eb; /* lighter border for cleaner look */
+  --input: #f8f9fa; /* better contrast input background with subtle border */
   --input-shadow: 0 1px 0 rgba(16, 24, 40, 0.04);
   --input-placeholder: #94a3b8;
   --ring: #111827; /* focus ring */
@@ -65,6 +66,11 @@
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
 
+  /* Header (light) - mesma cor da sidebar */
+  --header: #ffffff;
+  --header-foreground: var(--foreground);
+  --header-border: var(--border);
+
   --radius: 0.5rem;
 }
 
@@ -80,12 +86,12 @@
 }
 
 .dark {
-  --background: #222222;
+  --background: #0c1117;
   --foreground: #f8fafc;
 
-  --card: #16181b;
+  --card: #0c1117;
   --card-foreground: var(--foreground);
-  --popover: #16181b;
+  --popover: #0c1117;
   --popover-foreground: var(--foreground);
 
   /* In dark, primary becomes a light neutral for reversed controls */
@@ -94,7 +100,7 @@
   --secondary: #94a3b8;
   --secondary-foreground: #0f1724;
 
-  --muted: #0f1724; /* muted surface in dark */
+  --muted: #0c1117; /* muted surface in dark - matching main background */
   --muted-foreground: #9ca3af;
   --muted-foreground-small: #c7cbd1;
 
@@ -110,8 +116,9 @@
 
   /* Interaction tokens */
   --hover: #efefef;
-  --border: #111827;
-  --input: #0b1220;
+  --hover-icon: #0f1724; /* dark icon color on hover for contrast */
+  --border: #1a1a1a;
+  --input: #0a0a0a;
   --ring: #6b7280;
 
   /* Charts */
@@ -121,15 +128,20 @@
   --chart-4: #9ca3af;
   --chart-5: #c7d2fe;
 
-  /* Sidebar: lighter gray than page background */
-  --sidebar: #2b2b2b;
+  /* Sidebar: mesma cor do header (#0A0A0A) */
+  --sidebar: #0a0a0a;
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: #e5e7eb;
   --sidebar-primary-foreground: #0f1724;
   --sidebar-accent: var(--accent);
   --sidebar-accent-foreground: var(--accent-foreground);
-  --sidebar-border: #111827;
+  --sidebar-border: #1a1a1a;
   --sidebar-ring: #6b7280;
+
+  /* Header (dark) - mesma cor da sidebar */
+  --header: #0a0a0a;
+  --header-foreground: var(--foreground);
+  --header-border: #1a1a1a;
 }
 
 @theme inline {
@@ -154,6 +166,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-hover: var(--hover);
+  --color-hover-icon: var(--hover-icon);
 
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
@@ -172,6 +186,10 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-header: var(--header);
+  --color-header-foreground: var(--header-foreground);
+  --color-header-border: var(--header-border);
 
   --font-sans: var(--font-sans);
   --font-serif: var(--font-serif);
@@ -214,6 +232,30 @@
   input::placeholder,
   textarea::placeholder {
     color: var(--input-placeholder);
+  }
+
+  /* Icon hover colors for all interactive elements */
+  button:hover svg,
+  [role="button"]:hover svg,
+  a:hover svg,
+  .hover\:bg-accent:hover svg,
+  /* Sidebar specific selectors */
+  [data-sidebar="menu-button"]:hover svg,
+  .hover\:bg-sidebar-accent:hover svg,
+  [data-slot="sidebar-menu-button"]:hover svg {
+    color: var(--color-hover-icon) !important;
+  }
+
+  /* Ensure sidebar components maintain proper color on hover */
+  [data-sidebar] button:hover svg,
+  [data-sidebar] a:hover svg,
+  [data-sidebar] [data-sidebar="menu-button"]:hover svg {
+    color: var(--color-hover-icon) !important;
+  }
+
+  /* Special handling for submenu buttons */
+  [data-sidebar] [data-sidebar="menu-sub-button"]:hover svg {
+    color: var(--color-hover-icon) !important;
   }
 }
 
