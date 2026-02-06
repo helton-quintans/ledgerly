@@ -130,6 +130,7 @@ export default function Page() {
             </div>
             <TransactionsList
               items={items}
+              displayCurrency={displayCurrency}
               onEdit={(t) => setEditing(t)}
               onDelete={async (id) => {
                 await deleteTransaction(id);

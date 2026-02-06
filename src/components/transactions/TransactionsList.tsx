@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/table";
 import type { Currency } from "@ledgerly/schemas";
 import type { Transaction } from "@/lib/transactions";
-import { formatCurrencyFromCents } from "@ledgerly/utils";
+import { formatCurrencyFromCents, formatDateByCurrency } from "@ledgerly/utils";
 import {
   Calendar,
   ChevronDown,
@@ -39,11 +39,12 @@ import TransactionCard from "./TransactionCard";
 
 type Props = {
   items: Transaction[];
+  displayCurrency: Currency;
   onEdit: (t: Transaction) => void;
   onDelete: (id: string) => void;
 };
 
-export default function TransactionsList({ items, onEdit, onDelete }: Props) {
+export default function TransactionsList({ items, displayCurrency, onEdit, onDelete }: Props) {
   const isMobile = useIsMobile();
   const { query, setQuery } = useSearch();
   const activeQuery = query ?? "";
@@ -136,6 +137,7 @@ export default function TransactionsList({ items, onEdit, onDelete }: Props) {
             <TransactionCard
               key={t.id}
               transaction={t}
+              displayCurrency={displayCurrency}
               onEdit={onEdit}
               onDelete={onDelete}
               columnVisibility={columnVisibility}
@@ -213,7 +215,7 @@ export default function TransactionsList({ items, onEdit, onDelete }: Props) {
                 {columnVisibility.label && <TableCell>{t.category}</TableCell>}
 
                 {columnVisibility.date && (
-                  <TableCell>{new Date(t.date).toLocaleString()}</TableCell>
+                  <TableCell>{formatDateByCurrency(new Date(t.date), displayCurrency)}</TableCell>
                 )}
 
                 {columnVisibility.actions && (

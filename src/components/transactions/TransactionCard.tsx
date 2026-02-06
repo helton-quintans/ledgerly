@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import ConfirmModal from "@/components/ui/confirm-modal";
 import type { Currency } from "@ledgerly/schemas";
 import type { Transaction } from "@/lib/transactions";
-import { formatCurrencyFromCents } from "@ledgerly/utils";
+import { formatCurrencyFromCents, formatDateByCurrency } from "@ledgerly/utils";
 import {
   Calendar,
   Edit,
@@ -16,6 +16,7 @@ import { toast } from "sonner";
 
 type TransactionCardProps = {
   transaction: Transaction;
+  displayCurrency: Currency;
   onEdit: (t: Transaction) => void;
   onDelete: (id: string) => void;
   columnVisibility: Record<string, boolean>;
@@ -23,6 +24,7 @@ type TransactionCardProps = {
 
 export default function TransactionCard({
   transaction: t,
+  displayCurrency,
   onEdit,
   onDelete,
   columnVisibility,
@@ -98,7 +100,7 @@ export default function TransactionCard({
         {columnVisibility.date && (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="size-4" />
-            <span>{new Date(t.date).toLocaleString()}</span>
+            <span>{formatDateByCurrency(new Date(t.date), displayCurrency)}</span>
           </div>
         )}
       </div>
