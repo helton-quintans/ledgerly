@@ -315,8 +315,9 @@
   .dark [data-radix-collection-item]:hover,
   .dark [data-state="checked"]:hover,
   .dark [data-highlighted],
-  .dark .hover\:bg-accent:hover {
-    color: #0f1724 !important;
+  .dark .hover\:bg-accent:hover,
+  .dark [data-slot="dropdown-menu-label"]:hover {
+   color: var(--foreground) !important;
   }
 }
 

@@ -217,7 +217,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
         </div>
       ) : (
         // Desktop layout
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between py-6">
           <div className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

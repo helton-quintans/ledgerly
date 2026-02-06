@@ -3,8 +3,8 @@
 import CurrencySelector from "@/components/transactions/CurrencySelector";
 import DateFilter from "@/components/transactions/DateFilter";
 import Summary from "@/components/transactions/Summary";
-import TransactionFormModal from "@/components/transactions/TransactionFormModal";
 import TransactionsList from "@/components/transactions/TransactionsList";
+import { Separator } from "@/components/ui/separator";
 import type { Currency } from "@ledgerly/schemas";
 import {
   type Transaction,
@@ -108,7 +108,7 @@ export default function Page() {
 
   return (
     <main className="p-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Transactions</h1>
         <div className="flex items-center justify-end gap-2">
           <CurrencySelector
@@ -138,6 +138,9 @@ export default function Page() {
           fmt={(v) => fmt.format(v)}
         />
       </div>
+      
+      <Separator className="mb-6" />
+      
       <div className="mb-6">
         <DateFilter
           transactions={items}
@@ -145,6 +148,8 @@ export default function Page() {
           onChange={setDateFilter}
         />
       </div>
+
+      <Separator className="mb-6" />
 
       <TransactionsList
         items={filteredItems}
