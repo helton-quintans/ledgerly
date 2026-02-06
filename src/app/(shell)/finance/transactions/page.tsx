@@ -1,6 +1,7 @@
 "use client";
 
 import CurrencySelector from "@/components/transactions/CurrencySelector";
+import DateFilter from "@/components/transactions/DateFilter";
 import Summary from "@/components/transactions/Summary";
 import TransactionFormModal from "@/components/transactions/TransactionFormModal";
 import TransactionsList from "@/components/transactions/TransactionsList";
@@ -18,6 +19,11 @@ export default function Page() {
   const [editing, setEditing] = useState<Transaction | null>(null);
   const [hidden, setHidden] = useState(false);
   const [displayCurrency, setDisplayCurrency] = useState<Currency>("USD");
+  const [dateFilter, setDateFilter] = useState<{
+    year: number | null;
+    month: number | null;
+    preset: "all" | "this-month" | "last-month" | "this-year" | "custom";
+  }>({ year: null, month: null, preset: "all" });
 
   const load = useCallback(async () => {
     const data = await listTransactions();
@@ -37,7 +43,24 @@ export default function Page() {
     return (amount * f) / t;
   }
 
-  const incomes = items.reduce((acc, it) => {
+  // Filter items based on date filter
+  const filteredItems = items.filter(item => {
+    if (dateFilter.preset === "all") return true;
+    
+    const itemDate = new Date(item.date);
+    const itemYear = itemDate.getFullYear();
+    const itemMonth = itemDate.getMonth();
+    
+    // Year filter
+    if (dateFilter.year && itemYear !== dateFilter.year) return false;
+    
+    // Month filter
+    if (dateFilter.month !== null && itemMonth !== dateFilter.month) return false;
+    
+    return true;
+  });
+
+  const incomes = filteredItems.reduce((acc, it) => {
     if (it.type !== "income") return acc;
     // if there's a converted snapshot matching displayCurrency, use it
     if (
@@ -56,7 +79,7 @@ export default function Page() {
     );
   }, 0);
 
-  const expenses = items.reduce((acc, it) => {
+  const expenses = filteredItems.reduce((acc, it) => {
     if (it.type !== "expense") return acc;
     if (
       it.converted_currency === displayCurrency &&
@@ -113,6 +136,14 @@ export default function Page() {
         />
       </div>
 
+      <div className="mb-6">
+        <DateFilter
+          transactions={items}
+          filter={dateFilter}
+          onChange={setDateFilter}
+        />
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <section className="lg:col-span-2 space-y-4">
           <div className="rounded-md border p-4 relative">
@@ -129,7 +160,7 @@ export default function Page() {
               </div>
             </div>
             <TransactionsList
-              items={items}
+              items={filteredItems}
               displayCurrency={displayCurrency}
               onEdit={(t) => setEditing(t)}
               onDelete={async (id) => {
