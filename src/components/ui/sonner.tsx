@@ -13,9 +13,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
       position="top-center"
       className="toaster group"
       toastOptions={{
-          classNames: {
-              description: "!text-popover-foreground",
-          },
+        classNames: {
+          description: "!text-popover-foreground",
+          success: "!bg-success !text-success-foreground !border-success",
+          error: "!bg-destructive !text-destructive-foreground !border-destructive",
+        },
       }}
       style={
         {
