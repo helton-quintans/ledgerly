@@ -36,7 +36,7 @@ export default function TransactionCard({
         {columnVisibility.amount && (
           <div
             className={`text-lg font-semibold ${
-              t.type === "income" ? "text-green-600" : "text-red-600"
+              t.type === "income" ? "text-success" : "text-destructive"
             }`}
           >
             {t.type === "income" ? "+" : "-"}

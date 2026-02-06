@@ -276,7 +276,7 @@ export default function TransactionFormModal({
               );
             }}
           />
-          <div className="h-5 mt-1 text-sm text-red-400">
+          <div className="h-5 mt-1 text-sm text-destructive">
             {errors.amount?.message as string}
           </div>
         </div>
@@ -291,7 +291,7 @@ export default function TransactionFormModal({
             placeholder="Description"
             {...register("description")}
           />
-          <div className="h-5 mt-1 text-sm text-red-400">
+          <div className="h-5 mt-1 text-sm text-destructive">
             {errors.description?.message as string}
           </div>
         </div>
@@ -306,7 +306,7 @@ export default function TransactionFormModal({
             onChange={(v) => setValue("category", v)}
             className="w-full justify-center"
           />
-          <div className="h-5 mt-1 text-sm text-red-400">
+          <div className="h-5 mt-1 text-sm text-destructive">
             {errors.category?.message as string}
           </div>
         </div>
@@ -319,7 +319,7 @@ export default function TransactionFormModal({
           <div className="flex gap-2">
             <button
             type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "income" ? "bg-green-200 text-green-800 border-green-300" : "text-green-600 border-neutral-200"}`}
+            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "income" ? "bg-success/20 text-success border-success/30" : "text-success border-neutral-200"}`}
             onClick={() => setValue("type", "income")}
           >
             <ArrowUp className="size-4" />
@@ -328,7 +328,7 @@ export default function TransactionFormModal({
 
           <button
             type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "expense" ? "bg-red-200 text-red-800 border-red-300" : "text-red-400 border-neutral-200"}`}
+            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "expense" ? "bg-destructive/20 text-destructive border-destructive/30" : "text-destructive border-neutral-200"}`}
             onClick={() => setValue("type", "expense")}
           >
             <ArrowDown className="size-4" />

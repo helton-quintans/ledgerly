@@ -37,22 +37,22 @@ export default function Summary({
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded-md p-3 bg-muted flex items-center justify-between">
             <div className="min-w-0">
-              <div className="text-xs text-green-500 font-medium">In</div>
+              <div className="text-xs text-success font-medium">In</div>
               <div className="text-lg font-semibold mt-0.5 truncate">
                 {hidden ? "......" : fmt(incomes)}
               </div>
             </div>
-            <ArrowUp className="size-4 text-green-500 shrink-0 ml-1" />
+            <ArrowUp className="size-4 text-success shrink-0 ml-1" />
           </div>
 
           <div className="rounded-md p-3 bg-muted flex items-center justify-between">
             <div className="min-w-0">
-              <div className="text-xs text-red-500 font-medium">Out</div>
+              <div className="text-xs text-destructive font-medium">Out</div>
               <div className="text-lg font-semibold mt-0.5 truncate">
                 {hidden ? "......" : fmt(expenses)}
               </div>
             </div>
-            <ArrowDown className="size-4 text-red-500 shrink-0 ml-1" />
+            <ArrowDown className="size-4 text-destructive shrink-0 ml-1" />
           </div>
         </div>
       </div>
@@ -72,22 +72,22 @@ export default function Summary({
 
         <div className="w-64 rounded-md p-4 bg-muted flex items-center justify-between">
           <div>
-            <div className="text-sm text-green-500">In</div>
+            <div className="text-sm text-success">In</div>
             <div className="text-xl font-semibold mt-1">
               {hidden ? "......" : fmt(incomes)}
             </div>
           </div>
-          <ArrowUp className="size-5 text-green-500" />
+          <ArrowUp className="size-5 text-success" />
         </div>
 
         <div className="w-64 rounded-md p-4 bg-muted flex items-center justify-between">
           <div>
-            <div className="text-sm text-red-500">Out</div>
+            <div className="text-sm text-destructive">Out</div>
             <div className="text-xl font-semibold mt-1">
               {hidden ? "......" : fmt(expenses)}
             </div>
           </div>
-          <ArrowDown className="size-5 text-red-500" />
+          <ArrowDown className="size-5 text-destructive" />
         </div>
       </div>
     </div>

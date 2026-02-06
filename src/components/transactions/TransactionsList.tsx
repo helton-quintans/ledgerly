@@ -31,10 +31,46 @@ import {
   FileText,
   Tag,
   Trash2,
+  UtensilsCrossed,
+  Car,
+  ShoppingBag,
+  Film,
+  Zap,
+  Heart,
+  GraduationCap,
+  Plane,
+  ShoppingCart,
+  Briefcase,
+  Laptop,
+  TrendingUp,
+  Gift,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import TransactionCard from "./TransactionCard";
+
+// Category icons mapping
+const getCategoryIcon = (category: string) => {
+  const categoryMap: Record<string, React.ReactNode> = {
+    "Food & Dining": <UtensilsCrossed className="size-4" />,
+    "Food": <UtensilsCrossed className="size-4" />,
+    "Transportation": <Car className="size-4" />,
+    "Shopping": <ShoppingBag className="size-4" />,
+    "Entertainment": <Film className="size-4" />,
+    "Bills & Utilities": <Zap className="size-4" />,
+    "Healthcare": <Heart className="size-4" />,
+    "Education": <GraduationCap className="size-4" />,
+    "Travel": <Plane className="size-4" />,
+    "Groceries": <ShoppingCart className="size-4" />,
+    "Salary": <Briefcase className="size-4" />,
+    "Freelance": <Laptop className="size-4" />,
+    "Investment": <TrendingUp className="size-4" />,
+    "Gift": <Gift className="size-4" />,
+    "Other": <FileText className="size-4" />,
+  };
+  
+  return categoryMap[category] || <FileText className="size-4" />;
+};
 
 type Props = {
   items: Transaction[];
@@ -165,7 +201,7 @@ export default function TransactionsList({ items, displayCurrency, onEdit, onDel
                 <TableHead>
                   <div className="flex items-center gap-2">
                     <Tag className="size-4" />
-                    <span>Label</span>
+                    <span>Category</span>
                   </div>
                 </TableHead>
               )}
@@ -191,7 +227,7 @@ export default function TransactionsList({ items, displayCurrency, onEdit, onDel
               <TableRow key={t.id}>
                 {columnVisibility.amount && (
                   <TableCell
-                    className={`${t.type === "income" ? "text-green-600/80" : "text-red-600/80"} text-left`}
+                    className={`${t.type === "income" ? "text-success/80" : "text-destructive/80"} text-left`}
                   >
                     {t.type === "income" ? "+" : "-"}
                     {formatCurrencyFromCents(
@@ -205,7 +241,14 @@ export default function TransactionsList({ items, displayCurrency, onEdit, onDel
                   <TableCell>{t.description || t.category}</TableCell>
                 )}
 
-                {columnVisibility.label && <TableCell>{t.category}</TableCell>}
+                {columnVisibility.label && (
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {getCategoryIcon(t.category)}
+                      <span>{t.category}</span>
+                    </div>
+                  </TableCell>
+                )}
 
                 {columnVisibility.date && (
                   <TableCell>{formatDateByCurrency(new Date(t.date), displayCurrency)}</TableCell>
