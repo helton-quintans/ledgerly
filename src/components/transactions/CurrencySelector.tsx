@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 
 import type { Currency } from "@ledgerly/schemas";
 
@@ -28,9 +29,10 @@ export default function CurrencySelector({ value, onChange, className }: Props) 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className={className}>
-          <span className="mr-2 text-lg leading-none">{current.flag}</span>
+        <Button variant="outline" size="sm" className={`gap-2 ${className}`}>
+          <span className="text-lg leading-none">{current.flag}</span>
           {current.label}
+          <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

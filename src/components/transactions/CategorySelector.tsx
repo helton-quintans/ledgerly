@@ -22,6 +22,7 @@ import {
   TrendingUp,
   Gift,
   FileText,
+  ChevronDown,
 } from "lucide-react";
 
 type Props = {
@@ -53,9 +54,10 @@ export default function CategorySelector({ value, onChange, className }: Props) 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className={className}>
-          <span className="mr-2">{current.icon}</span>
+        <Button variant="outline" size="sm" className={`gap-2 ${className}`}>
+          {current.icon}
           {current.label}
+          <ChevronDown className="size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

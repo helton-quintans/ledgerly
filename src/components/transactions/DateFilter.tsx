@@ -183,7 +183,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
           </div>
 
           {filter.year && (
-            <div className="grid grid-cols-4 gap-1">
+            <div className="flex gap-1 overflow-x-auto pb-1">
               {monthNames.map((name, index) => {
                 const count = monthCounts[index] || 0;
                 const isSelected = filter.month === index;
@@ -194,7 +194,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                     key={index}
                     variant={isSelected ? "default" : hasTransactions ? "outline" : "ghost"}
                     size="sm"
-                    className={`h-9 px-1 text-xs flex flex-col items-center justify-center ${
+                    className={`h-7 px-2 text-xs shrink-0 min-w-[44px] ${
                       !hasTransactions ? "opacity-50" : ""
                     }`}
                     onClick={() => handleMonthChange(index)}
@@ -202,7 +202,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                   >
                     <span className="font-medium">{name}</span>
                     {hasTransactions && count > 0 && (
-                      <span className="text-[10px] opacity-70 -mt-0.5">
+                      <span className="ml-1 text-[10px] opacity-70">
                         {count}
                       </span>
                     )}

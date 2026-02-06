@@ -304,7 +304,7 @@ export default function TransactionFormModal({
           <CategorySelector
             value={watch("category") || "Other"}
             onChange={(v) => setValue("category", v)}
-            className="w-full justify-start"
+            className="w-full justify-center"
           />
           <div className="h-5 mt-1 text-sm text-red-400">
             {errors.category?.message as string}
