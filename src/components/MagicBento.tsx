@@ -196,7 +196,7 @@ const ParticleCard: React.FC<{
         });
       }, index * 100);
 
-      timeoutsRef.current.push(timeoutId);
+      timeoutsRef.current.push(Number(timeoutId));
     });
   }, [initializeParticles]);
 
