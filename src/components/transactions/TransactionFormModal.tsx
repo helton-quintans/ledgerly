@@ -1,5 +1,6 @@
 "use client";
 
+import CategorySelector from "@/components/transactions/CategorySelector";
 import CurrencySelector from "@/components/transactions/CurrencySelector";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,10 +12,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@ledgerly/hooks/use-mobile";
 import { createTransaction } from "@/lib/transactions";
-import { ArrowDown, ArrowUp, FileText, Plus, Tag, XCircle } from "lucide-react";
+import { ArrowDown, ArrowUp, Coins, DollarSign, FileText, Plus, Tag, TrendingUp, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -32,15 +34,29 @@ type Props = {
   onSaved?: () => void;
   transaction?: Transaction | null;
   onClose?: () => void;
+  className?: string;
+  open?: boolean;
+  trigger?: React.ReactNode;
 };
 
 export default function TransactionFormModal({
   onSaved,
   transaction = null,
   onClose,
+  className,
+  open: externalOpen,
+  trigger: externalTrigger,
 }: Props) {
   const isMobile = useIsMobile();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  
+  // Use external open state if provided, otherwise use internal state
+  const open = externalOpen !== undefined ? externalOpen : internalOpen;
+  const setOpen = externalOpen !== undefined 
+    ? (value: boolean) => {
+        if (!value) onClose?.();
+      }
+    : setInternalOpen;
 
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema) as any,
@@ -48,7 +64,7 @@ export default function TransactionFormModal({
       description: "",
       // `amount` is stored as integer cents by the schema preprocess — keep input empty initially
       amount: undefined as unknown as number,
-      category: "",
+      category: "Other",
       type: "income",
       currency: "USD" as Currency,
       date: undefined,
@@ -114,9 +130,12 @@ export default function TransactionFormModal({
       }
 
       reset();
-      setOpen(false);
+      if (externalOpen !== undefined) {
+        onClose?.();
+      } else {
+        setInternalOpen(false);
+      }
       onSaved?.();
-      onClose?.();
     } catch (err) {
       console.error(err);
       toast.error(
@@ -130,12 +149,18 @@ export default function TransactionFormModal({
     }
   }
 
-  const trigger = (
-    <Button onClick={() => setOpen(true)} variant="default">
+  const defaultTrigger = (
+    <Button 
+      onClick={() => setOpen(true)} 
+      variant="default" 
+      className={`shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 font-medium ${className}`}
+    >
       <Plus className="size-4" />
       New transaction
     </Button>
   );
+
+  const trigger = externalTrigger || defaultTrigger;
 
   const currencySymbolMap: Record<Currency, string> = {
     USD: "$",
@@ -175,15 +200,24 @@ export default function TransactionFormModal({
         </DialogTitle>
       </DialogHeader>
 
-      <div className="flex justify-center items-center gap-2 my-2">
-        <CurrencySelector
-          value={watchedCurrency}
-          onChange={(v) => setValue("currency", v)}
-        />
-      </div>
+      <div className="grid gap-3 py-4">
+        <div className="space-y-2">
+          <Label htmlFor="currency" className="flex items-center gap-2">
+            <Coins className="size-4" />
+            Currency
+          </Label>
+          <CurrencySelector
+            value={watchedCurrency}
+            onChange={(v) => setValue("currency", v)}
+            className="w-full justify-center"
+          />
+        </div>
 
-      <div className="grid gap-3 py-2">
-        <div className="relative">
+        <div className="relative space-y-2">
+          <Label htmlFor="amount" className="flex items-center gap-2">
+            <DollarSign className="size-4" />
+            Amount
+          </Label>
           <Controller
             name="amount"
             control={control}
@@ -206,6 +240,7 @@ export default function TransactionFormModal({
                   decimalScale={2}
                   allowNegative={false}
                   prefix={currencySymbolMap[watchedCurrency] || ""}
+                  inputMode="decimal"
                   // numeric-proper changes (no suffix) provide floatValue
                   onValueChange={(values) => {
                     if (values.floatValue != null) {
@@ -259,53 +294,55 @@ export default function TransactionFormModal({
                       }
                     }
                   }}
-                  className="pl-9"
+                  id="amount"
                 />
               );
             }}
           />
-          <div className="absolute left-2 top-2 text-neutral-500">
-            {currencySymbolMap[watchedCurrency] || "$"}
-          </div>
-          <div className="h-5 mt-1 text-sm text-red-400">
+          <div className="h-5 mt-1 text-sm text-destructive">
             {errors.amount?.message as string}
           </div>
         </div>
 
-        <div className="relative">
+        <div className="relative space-y-2">
+          <Label htmlFor="description" className="flex items-center gap-2">
+            <FileText className="size-4" />
+            Description
+          </Label>
           <Input
+            id="description"
             placeholder="Description"
             {...register("description")}
-            className="pl-9"
           />
-          <FileText
-            className="absolute left-2 top-2 size-4"
-            style={{ color: "var(--input-placeholder)" }}
-          />
-          <div className="h-5 mt-1 text-sm text-red-400">
+          <div className="h-5 mt-1 text-sm text-destructive">
             {errors.description?.message as string}
           </div>
         </div>
 
-        <div className="relative">
-          <Input
-            placeholder="Category / Label"
-            {...register("category")}
-            className="pl-9"
+        <div className="space-y-2">
+          <Label htmlFor="category" className="flex items-center gap-2">
+            <Tag className="size-4" />
+            Category
+          </Label>
+          <CategorySelector
+            value={watch("category") || "Other"}
+            onChange={(v) => setValue("category", v)}
+            className="w-full justify-center"
           />
-          <Tag
-            className="absolute left-2 top-2 size-4"
-            style={{ color: "var(--input-placeholder)" }}
-          />
-          <div className="h-5 mt-1 text-sm text-red-400">
+          <div className="h-5 mt-1 text-sm text-destructive">
             {errors.category?.message as string}
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <button
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2">
+            <TrendingUp className="size-4" />
+            Type
+          </Label>
+          <div className="flex gap-2">
+            <button
             type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "income" ? "bg-green-200 text-green-800 border-green-300" : "text-green-600 border-neutral-200"}`}
+            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "income" ? "bg-success/20 text-success border-success/30" : "text-success border-neutral-200"}`}
             onClick={() => setValue("type", "income")}
           >
             <ArrowUp className="size-4" />
@@ -314,30 +351,33 @@ export default function TransactionFormModal({
 
           <button
             type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "expense" ? "bg-red-200 text-red-800 border-red-300" : "text-red-400 border-neutral-200"}`}
+            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "expense" ? "bg-destructive/20 text-destructive border-destructive/30" : "text-destructive border-neutral-200"}`}
             onClick={() => setValue("type", "expense")}
           >
             <ArrowDown className="size-4" />
             <span>Out</span>
           </button>
+          </div>
         </div>
       </div>
 
-      <DialogFooter className="flex flex-col gap-2 sm:flex-col">
-        <Button size="lg" className="w-full" onClick={handleSubmit(onSubmit)}>
-          Save
-        </Button>
+      <DialogFooter className="mt-6 flex flex-row justify-end gap-2 sm:justify-end">
         <Button
           variant="outline"
-          size="lg"
-          className="w-full"
           onClick={() => {
-            setOpen(false);
             reset();
-            onClose?.();
+            if (externalOpen !== undefined) {
+              onClose?.();
+            } else {
+              setInternalOpen(false);
+              onClose?.();
+            }
           }}
         >
           Cancel
+        </Button>
+        <Button onClick={handleSubmit(onSubmit)}>
+          Save
         </Button>
       </DialogFooter>
     </div>
@@ -352,8 +392,8 @@ export default function TransactionFormModal({
           if (!val) onClose?.();
         }}
       >
-        <SheetTrigger asChild>{trigger}</SheetTrigger>
-        <SheetContent side="bottom" className="p-4">
+        {externalOpen === undefined && <SheetTrigger asChild>{trigger}</SheetTrigger>}
+        <SheetContent side="bottom" className="p-8">
           {content}
         </SheetContent>
       </Sheet>
@@ -368,7 +408,7 @@ export default function TransactionFormModal({
         if (!val) onClose?.();
       }}
     >
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      {externalOpen === undefined && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent>{content}</DialogContent>
     </Dialog>
   );
