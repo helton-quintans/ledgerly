@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTransactions } from "@/contexts/TransactionsContext";
+import { SplitText } from "@ledgerly/ui";
 import { TrendingUp, TrendingDown, Wallet, ArrowRight } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -29,7 +30,21 @@ export default function Home() {
   return (
     <main className="p-6 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Hello {firstName}! 👋</h1>
+        <SplitText
+          text={`Hello ${firstName}!`}
+          className="text-3xl font-bold"
+          delay={200}
+          duration={0.4}
+          ease="power3.out"
+          splitType="chars"
+          from={{ opacity: 0, y: 40, rotation: 10 }}
+          to={{ opacity: 1, y: 0, rotation: 0 }}
+          threshold={0.1}
+          rootMargin="-50px"
+          textAlign="left"
+          stagger={0.08}
+          trigger="scroll"
+        />
         <p className="mt-2 text-sm text-muted-foreground">
           Welcome back to your Personal Triforce dashboard: Career, Health & Wellbeing, Finance.
         </p>
