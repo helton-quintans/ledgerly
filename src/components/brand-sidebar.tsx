@@ -56,6 +56,36 @@ export function BrandSidebar() {
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
+  // Helper functions for active states
+  function isRouteActive(href: string): boolean {
+    return pathname === href;
+  }
+
+  function isParentActive(item: NavItem): boolean {
+    if (pathname === item.href) return true;
+    if (item.children) {
+      return item.children.some(child => pathname === child.href || pathname.startsWith(child.href + '/'));
+    }
+    return pathname.startsWith(item.href + '/');
+  }
+
+  function isChildActive(href: string): boolean {
+    return pathname === href || pathname.startsWith(href + '/');
+  }
+
+  // Auto-expand parent items when on child routes
+  React.useEffect(() => {
+    const autoExpand: Record<string, boolean> = {};
+    
+    [...mainNavItems, ...pillarNavItems, ...toolsNavItems].forEach(item => {
+      if (item.children && isParentActive(item)) {
+        autoExpand[item.title] = true;
+      }
+    });
+    
+    setExpanded(prev => ({ ...prev, ...autoExpand }));
+  }, [pathname]);
+
   function toggleExpand(key: string) {
     setExpanded((s) => ({ ...s, [key]: !s[key] }));
   }
@@ -202,7 +232,11 @@ export function BrandSidebar() {
                         {hasChildren ? (
                           <SidebarMenuButton
                             asChild
-                            className="cursor-pointer"
+                            className={cn(
+                              "cursor-pointer",
+                              isParentActive(item) && "bg-sidebar-accent text-sidebar-accent-foreground",
+                              isParentActive(item) && "dark:text-gray-900"
+                            )}
                             tooltip={item.title}
                           >
                             <button
@@ -223,8 +257,11 @@ export function BrandSidebar() {
                         ) : (
                           <SidebarMenuButton
                             asChild
-                            isActive={pathname === item.href}
+                            isActive={isRouteActive(item.href)}
                             tooltip={item.title}
+                            className={cn(
+                              isRouteActive(item.href) && "dark:data-[active=true]:text-gray-900"
+                            )}
                           >
                             <Link
                               href={item.href}
@@ -247,7 +284,13 @@ export function BrandSidebar() {
                               })
                               .map((child) => (
                                 <SidebarMenuSubItem key={child.href}>
-                                  <SidebarMenuSubButton asChild>
+                                  <SidebarMenuSubButton 
+                                    asChild
+                                    isActive={isChildActive(child.href)}
+                                    className={cn(
+                                      isChildActive(child.href) && "dark:data-[active=true]:text-gray-900"
+                                    )}
+                                  >
                                     <Link
                                       href={child.href}
                                       onClick={() => {
@@ -285,7 +328,11 @@ export function BrandSidebar() {
                               {pHasChildren ? (
                                 <SidebarMenuButton
                                   asChild
-                                  className="cursor-pointer"
+                                  className={cn(
+                                    "cursor-pointer",
+                                    isParentActive(p) && "bg-sidebar-accent text-sidebar-accent-foreground",
+                                    isParentActive(p) && "dark:text-gray-900"
+                                  )}
                                   tooltip={p.title}
                                 >
                                   <button
@@ -306,8 +353,11 @@ export function BrandSidebar() {
                               ) : (
                                 <SidebarMenuButton
                                   asChild
-                                  isActive={pathname === p.href}
+                                  isActive={isRouteActive(p.href)}
                                   tooltip={p.title}
+                                  className={cn(
+                                    isRouteActive(p.href) && "dark:data-[active=true]:text-gray-900"
+                                  )}
                                 >
                                   <Link
                                     href={p.href}
@@ -323,7 +373,13 @@ export function BrandSidebar() {
                                 <SidebarMenuSub>
                                   {p.children!.map((child) => (
                                     <SidebarMenuSubItem key={child.href}>
-                                      <SidebarMenuSubButton asChild>
+                                      <SidebarMenuSubButton 
+                                        asChild
+                                        isActive={isChildActive(child.href)}
+                                        className={cn(
+                                          isChildActive(child.href) && "dark:data-[active=true]:text-gray-900"
+                                        )}
+                                      >
                                         <Link
                                           href={child.href}
                                           onClick={() => setOpenMobile(false)}
@@ -377,7 +433,11 @@ export function BrandSidebar() {
                       {hasChildren ? (
                         <SidebarMenuButton
                           asChild
-                          className="cursor-pointer"
+                          className={cn(
+                            "cursor-pointer",
+                            isParentActive(item) && "bg-sidebar-accent text-sidebar-accent-foreground",
+                            isParentActive(item) && "dark:text-gray-900"
+                          )}
                           tooltip={item.title}
                         >
                           <button
@@ -398,8 +458,11 @@ export function BrandSidebar() {
                       ) : (
                         <SidebarMenuButton
                           asChild
-                          isActive={pathname === item.href}
+                          isActive={isRouteActive(item.href)}
                           tooltip={item.title}
+                          className={cn(
+                            isRouteActive(item.href) && "dark:data-[active=true]:text-gray-900"
+                          )}
                         >
                           <Link
                             href={item.href}
@@ -422,7 +485,13 @@ export function BrandSidebar() {
                             })
                             .map((child) => (
                               <SidebarMenuSubItem key={child.href}>
-                                <SidebarMenuSubButton asChild>
+                                <SidebarMenuSubButton 
+                                  asChild
+                                  isActive={isChildActive(child.href)}
+                                  className={cn(
+                                    isChildActive(child.href) && "dark:data-[active=true]:text-gray-900"
+                                  )}
+                                >
                                   <Link
                                     href={child.href}
                                     onClick={() => {

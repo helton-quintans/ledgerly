@@ -4,7 +4,6 @@ import CurrencySelector from "@/components/transactions/CurrencySelector";
 import DateFilter from "@/components/transactions/DateFilter";
 import Summary from "@/components/transactions/Summary";
 import TransactionsList from "@/components/transactions/TransactionsList";
-import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTransactions } from "@/contexts/TransactionsContext";
 import { Eye, EyeOff } from "lucide-react";

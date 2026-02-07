@@ -4,9 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTransactions } from "@/contexts/TransactionsContext";
 import { TrendingUp, TrendingDown, Wallet, ArrowRight } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 export default function Home() {
+  const { data: session } = useSession();
   const {
     incomes,
     expenses,
@@ -14,6 +16,9 @@ export default function Home() {
     formatCurrency,
     filteredTransactions,
   } = useTransactions();
+
+  // Get first name from user's name
+  const firstName = session?.user?.name?.split(' ')[0] || 'there';
 
   // Recent transactions (last 3)
   const recentTransactions = filteredTransactions
@@ -24,9 +29,9 @@ export default function Home() {
   return (
     <main className="p-6 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Ledgerly</h1>
+        <h1 className="text-3xl font-bold">Hello {firstName}! 👋</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Personal Triforce dashboard: Career, Health & Wellbeing, Finance.
+          Welcome back to your Personal Triforce dashboard: Career, Health & Wellbeing, Finance.
         </p>
       </div>
 
