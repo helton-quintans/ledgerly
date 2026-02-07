@@ -318,6 +318,7 @@
   .dark .hover\:bg-accent:hover,
   .dark [data-slot="dropdown-menu-label"]:hover {
    color: var(--foreground) !important;
+   color: var(--color-gray-500) !important;
   }
 }
 
