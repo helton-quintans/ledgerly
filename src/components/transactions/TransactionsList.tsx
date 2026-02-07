@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearch } from "@/components/search-context";
+import { useTransactions } from "@/contexts/TransactionsContext";
 import { Button } from "@/components/ui/button";
 import ConfirmModal from "@/components/ui/confirm-modal";
 import {
@@ -78,7 +78,7 @@ type Props = {
   items: Transaction[];
   displayCurrency: Currency;
   onEdit: (t: Transaction) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
   editing?: Transaction | null;
   onSaved?: () => void;
   onClose?: () => void;
@@ -94,8 +94,7 @@ export default function TransactionsList({
   onClose
 }: Props) {
   const isMobile = useIsMobile();
-  const { query, setQuery } = useSearch();
-  const activeQuery = query ?? "";
+  const { searchQuery, setSearchQuery } = useTransactions();
   const [page, setPage] = useState(1);
   const perPage = 8;
   const [columnVisibility, setColumnVisibility] = useState<
@@ -119,23 +118,12 @@ export default function TransactionsList({
     return iconMap[columnName] || null;
   };
 
-  const filtered = useMemo(() => {
-    const normalized = (activeQuery ?? "").trim().toLowerCase();
-    if (!normalized) return items;
-    return items.filter((it) => {
-      return (
-        (it.description || "").toLowerCase().includes(normalized) ||
-        (it.category || "").toLowerCase().includes(normalized) ||
-        (it.currency || "").toLowerCase().includes(normalized)
-      );
-    });
-  }, [items, activeQuery]);
+  // Use filtered items directly from props (already filtered by context)
+  const filtered = items;
 
   useEffect(() => {
-    if (typeof activeQuery === "string") {
-      setPage(1);
-    }
-  }, [activeQuery]);
+    setPage(1);
+  }, [searchQuery]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
   const pageItems = filtered.slice((page - 1) * perPage, page * perPage);
@@ -146,8 +134,8 @@ export default function TransactionsList({
         <div className="flex items-center gap-3 flex-1 lg:flex-initial">
           <SearchInput
             placeholder="Search"
-            value={activeQuery}
-            onChange={(e) => setQuery(e.target.value)}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="flex-1 lg:max-w-md"
           />
           <div className="text-sm text-muted-foreground">

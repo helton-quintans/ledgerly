@@ -35,6 +35,8 @@ type Props = {
   transaction?: Transaction | null;
   onClose?: () => void;
   className?: string;
+  open?: boolean;
+  trigger?: React.ReactNode;
 };
 
 export default function TransactionFormModal({
@@ -42,9 +44,19 @@ export default function TransactionFormModal({
   transaction = null,
   onClose,
   className,
+  open: externalOpen,
+  trigger: externalTrigger,
 }: Props) {
   const isMobile = useIsMobile();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  
+  // Use external open state if provided, otherwise use internal state
+  const open = externalOpen !== undefined ? externalOpen : internalOpen;
+  const setOpen = externalOpen !== undefined 
+    ? (value: boolean) => {
+        if (!value) onClose?.();
+      }
+    : setInternalOpen;
 
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema) as any,
@@ -118,9 +130,12 @@ export default function TransactionFormModal({
       }
 
       reset();
-      setOpen(false);
+      if (externalOpen !== undefined) {
+        onClose?.();
+      } else {
+        setInternalOpen(false);
+      }
       onSaved?.();
-      onClose?.();
     } catch (err) {
       console.error(err);
       toast.error(
@@ -134,7 +149,7 @@ export default function TransactionFormModal({
     }
   }
 
-  const trigger = (
+  const defaultTrigger = (
     <Button 
       onClick={() => setOpen(true)} 
       variant="default" 
@@ -144,6 +159,8 @@ export default function TransactionFormModal({
       New transaction
     </Button>
   );
+
+  const trigger = externalTrigger || defaultTrigger;
 
   const currencySymbolMap: Record<Currency, string> = {
     USD: "$",
@@ -348,9 +365,13 @@ export default function TransactionFormModal({
         <Button
           variant="outline"
           onClick={() => {
-            setOpen(false);
             reset();
-            onClose?.();
+            if (externalOpen !== undefined) {
+              onClose?.();
+            } else {
+              setInternalOpen(false);
+              onClose?.();
+            }
           }}
         >
           Cancel
@@ -371,7 +392,7 @@ export default function TransactionFormModal({
           if (!val) onClose?.();
         }}
       >
-        <SheetTrigger asChild>{trigger}</SheetTrigger>
+        {externalOpen === undefined && <SheetTrigger asChild>{trigger}</SheetTrigger>}
         <SheetContent side="bottom" className="p-8">
           {content}
         </SheetContent>
@@ -387,7 +408,7 @@ export default function TransactionFormModal({
         if (!val) onClose?.();
       }}
     >
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      {externalOpen === undefined && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent>{content}</DialogContent>
     </Dialog>
   );
