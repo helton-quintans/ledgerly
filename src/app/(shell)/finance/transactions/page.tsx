@@ -13,6 +13,7 @@ import {
 } from "@/lib/transactions";
 import { Eye, EyeOff } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function Page() {
   const [items, setItems] = useState<Transaction[]>([]);
@@ -23,10 +24,10 @@ export default function Page() {
     year: number | null;
     month: number | null;
     preset: "all" | "this-month" | "last-month" | "this-year" | "custom";
-  }>({ 
-    year: new Date().getFullYear(), 
-    month: null, 
-    preset: "this-year" 
+  }>({
+    year: new Date().getFullYear(),
+    month: null,
+    preset: "this-year"
   });
 
   const load = useCallback(async () => {
@@ -50,17 +51,17 @@ export default function Page() {
   // Filter items based on date filter
   const filteredItems = items.filter(item => {
     if (dateFilter.preset === "all") return true;
-    
+
     const itemDate = new Date(item.date);
     const itemYear = itemDate.getFullYear();
     const itemMonth = itemDate.getMonth();
-    
+
     // Year filter
     if (dateFilter.year && itemYear !== dateFilter.year) return false;
-    
+
     // Month filter
     if (dateFilter.month !== null && itemMonth !== dateFilter.month) return false;
-    
+
     return true;
   });
 
@@ -129,7 +130,7 @@ export default function Page() {
           </button>
         </div>
       </div>
-      <div className="mb-4">
+      <div>
         <Summary
           incomes={incomes}
           expenses={expenses}
@@ -138,16 +139,16 @@ export default function Page() {
           fmt={(v) => fmt.format(v)}
         />
       </div>
-      
-      <Separator className="mb-6" />
-      
-      <div className="mb-6">
-        <DateFilter
-          transactions={items}
-          filter={dateFilter}
-          onChange={setDateFilter}
-        />
-      </div>
+
+      <Card>
+        <CardContent>
+          <DateFilter
+            transactions={items}
+            filter={dateFilter}
+            onChange={setDateFilter}
+          />
+        </CardContent>
+      </Card>
 
       <Separator className="mb-6" />
 
