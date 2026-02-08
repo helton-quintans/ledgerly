@@ -173,3 +173,73 @@ Have ideas for new features?
 **Last Updated:** January 2026
 
 *This roadmap is subject to change based on user feedback and priorities.*
+
+---
+
+# Épico: MVP – Gestão de Vida com 3 Pilares + Ficha de Produtividade Alfa
+
+Objetivo
+Lançar um aplicativo que permite ao usuário acompanhar sua evolução em Carreira, Finanças e Saúde & Bem-estar, além de registrar diariamente sua Ficha de Produtividade Alfa (FPA), conectando ações e metas pessoais.
+
+1. Pilares do App
+
+Carreira
+Registro de metas profissionais (ex: concluir curso, entregar projeto, receber promoção).
+Registro de conquistas e eventos relevantes.
+Visualização de progresso: barra de metas, gráfico de evolução, contador de conquistas.
+Possibilidade de adicionar novas metas/conquistas manualmente.
+
+Finanças
+Registro manual de receitas e despesas.
+Categorização dos gastos (ex: alimentação, lazer, contas).
+Visualização de distribuição (gráfico de pizza), evolução mensal (barras/linha), saldo atual.
+Possibilidade de adicionar transações manualmente.
+
+Saúde & Bem-estar
+Registro de hábitos (ex: exercícios, sono, consultas, meditação).
+Visualização de hábitos cumpridos (barra de progresso), radar de hábitos, evolução ao longo do tempo.
+Possibilidade de adicionar eventos/hábitos manualmente.
+
+2. Ficha de Produtividade Alfa (FPA)
+
+Funcionalidades
+Usuário preenche a ficha diariamente (idealmente à noite, para o dia seguinte).
+Campos:
+Foco do dia (texto curto, até 400 caracteres)
+Prioridades do dia (até 10 itens)
+Extras (tarefas corriqueiras, até 20 itens)
+Para evitar no dia (texto breve, até 400 caracteres)
+Solução para evitar (texto breve, até 400 caracteres)
+Como foi meu dia? (nota de 0 a 10)
+O que aprendi hoje? (até 400 caracteres)
+Hoje tenho gratidão por? (até 400 caracteres)
+Todos os campos de texto possuem limitação de 400 caracteres.
+FPA conectada aos objetivos/metas do usuário (ex: prioridades podem ser metas dos pilares).
+Contador de fichas feitas (desde sempre e no mês corrente).
+Visualização das fichas do mês corrente (lista simples).
+Possibilidade de ver a quantidade de fichas feitas no ano (gráfico estilo commits do GitHub – melhoria futura).
+Animação ou destaque motivacional ao preencher a ficha.
+
+Localização no App
+Novo menu na sidebar: “Produtividade Alfa”
+Tela dedicada para preencher a ficha do dia e visualizar fichas recentes.
+Contador visível na tela e/ou dashboard.
+
+3. MVP – O que será entregue
+
+Onboarding apresentando os 3 pilares e a FPA.
+Dashboard na home com gráficos animados (shadcn/ui) para cada pilar.
+Registro manual de metas, transações e hábitos.
+Visualização de progresso (gráficos, barras, contadores).
+Módulo FPA com preenchimento diário, contador e visualização das fichas do mês.
+Sidebar com menu para cada pilar e para a FPA.
+Autenticação (login/cadastro).
+Layout responsivo e usável.
+
+4. Melhorias Futuras
+
+Gráfico anual estilo commits do GitHub para FPA.
+Relatórios avançados, notificações, integração bancária, gamificação.
+Visualização de fichas antigas (opcional).
+
+---
