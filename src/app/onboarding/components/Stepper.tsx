@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, Children, useRef, useLayoutEffect, HTMLAttributes, ReactNode } from 'react';
+import Orb from "@ledgerly/ui/components/Orb";
 import { motion, AnimatePresence, Variants } from 'motion/react';
 
 interface StepperProps extends HTMLAttributes<HTMLDivElement> {
@@ -77,12 +78,12 @@ export default function Stepper({
 
   return (
     <div
-      className="flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] relative text-white"
+      className="flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] relative text-white overflow-hidden"
       {...rest}
     >
       {/* Orb background */}
       <div className="absolute inset-0 z-0">
-        {/* Orb será importado e renderizado */}
+        <Orb backgroundColor="#0a0a0a" />
       </div>
       <div className="relative z-10 mx-auto w-full max-w-md rounded-4xl shadow-xl" style={{ border: '1px solid #222' }}>
         <div className="flex w-full items-center p-8">
