@@ -7,6 +7,8 @@ import GoalsStep from "./steps/GoalsStep";
 import PreferencesStep from "./steps/PreferencesStep";
 import SummaryStep from "./steps/SummaryStep";
 
+import { Button } from "@/components/ui/button";
+
 const pillars = [
   {
     link: "#career",
@@ -27,8 +29,24 @@ const pillars = [
 
 export function OnboardingWizard() {
   const [pillarSelected, setPillarSelected] = useState<null | (typeof pillars[0] & { confirmed?: boolean })>(null);
+  const [startStepper, setStartStepper] = useState(false);
 
   if (!pillarSelected) {
+    if (startStepper) {
+      return (
+        <Stepper initialStep={1}>
+          <Step>
+            <GoalsStep />
+          </Step>
+          <Step>
+            <PreferencesStep />
+          </Step>
+          <Step>
+            <SummaryStep />
+          </Step>
+        </Stepper>
+      );
+    }
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-black text-foreground relative overflow-hidden">
         <div className="absolute inset-0 z-0 pointer-events-none">
@@ -47,13 +65,13 @@ export function OnboardingWizard() {
             className="pointer-events-auto"
           />
         </div>
-        <div className="w-full max-w-2xl flex flex-col items-center justify-center gap-10 py-16 px-4 relative z-10">
+        <div className="w-full flex flex-col items-center justify-center gap-10 py-16 px-4 relative z-10">
           <div className="text-center mb-8">
             <div>
               <h2 className="inline-block p-4 rounded-2xl bg-black/40 backdrop-blur-md border border-white/20 shadow-lg transition-all animate-fade-in text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg mb-4">
                 Welcome to Ledgerly!
               </h2>
-              <p className="rounded-2xl p-2 bg-black/60 backdrop-blur-md border border-white/20 text-lg md:text-2xl text-white/80 font-medium">
+              <p className="rounded-2xl p-2 bg-black/60 backdrop-blur-md border border-white/20 text-sm md:text-xl text-white/80 font-medium">
                 simplify and hack your life.
               </p>
             </div>
@@ -72,6 +90,14 @@ export function OnboardingWizard() {
               borderColor="#fff"
             />
           </div>
+          <Button
+            className="mt-8 w-full max-w-md text-lg font-semibold transition-all duration-200 hover:scale-105 "
+            variant="outline"
+            size="lg"
+            onClick={() => setStartStepper(true)}
+          >
+            Start your journey
+          </Button>
         </div>
       </div>
     );
