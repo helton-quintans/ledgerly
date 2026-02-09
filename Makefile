@@ -2,6 +2,10 @@
 setup:
 		cp .env.example .env.local
 
+# ──────────────── Install Dependencies ────────────────
+install:
+		pnpm install
+
 # ──────────────── Prisma ────────────────
 migrate:
 		pnpm prisma migrate dev
