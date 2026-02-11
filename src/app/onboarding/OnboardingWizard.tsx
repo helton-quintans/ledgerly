@@ -76,7 +76,7 @@ export function OnboardingWizard() {
               </p>
             </div>
           </div>
-          <div className="w-full h-[40vh] flex items-center justify-center py-3 bg-[#0a0a0a]/50 rounded-2xl border border-[#222] animate-fade-in delay-200">
+          <div className="w-full h-[40vh] flex items-center justify-center py-3 bg-white/80 rounded-2xl border border-[#222] animate-fade-in delay-200">
             <FlowingMenu
               items={pillars.map(pillar => ({
                 ...pillar,
