@@ -6,8 +6,9 @@ import type { ReactNode } from "react";
 
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { ApolloGraphQLProvider } from "@/components/providers/apollo-provider";
-import { cn } from "@ledgerly/utils";
 import { ReactQueryProvider } from "@/components/providers/react-query-provider";
+import { cn } from "@ledgerly/utils";
+import { ChatIAWidget } from "@/components/ChatIAWidget";
 
 import "@/app/globals.css";
 
@@ -78,6 +79,7 @@ export default function RootLayout({
           <ApolloGraphQLProvider>
             <AuthSessionProvider>
               {children}
+              <ChatIAWidget />
             </AuthSessionProvider>
           </ApolloGraphQLProvider>
         </ReactQueryProvider>
