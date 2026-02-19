@@ -1,4 +1,4 @@
-import { LogoPulse } from "@/components/logo";
+import { LogoPulse } from "@ledgerly/ui/components/logo";
 import { ColorBends } from "@ledgerly/ui";
 import type { ReactNode } from "react";
 

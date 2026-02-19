@@ -50,7 +50,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
   // Count transactions per month for selected year
   const monthCounts = useMemo(() => {
     if (!filter.year) return {};
-    
+
     const counts: Record<number, number> = {};
     transactions.forEach(t => {
       const date = new Date(t.date);
@@ -64,7 +64,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
 
   const handlePresetChange = (preset: DateFilter["preset"]) => {
     const newFilter: DateFilter = { ...filter, preset };
-    
+
     switch (preset) {
       case "all":
         newFilter.year = null;
@@ -88,7 +88,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
         // Keep current selections
         break;
     }
-    
+
     onChange(newFilter);
   };
 
@@ -103,7 +103,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
   const handleMonthChange = (month: number) => {
     // When selecting a month, ensure we have a year selected
     const targetYear = filter.year || currentYear;
-    
+
     onChange({
       year: targetYear,
       month: filter.month === month ? null : month, // Toggle selection
@@ -143,10 +143,9 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                <DropdownMenuLabel>Select Year</DropdownMenuLabel>
                 {availableYears.map(year => (
-                  <DropdownMenuItem 
-                    key={year} 
+                  <DropdownMenuItem
+                    key={year}
                     onClick={() => handleYearChange(year.toString())}
                   >
                     {year} {year === currentYear && "(Current)"}
@@ -165,7 +164,6 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-48">
-                <DropdownMenuLabel>Quick Filters</DropdownMenuLabel>
                 <DropdownMenuItem onClick={() => handlePresetChange("all")}>
                   All Transactions
                 </DropdownMenuItem>
@@ -195,11 +193,9 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                     key={index}
                     variant={isSelected ? "default" : hasTransactions ? "outline" : "ghost"}
                     size="sm"
-                    className={`h-7 px-2 text-xs shrink-0 min-w-[44px] ${
-                      !hasTransactions ? "opacity-50" : ""
-                    } ${
-                      isCurrentMonth && !isSelected ? "ring-2 ring-primary/20 border-primary/40 font-semibold" : ""
-                    }`}
+                    className={`h-7 px-2 text-xs shrink-0 min-w-[44px] ${!hasTransactions ? "opacity-50" : ""
+                      } ${isCurrentMonth && !isSelected ? "ring-2 ring-primary/20 border-primary/40 font-semibold" : ""
+                      }`}
                     onClick={() => handleMonthChange(index)}
                     disabled={!hasTransactions}
                   >
@@ -228,10 +224,9 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                <DropdownMenuLabel>Select Year</DropdownMenuLabel>
                 {availableYears.map(year => (
-                  <DropdownMenuItem 
-                    key={year} 
+                  <DropdownMenuItem
+                    key={year}
                     onClick={() => handleYearChange(year.toString())}
                   >
                     {year} {year === currentYear && "(Current)"}
@@ -249,7 +244,6 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-48">
-                <DropdownMenuLabel>Quick Filters</DropdownMenuLabel>
                 <DropdownMenuItem onClick={() => handlePresetChange("all")}>
                   All Transactions
                 </DropdownMenuItem>
@@ -279,11 +273,9 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                     key={index}
                     variant={isSelected ? "default" : hasTransactions ? "outline" : "ghost"}
                     size="sm"
-                    className={`h-8 px-2 text-xs ${
-                      !hasTransactions ? "opacity-50" : ""
-                    } ${
-                      isCurrentMonth && !isSelected ? "ring-2 ring-primary/20 border-primary/40 font-semibold" : ""
-                    }`}
+                    className={`h-8 px-2 text-xs ${!hasTransactions ? "opacity-50" : ""
+                      } ${isCurrentMonth && !isSelected ? "ring-2 ring-primary/20 border-primary/40 font-semibold" : ""
+                      }`}
                     onClick={() => handleMonthChange(index)}
                     disabled={!hasTransactions}
                   >

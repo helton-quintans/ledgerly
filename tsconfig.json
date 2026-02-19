@@ -28,7 +28,9 @@
       "@ledgerly/api-client": ["packages/api-client"],
       "@ledgerly/api-client/*": ["packages/api-client/*"],
       "@ledgerly/config": ["packages/config"],
-      "@ledgerly/config/*": ["packages/config/*"]
+      "@ledgerly/config/*": ["packages/config/*"],
+      "@ledgerly/services": ["packages/services"],
+      "@ledgerly/services/*": ["packages/services/*"]
     },
     "plugins": [
       {

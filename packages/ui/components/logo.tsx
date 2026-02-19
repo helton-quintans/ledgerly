@@ -21,13 +21,14 @@ export function Logo() {
 
 type LogoSpinnerProps = {
   color?: string;
+  size?: number;
 };
 
-export function LogoSpinner({ color = "var(--primary)" }: LogoSpinnerProps) {
+export function LogoSpinner({ color = "var(--primary)", size = 28 }: LogoSpinnerProps) {
   return (
     <div className="flex items-center gap-2">
       <Spinner
-        size={28}
+        size={size}
         triangleScale={0.6}
         color={color}
         speed={0.4}

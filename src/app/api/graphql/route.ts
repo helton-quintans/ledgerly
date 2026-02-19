@@ -1,37 +1,12 @@
 import { ApolloServer } from '@apollo/server';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { helloQuery } from './schema/queries/hello';
-import { setMessageMutation } from './schema/mutations/setMessage';
-import { hello } from './resolvers/queries/hello';
-import { setMessage } from './resolvers/mutations/setMessage';
+import { transactionResolvers } from './resolvers/transaction';
+import { transactionSchema } from './schema/transaction';
 
-const typeDefs = `#graphql
-  type Message {
-    content: String!
-  }
-  type Query {
-    ${helloQuery}
-  }
-  type Mutation {
-    ${setMessageMutation}
-  }
-`;
+const typeDefs = transactionSchema;
 
-const resolvers = {
-  Query: {
-    hello,
-  },
-  Mutation: {
-    setMessage,
-  },
-};
-
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-});
-
+const resolvers = transactionResolvers;
 
 let apolloServer: ApolloServer | null = null;
 
@@ -49,11 +24,14 @@ async function getApolloServer() {
 export async function POST(req: NextRequest) {
   const server = await getApolloServer();
   const { query, variables, operationName } = await req.json();
-  const response = await server.executeOperation({
-    query,
-    variables,
-    operationName,
-  });
+
+  const { getToken } = await import("next-auth/jwt");
+  const secret = process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET;
+  const token = await getToken({ req, secret });
+  const response = await server.executeOperation(
+    { query, variables, operationName },
+    { contextValue: { user: token } }
+  );
 
   if (response.body.kind === "single") {
     return NextResponse.json(response.body.singleResult);

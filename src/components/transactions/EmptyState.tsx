@@ -19,7 +19,7 @@ export default function EmptyState({
 }: EmptyStateProps) {
   if (type === "no-transactions") {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
+      <div className="flex flex-col items-center justify-center py-4 text-center">
         <div className="rounded-full bg-muted p-6 mb-4">
           <Receipt className="size-12 text-muted-foreground" />
         </div>

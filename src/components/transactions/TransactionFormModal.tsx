@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@ledgerly/hooks/use-mobile";
-import { createTransaction } from "@/lib/transactions";
+import { useCreateTransaction } from "@ledgerly/hooks/transactions/useCreateTransaction";
 import { ArrowDown, ArrowUp, Coins, DollarSign, FileText, Plus, Tag, TrendingUp, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -25,7 +25,7 @@ import transactionFormSchema, {
 } from "@ledgerly/schemas/transaction";
 import type { Currency } from "@ledgerly/schemas";
 import type { Transaction } from "@/lib/transactions";
-import { updateTransaction } from "@/lib/transactions";
+import { useUpdateTransaction } from "@ledgerly/hooks/transactions/useUpdateTransaction";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
@@ -84,44 +84,26 @@ export default function TransactionFormModal({
 
   const watchedCurrency = (watch("currency") || "USD") as Currency;
 
+  const createMutation = useCreateTransaction();
+  const updateMutation = useUpdateTransaction();
+
   async function onSubmit(values: TransactionFormValues) {
-    // values.amount is the integer cents thanks to the zod preprocess
-    const amount_cents = Math.abs(values.amount as number);
-
-    // mock rates to USD
-    const rateToUSD: Record<string, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
-    const exchange_rate =
-      (rateToUSD[values.currency] ?? 1) / (rateToUSD["USD"] ?? 1);
-    const converted_amount_cents = Math.round(
-      amount_cents * (rateToUSD[values.currency] ?? 1),
-    );
-    const rate_timestamp = new Date().toISOString();
-
+    const amount = Math.abs(values.amount as number);
     try {
       if (transaction) {
-        // update existing
-        await updateTransaction(transaction.id, {
-          type: values.type,
-          amount_cents,
+        await updateMutation.mutateAsync({
+          id: transaction.id,
+          amount,
           currency: values.currency,
-          converted_amount_cents,
-          converted_currency: "USD",
-          exchange_rate,
-          rate_timestamp,
           date: values.date ?? new Date().toISOString(),
           category: values.category || "Uncategorized",
           description: values.description || "",
         });
         toast.success("Transaction updated");
       } else {
-        await createTransaction({
-          type: values.type,
-          amount_cents,
+        await createMutation.mutateAsync({
+          amount,
           currency: values.currency,
-          converted_amount_cents,
-          converted_currency: "USD",
-          exchange_rate,
-          rate_timestamp,
           date: values.date ?? new Date().toISOString(),
           category: values.category || "Uncategorized",
           description: values.description || "",

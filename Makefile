@@ -8,15 +8,15 @@ install:
 
 # ──────────────── Prisma ────────────────
 migrate:
-		pnpm prisma migrate dev
+		DOTENV_CONFIG_PATH=.env.local pnpm prisma migrate dev
 generate:
-		pnpm prisma generate
+		DOTENV_CONFIG_PATH=.env.local pnpm prisma generate
 studio:
-		pnpm prisma studio
+		DOTENV_CONFIG_PATH=.env.local pnpm prisma studio
 reset-db:
-		pnpm prisma migrate reset --force
+		DOTENV_CONFIG_PATH=.env.local pnpm prisma migrate reset --force
 seed:
-		pnpm prisma db seed
+		DOTENV_CONFIG_PATH=.env.local pnpm prisma db seed
 
 # ──────────────── Local Database ────────────────
 db-up:
