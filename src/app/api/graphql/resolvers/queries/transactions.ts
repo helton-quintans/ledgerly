@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "../../../../../../generated/prisma/client";
 import { TransactionArgs } from "../../schema/types/transaction.types";
 
 export async function transactions(_: unknown, args: TransactionArgs) {
