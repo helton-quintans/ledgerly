@@ -87,7 +87,26 @@ export function TransactionsProvider({ children }: Props) {
     preset: "this-year"
   });
   const [searchQuery, setSearchQuery] = useState("");
-  const [displayCurrency, setDisplayCurrency] = useState<Currency>("USD");
+  const [displayCurrency, setDisplayCurrencyState] = useState<Currency>(loadDisplayCurrency);
+
+  function loadDisplayCurrency(): Currency {
+    try {
+      if (typeof window === "undefined") return "USD";
+      const stored = localStorage.getItem("ledgerly.displayCurrency");
+      return (stored as Currency) ?? "USD";
+    } catch (e) {
+      return "USD";
+    }
+  }
+
+  const setDisplayCurrency = useCallback((currency: Currency) => {
+    try {
+      localStorage.setItem("ledgerly.displayCurrency", currency);
+    } catch (e) {
+      // ignore
+    }
+    setDisplayCurrencyState(currency);
+  }, []);
   
   // Mock conversion rates
   const rateToUSD: Record<Currency, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };

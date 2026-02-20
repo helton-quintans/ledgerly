@@ -52,7 +52,6 @@ export async function transactions(_: unknown, args: TransactionArgs) {
     orderBy: { date: "desc" },
   });
 
-  // Map to the shape expected by the frontend (compat with legacy in-memory shape)
   const transactions = raw.map((t) => ({
     ...t,
     amount_cents: Math.round((t.amount ?? 0) * 100),
