@@ -145,34 +145,42 @@ export function TransactionsProvider({ children }: Props) {
   });
   
   // Calculate totals
+  const getAmountCents = (transaction: Transaction) => {
+    return transaction.amount_cents ?? Math.round(((transaction as any).amount ?? 0) * 100);
+  };
+
   const incomes = filteredTransactions.reduce((acc, transaction) => {
-    if (transaction.type !== "income") return acc;
-    
-    if (transaction.converted_currency === displayCurrency && 
-        typeof transaction.converted_amount_cents === "number") {
-      return acc + (transaction.converted_amount_cents || 0) / 100;
+    // Determine numeric amount in display currency
+    let amtInDisplay = 0;
+    if (transaction.converted_currency === displayCurrency && typeof transaction.converted_amount_cents === "number") {
+      amtInDisplay = (transaction.converted_amount_cents || 0) / 100;
+    } else {
+      amtInDisplay = convert(
+        getAmountCents(transaction) / 100,
+        transaction.currency as Currency | undefined,
+        displayCurrency,
+      );
     }
-    
-    return acc + convert(
-      (transaction.amount_cents || 0) / 100,
-      transaction.currency as Currency | undefined,
-      displayCurrency,
-    );
+
+    // Count only positive amounts as incomes
+    return acc + (amtInDisplay > 0 ? Math.abs(amtInDisplay) : 0);
   }, 0);
   
   const expenses = filteredTransactions.reduce((acc, transaction) => {
-    if (transaction.type !== "expense") return acc;
-    
-    if (transaction.converted_currency === displayCurrency && 
-        typeof transaction.converted_amount_cents === "number") {
-      return acc + (transaction.converted_amount_cents || 0) / 100;
+    // Determine numeric amount in display currency
+    let amtInDisplay = 0;
+    if (transaction.converted_currency === displayCurrency && typeof transaction.converted_amount_cents === "number") {
+      amtInDisplay = (transaction.converted_amount_cents || 0) / 100;
+    } else {
+      amtInDisplay = convert(
+        getAmountCents(transaction) / 100,
+        transaction.currency as Currency | undefined,
+        displayCurrency,
+      );
     }
-    
-    return acc + convert(
-      (transaction.amount_cents || 0) / 100,
-      transaction.currency as Currency | undefined,
-      displayCurrency,
-    );
+
+    // Count only negative amounts as expenses (use absolute value)
+    return acc + (amtInDisplay < 0 ? Math.abs(amtInDisplay) : 0);
   }, 0);
   
   const balance = incomes - expenses;

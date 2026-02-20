@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowDown, ArrowUp, DollarSign } from "lucide-react";
 
-type Props = {
+type SummaryProps = {
   incomes: number;
   expenses: number;
   balance: number;
@@ -17,7 +17,7 @@ export default function Summary({
   balance,
   hidden,
   fmt,
-}: Props) {
+}: SummaryProps) {
   return (
     <div className="grid grid-cols-1 gap-4 mb-6">
       <div className="lg:hidden">

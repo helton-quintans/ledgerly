@@ -160,7 +160,7 @@ export default function TransactionFormModal({
       clearErrors();
       reset({
         description: transaction.description || "",
-        amount: (transaction.amount_cents || 0) / 100,
+        amount: (transaction.amount_cents ?? Math.round(((transaction as any).amount ?? 0) * 100)) / 100,
         category: transaction.category || "",
         type: transaction.type,
         currency: (transaction.currency as Currency) || "USD",

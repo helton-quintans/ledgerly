@@ -83,6 +83,7 @@ type Props = {
   editing?: Transaction | null;
   onSaved?: () => void;
   onClose?: () => void;
+  items?: Transaction[];
 };
 
 export default function TransactionsList({
@@ -91,21 +92,29 @@ export default function TransactionsList({
   onDelete,
   editing,
   onSaved,
-  onClose
+  onClose,
+  items,
 }: Props) {
   const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState("");
+  const [remoteSearch, setRemoteSearch] = useState("");
   const [page, setPage] = useState(1);
   const perPage = 8;
+  // debounce remote search (avoid request per keypress)
+  useEffect(() => {
+    const id = setTimeout(() => setRemoteSearch(searchQuery.trim()), 300);
+    return () => clearTimeout(id);
+  }, [searchQuery]);
+
   const {
     data,
     isLoading,
     error
-  } = useTransactions({
+  } = !items ? useTransactions({
     page,
     pageSize: perPage,
-    search: searchQuery
-  });
+    search: remoteSearch
+  }) : { data: undefined, isLoading: false, error: undefined } as any;
   const [columnVisibility, setColumnVisibility] = useState<
     Record<string, boolean>
   >({
@@ -127,10 +136,24 @@ export default function TransactionsList({
     return iconMap[columnName] || null;
   };
 
-  // Use items from backend
-  const filtered = data?.transactions ?? [];
-  const totalPages = data?.totalPages ?? 1;
-  const pageItems = filtered;
+  // Determine source items: prefer `items` prop (client-side), otherwise use server data
+  const sourceItems: Transaction[] = items ?? (data?.transactions ?? []);
+
+  // If `items` provided, apply local search (immediate). Otherwise server already filtered.
+  const filtered = items
+    ? sourceItems.filter((t) => {
+        const q = searchQuery.trim().toLowerCase();
+        if (!q) return true;
+        return (
+          (t.description || "").toLowerCase().includes(q) ||
+          (t.category || "").toLowerCase().includes(q) ||
+          (t.currency || "").toLowerCase().includes(q)
+        );
+      })
+    : sourceItems;
+
+  const totalPages = items ? Math.max(1, Math.ceil((filtered.length || 0) / perPage)) : (data?.totalPages ?? 1);
+  const pageItems = items ? filtered.slice((page - 1) * perPage, page * perPage) : filtered;
 
   return (
     <div className="space-y-4">
@@ -274,11 +297,14 @@ export default function TransactionsList({
                     <TableRow key={t.id}>
                       {columnVisibility.amount && (
                         <TableCell
-                          className={`${t.type === "income" ? "text-success/80" : "text-destructive/80"} text-left`}
+                          className={`${(t.amount_cents ?? Math.round(((t as any).amount ?? 0) * 100)) >= 0 ? "text-success/80" : "text-destructive/80"} text-left`}
                         >
-                          {t.type === "income" ? "+" : "-"}
+                          {(() => {
+                            const amountCents = t.amount_cents ?? Math.round(((t as any).amount ?? 0) * 100);
+                            return (amountCents >= 0 ? "+" : "-");
+                          })()}
                           {formatCurrencyFromCents(
-                            t.amount_cents || 0,
+                            Math.abs(t.amount_cents ?? Math.round(((t as any).amount ?? 0) * 100)),
                             (t.currency ?? "USD") as Currency,
                           )}
                         </TableCell>
@@ -319,7 +345,7 @@ export default function TransactionsList({
                               cancelLabel="Cancel"
                               onConfirm={async () => {
                                 try {
-                                  await Promise.resolve(onDelete(t.id));
+                                  await onDelete(t.id);
                                   toast.success("Transaction deleted");
                                 } catch (err) {
                                   console.error(err);
