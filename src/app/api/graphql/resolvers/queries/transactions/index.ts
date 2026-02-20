@@ -45,12 +45,20 @@ export async function transactions(_: unknown, args: TransactionArgs) {
   }
 
   const total = await prisma.transaction.count({ where });
-  const transactions = await prisma.transaction.findMany({
+  const raw = await prisma.transaction.findMany({
     where,
     skip: (page - 1) * pageSize,
     take: pageSize,
     orderBy: { date: "desc" },
   });
+
+  // Map to the shape expected by the frontend (compat with legacy in-memory shape)
+  const transactions = raw.map((t) => ({
+    ...t,
+    amount_cents: Math.round((t.amount ?? 0) * 100),
+    type: (t.amount ?? 0) >= 0 ? "income" : "expense",
+    date: t.date instanceof Date ? t.date.toISOString() : t.date,
+  }));
   return {
     transactions,
     total,

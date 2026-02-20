@@ -88,7 +88,9 @@ export default function TransactionFormModal({
   const updateMutation = useUpdateTransaction();
 
   async function onSubmit(values: TransactionFormValues) {
-    const amount = Math.abs(values.amount as number);
+    // `values.amount` is provided by the form schema as integer cents.
+    // Convert to major units (float) when sending to GraphQL (`amount: Float`).
+    const amount = (values.type === "expense" ? -1 : 1) * (Math.abs(values.amount as number) / 100);
     try {
       if (transaction) {
         await updateMutation.mutateAsync({

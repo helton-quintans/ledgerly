@@ -1,14 +1,15 @@
 "use client";
 
+import type { Transaction } from "@/lib/transactions";
 import {
-  createTransaction,
-  deleteTransaction,
-  listTransactions,
-  updateTransaction,
-  type Transaction,
-} from "@/lib/transactions";
+  getTransactions,
+  createTransaction as svcCreateTransaction,
+  updateTransaction as svcUpdateTransaction,
+  deleteTransaction as svcDeleteTransaction,
+} from "@/services/transactionsService";
 import type { Currency } from "@ledgerly/schemas";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 type DateFilter = {
   year: number | null;
@@ -102,8 +103,10 @@ export function TransactionsProvider({ children }: Props) {
     try {
       setLoading(true);
       setError(null);
-      const data = await listTransactions();
-      setTransactions(data);
+      const data = await getTransactions({});
+      // data is expected to be a TransactionPage { transactions: Transaction[] }
+      const items = Array.isArray(data.transactions) ? data.transactions : [];
+      setTransactions(items as Transaction[]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load transactions");
     } finally {
@@ -180,21 +183,26 @@ export function TransactionsProvider({ children }: Props) {
     balance: balance
   };
   
+  const queryClient = useQueryClient();
+
   // Operations
   const handleCreateTransaction = useCallback(async (data: any) => {
-    await createTransaction(data);
+    await svcCreateTransaction(data);
+    queryClient.invalidateQueries({ queryKey: ["transactions"] });
     await refreshTransactions();
-  }, [refreshTransactions]);
+  }, [refreshTransactions, queryClient]);
   
   const handleUpdateTransaction = useCallback(async (id: string, data: any) => {
-    await updateTransaction(id, data);
+    await svcUpdateTransaction({ id, ...data });
+    queryClient.invalidateQueries({ queryKey: ["transactions"] });
     await refreshTransactions();
-  }, [refreshTransactions]);
+  }, [refreshTransactions, queryClient]);
   
   const handleDeleteTransaction = useCallback(async (id: string) => {
-    await deleteTransaction(id);
+    await svcDeleteTransaction({ id });
+    queryClient.invalidateQueries({ queryKey: ["transactions"] });
     await refreshTransactions();
-  }, [refreshTransactions]);
+  }, [refreshTransactions, queryClient]);
   
   // Currency formatting
   const formatCurrency = useCallback((amount: number) => {

@@ -36,12 +36,11 @@ export default function TransactionCard({
         {columnVisibility.amount && (
           <div
             className={`text-lg font-semibold ${
-              t.type === "income" ? "text-success" : "text-destructive"
+              (t.amount_cents || 0) > 0 ? "text-success" : (t.amount_cents || 0) < 0 ? "text-destructive" : ""
             }`}
           >
-            {t.type === "income" ? "+" : "-"}
             {formatCurrencyFromCents(
-              t.amount_cents || 0,
+              Math.abs(t.amount_cents || 0),
               (t.currency ?? "USD") as Currency,
             )}
           </div>
