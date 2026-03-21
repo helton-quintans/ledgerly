@@ -3,7 +3,10 @@
 import CurrencySelector from "@/components/transactions/CurrencySelector";
 import DateFilter from "@/components/transactions/DateFilter";
 import Summary from "@/components/transactions/Summary";
+import SummarySkeleton from "@/components/transactions/SummarySkeleton";
+import DateFilterSkeleton from "@/components/transactions/DateFilterSkeleton";
 import TransactionsList from "@/components/transactions/TransactionsList";
+import TransactionsListSkeleton from "@/components/transactions/TransactionsListSkeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTransactions } from "@/contexts/TransactionsContext";
 import { Eye, EyeOff } from "lucide-react";
@@ -14,6 +17,7 @@ export default function Page() {
 
   const {
     transactions,
+    loading,
     filteredTransactions,
     dateFilter,
     displayCurrency,
@@ -53,37 +57,51 @@ export default function Page() {
         </div>
       </div>
 
-      <Summary
-        incomes={incomes}
-        expenses={expenses}
-        balance={balance}
-        hidden={hidden}
-        fmt={(v) => formatCurrency(v)}
-      />
+      {loading ? (
+        <div className="py-4 lg:mt-2">
+          <SummarySkeleton />
+        </div>
+      ) : (
+        <Summary
+          incomes={incomes}
+          expenses={expenses}
+          balance={balance}
+          hidden={hidden}
+          fmt={(v) => formatCurrency(v)}
+        />
+      )}
 
       <Card className="mb-6">
         <CardContent>
-          <DateFilter
-            transactions={transactions}
-            filter={dateFilter}
-            onChange={setDateFilter}
-          />
+          {loading ? (
+            <DateFilterSkeleton />
+          ) : (
+            <DateFilter
+              transactions={transactions}
+              filter={dateFilter}
+              onChange={setDateFilter}
+            />
+          )}
         </CardContent>
       </Card>
 
 
-      <TransactionsList
-        items={filteredTransactions}
-        displayCurrency={displayCurrency}
-        editing={editing}
-        onSaved={() => {
-          refreshTransactions();
-          setEditing(null);
-        }}
-        onClose={() => setEditing(null)}
-        onEdit={(t) => setEditing(t)}
-        onDelete={deleteTransaction}
-      />
+      {loading ? (
+        <TransactionsListSkeleton />
+      ) : (
+        <TransactionsList
+          items={filteredTransactions}
+          displayCurrency={displayCurrency}
+          editing={editing}
+          onSaved={() => {
+            refreshTransactions();
+            setEditing(null);
+          }}
+          onClose={() => setEditing(null)}
+          onEdit={(t) => setEditing(t)}
+          onDelete={deleteTransaction}
+        />
+      )}
     </main>
   );
 }

@@ -51,7 +51,7 @@ import { toast } from "sonner";
 import TransactionCard from "./TransactionCard";
 import TransactionFormModal from "./TransactionFormModal";
 import EmptyState from "./EmptyState";
-import { Skeleton } from "../ui/skeleton";
+import TransactionsListSkeleton from "./TransactionsListSkeleton";
 
 // Category icons mapping
 const getCategoryIcon = (category: string) => {
@@ -213,10 +213,7 @@ export default function TransactionsList({
       </div>
 
       {isLoading ? (
-        <div className="flex flex-col justify-center items-center ">
-          <Skeleton className="w-full h-10 mb-1" />
-          <Skeleton className="w-full h-72" />
-        </div>
+        <TransactionsListSkeleton />
       ) : (
         <>
           {error && <div>Error loading transactions.</div>}
