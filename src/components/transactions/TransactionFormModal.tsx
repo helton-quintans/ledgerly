@@ -16,7 +16,8 @@ import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@ledgerly/hooks/use-mobile";
 import { useCreateTransaction } from "@ledgerly/hooks/transactions/useCreateTransaction";
-import { ArrowDown, ArrowUp, Coins, DollarSign, FileText, Plus, Tag, TrendingUp, XCircle } from "lucide-react";
+import { ArrowDown, ArrowUp, Coins, DollarSign, FileText, Plus, Tag, TrendingUp, XCircle, Calendar as CalendarIcon } from "lucide-react";
+import { DatePicker } from "@/components/ui/date-picker";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -67,7 +68,12 @@ export default function TransactionFormModal({
       category: "Other",
       type: "income",
       currency: "USD" as Currency,
-      date: undefined,
+      date: (() => {
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+          d.getDate(),
+        ).padStart(2, "0")}`;
+      })(),
     } as any,
   });
 
@@ -82,6 +88,14 @@ export default function TransactionFormModal({
     control,
   } = form;
 
+  const parseYMD = (s?: string | null) => {
+    if (!s) return undefined;
+    const parts = s.split("-").map((p) => Number(p));
+    if (parts.length < 3 || parts.some((n) => Number.isNaN(n))) return undefined;
+    const [y, m, d] = parts;
+    return new Date(y, m - 1, d);
+  };
+
   const watchedCurrency = (watch("currency") || "USD") as Currency;
 
   const createMutation = useCreateTransaction();
@@ -92,12 +106,13 @@ export default function TransactionFormModal({
     // Convert to major units (float) when sending to GraphQL (`amount: Float`).
     const amount = (values.type === "expense" ? -1 : 1) * (Math.abs(values.amount as number) / 100);
     try {
+      const dateIso = values.date ? new Date(`${values.date}T00:00:00`).toISOString() : new Date().toISOString();
       if (transaction) {
         await updateMutation.mutateAsync({
           id: transaction.id,
           amount,
           currency: values.currency,
-          date: values.date ?? new Date().toISOString(),
+          date: dateIso,
           category: values.category || "Uncategorized",
           description: values.description || "",
         });
@@ -106,7 +121,7 @@ export default function TransactionFormModal({
         await createMutation.mutateAsync({
           amount,
           currency: values.currency,
-          date: values.date ?? new Date().toISOString(),
+          date: dateIso,
           category: values.category || "Uncategorized",
           description: values.description || "",
         });
@@ -164,7 +179,10 @@ export default function TransactionFormModal({
         category: transaction.category || "",
         type: transaction.type,
         currency: (transaction.currency as Currency) || "USD",
-        date: transaction.date,
+        date: transaction.date ? (() => {
+          const d = new Date(transaction.date);
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+        })() : undefined,
       } as any);
       return;
     }
@@ -172,7 +190,10 @@ export default function TransactionFormModal({
     if (open && !transaction) {
       // if creating new, reset to defaults
       clearErrors();
-      reset();
+      reset({ date: (() => {
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      })() });
     }
   }, [transaction, open, clearErrors, reset]);
 
@@ -193,8 +214,36 @@ export default function TransactionFormModal({
           <CurrencySelector
             value={watchedCurrency}
             onChange={(v) => setValue("currency", v)}
-            className="w-full justify-center"
+            className="w-full justify-center h-10"
           />
+          <div className="h-5 mt-1 text-sm text-destructive">
+            {errors.currency?.message as string}
+          </div>
+          
+          <div className="mt-2 w-full">
+            <label className="w-full flex text-sm font-medium mb-2">
+              <CalendarIcon className="size-4 mr-2" />
+              Date
+            </label>
+            <DatePicker
+              value={parseYMD(watch("date") as string | undefined)}
+              onChange={(d) => {
+                if (d) {
+                  const yyyy = d.getFullYear();
+                  const mm = String(d.getMonth() + 1).padStart(2, "0");
+                  const dd = String(d.getDate()).padStart(2, "0");
+                  setValue("date", `${yyyy}-${mm}-${dd}`);
+                  clearErrors("date");
+                } else {
+                  setValue("date", undefined);
+                }
+              }}
+              className="w-full h-10 justify-center text-center gap-2"
+            />
+            <div className="h-5 mt-1 text-sm text-destructive">
+              {errors.date?.message as string}
+            </div>
+          </div>
         </div>
 
         <div className="relative space-y-2">
@@ -219,6 +268,7 @@ export default function TransactionFormModal({
                 <NumericFormat
                   {...field}
                   customInput={Input}
+                  className="h-10"
                   thousandSeparator={thousandSep}
                   decimalSeparator={decimalSep}
                   decimalScale={2}
@@ -296,6 +346,7 @@ export default function TransactionFormModal({
           <Input
             id="description"
             placeholder="Description"
+            className="h-10"
             {...register("description")}
           />
           <div className="h-5 mt-1 text-sm text-destructive">
@@ -311,7 +362,7 @@ export default function TransactionFormModal({
           <CategorySelector
             value={watch("category") || "Other"}
             onChange={(v) => setValue("category", v)}
-            className="w-full justify-center"
+            className="w-full justify-center h-10"
           />
           <div className="h-5 mt-1 text-sm text-destructive">
             {errors.category?.message as string}
@@ -326,7 +377,7 @@ export default function TransactionFormModal({
           <div className="flex gap-2">
             <button
             type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "income" ? "bg-success/20 text-success border-success/30" : "text-success border-neutral-200"}`}
+            className={`flex-1 flex items-center justify-center gap-2 px-3 rounded h-10 cursor-pointer border ${watch("type") === "income" ? "bg-success/20 text-success border-success/30" : "text-success border-neutral-200"}`}
             onClick={() => setValue("type", "income")}
           >
             <ArrowUp className="size-4" />
@@ -335,7 +386,7 @@ export default function TransactionFormModal({
 
           <button
             type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded cursor-pointer border ${watch("type") === "expense" ? "bg-destructive/20 text-destructive border-destructive/30" : "text-destructive border-neutral-200"}`}
+            className={`flex-1 flex items-center justify-center gap-2 px-3 rounded h-10 cursor-pointer border ${watch("type") === "expense" ? "bg-destructive/20 text-destructive border-destructive/30" : "text-destructive border-neutral-200"}`}
             onClick={() => setValue("type", "expense")}
           >
             <ArrowDown className="size-4" />
@@ -345,7 +396,7 @@ export default function TransactionFormModal({
         </div>
       </div>
 
-      <DialogFooter className="mt-6 flex flex-row justify-end gap-2 sm:justify-end">
+      <DialogFooter className="mt-1 flex flex-row justify-end gap-2 sm:justify-end">
         <Button
           variant="outline"
           onClick={() => {
