@@ -56,7 +56,13 @@ export async function updateTransaction(
   const { id, ...data } = args;
   const updateData: Record<string, unknown> = { ...data };
   if (data.date) {
-    updateData.date = new Date(data.date as string);
+    const dstr = data.date as string;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dstr)) {
+      const [y, m, d] = dstr.split("-").map(Number);
+      updateData.date = new Date(y, m - 1, d);
+    } else {
+      updateData.date = new Date(dstr);
+    }
   }
 
   const updated = await prisma.transaction.update({

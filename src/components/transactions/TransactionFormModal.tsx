@@ -173,11 +173,16 @@ export default function TransactionFormModal({
       // if a transaction prop is provided, open and populate
       setOpen(true);
       clearErrors();
+      // derive type from transaction or from amount sign when missing
+      const derivedAmountCents = transaction.amount_cents ?? Math.round(((transaction as any).amount ?? 0) * 100);
+      const derivedType = (transaction as any).type ?? (derivedAmountCents >= 0 ? "income" : "expense");
+
       reset({
         description: transaction.description || "",
-        amount: (transaction.amount_cents ?? Math.round(((transaction as any).amount ?? 0) * 100)) / 100,
+        // amount input must be positive in the form; type determines sign on submit
+        amount: Math.abs(derivedAmountCents) / 100,
         category: transaction.category || "",
-        type: transaction.type,
+        type: derivedType,
         currency: (transaction.currency as Currency) || "USD",
         date: transaction.date ? (() => {
           const d = new Date(transaction.date);
@@ -188,12 +193,18 @@ export default function TransactionFormModal({
     }
 
     if (open && !transaction) {
-      // if creating new, reset to defaults
       clearErrors();
-      reset({ date: (() => {
-        const d = new Date();
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-      })() });
+      reset({
+        description: "",
+        amount: undefined as unknown as number,
+        category: "Other",
+        type: "income",
+        currency: "USD" as Currency,
+        date: (() => {
+          const d = new Date();
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+        })(),
+      } as any);
     }
   }, [transaction, open, clearErrors, reset]);
 

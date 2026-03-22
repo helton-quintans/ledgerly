@@ -39,7 +39,15 @@ export async function createTransaction(
     data: {
       amount,
       currency,
-      date: new Date(date),
+      date: ((): Date => {
+        // Accept both ISO strings and plain YYYY-MM-DD. For YYYY-MM-DD, construct
+        // a local Date to avoid timezone shifting to previous day.
+        if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+          const [y, m, d] = date.split("-").map(Number);
+          return new Date(y, m - 1, d);
+        }
+        return new Date(date as string);
+      })(),
       category,
       description,
       userId,
