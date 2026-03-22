@@ -4,7 +4,7 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { LogoSpinner } from "@/components/logo";
+import { LogoSpinner } from "@ledgerly/ui/components/logo";
 import { GoogleLogo } from "@ledgerly/ui";
 
 export default function OAuthButtons() {

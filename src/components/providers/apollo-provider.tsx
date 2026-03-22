@@ -1,4 +1,5 @@
 "use client";
+
 import { ApolloProvider } from "@apollo/client/react";
 import { InMemoryCache, ApolloClient, HttpLink } from "@apollo/client";
 import { ReactNode } from "react";

@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowDown, ArrowUp, DollarSign } from "lucide-react";
 
-type Props = {
+type SummaryProps = {
   incomes: number;
   expenses: number;
   balance: number;
@@ -17,7 +17,7 @@ export default function Summary({
   balance,
   hidden,
   fmt,
-}: Props) {
+}: SummaryProps) {
   return (
     <div className="grid grid-cols-1 gap-4 mb-6">
       <div className="lg:hidden">
@@ -63,7 +63,7 @@ export default function Summary({
       {/* Desktop aligned left */}
       <div className="hidden lg:flex gap-4 lg:flex-row lg:col-span-3 justify-start items-center">
         <Card className="w-64 relative shadow-md bg-primary text-primary-foreground">
-          <CardContent className="p-4 flex items-center justify-between">
+          <CardContent className="px-4 py-1 flex items-center justify-between">
             <div>
               <div className="text-sm font-medium">Total</div>
               <div className="text-xl font-extrabold mt-1">
@@ -75,7 +75,7 @@ export default function Summary({
         </Card>
 
         <Card className="w-64">
-          <CardContent className="p-4 flex items-center justify-between">
+          <CardContent className="px-4 py-1 flex items-center justify-between">
             <div>
               <div className="text-sm text-success">In</div>
               <div className="text-xl font-semibold mt-1">
@@ -87,7 +87,7 @@ export default function Summary({
         </Card>
 
         <Card className="w-64">
-          <CardContent className="p-4 flex items-center justify-between">
+          <CardContent className="px-4 py-1 flex items-center justify-between">
             <div>
               <div className="text-sm text-destructive">Out</div>
               <div className="text-xl font-semibold mt-1">

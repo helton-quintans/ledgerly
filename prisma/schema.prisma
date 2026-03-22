@@ -19,6 +19,7 @@ model User {
   accounts            Account[]
   passwordResetTokens PasswordResetToken[]
   sessions            Session[]
+  transactions        Transaction[]
 }
 
 model Account {
@@ -71,4 +72,17 @@ model PasswordResetToken {
 
   @@index([email])
   @@index([expiresAt])
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  amount       Float
+  currency    String   // "BRL", "USD", "EUR"
+  date        DateTime
+  category    String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

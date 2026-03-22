@@ -1,6 +1,10 @@
 import type { Currency } from "@ledgerly/schemas";
 
 export function formatDateByCurrency(date: Date, currency: Currency): string {
+  if (!date || isNaN(date.getTime())) {
+    return "Invalid Date";
+  }
+
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: '2-digit',

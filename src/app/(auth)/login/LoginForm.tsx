@@ -8,8 +8,9 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
-import { LogoSpinner } from "@/components/logo";
+import { LogoSpinner } from "@ledgerly/ui/components/logo";
 import { cn } from "@ledgerly/utils";
+
 const schema = z.object({
   email: z.string().email(),
   password: z.string().min(6),

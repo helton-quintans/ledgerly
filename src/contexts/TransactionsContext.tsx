@@ -1,14 +1,15 @@
 "use client";
 
+import type { Transaction } from "@/lib/transactions";
 import {
-  createTransaction,
-  deleteTransaction,
-  listTransactions,
-  updateTransaction,
-  type Transaction,
-} from "@/lib/transactions";
+  getTransactions,
+  createTransaction as svcCreateTransaction,
+  updateTransaction as svcUpdateTransaction,
+  deleteTransaction as svcDeleteTransaction,
+} from "@/services/transactionsService";
 import type { Currency } from "@ledgerly/schemas";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 type DateFilter = {
   year: number | null;
@@ -86,7 +87,26 @@ export function TransactionsProvider({ children }: Props) {
     preset: "this-year"
   });
   const [searchQuery, setSearchQuery] = useState("");
-  const [displayCurrency, setDisplayCurrency] = useState<Currency>("USD");
+  const [displayCurrency, setDisplayCurrencyState] = useState<Currency>(loadDisplayCurrency);
+
+  function loadDisplayCurrency(): Currency {
+    try {
+      if (typeof window === "undefined") return "USD";
+      const stored = localStorage.getItem("ledgerly.displayCurrency");
+      return (stored as Currency) ?? "USD";
+    } catch (e) {
+      return "USD";
+    }
+  }
+
+  const setDisplayCurrency = useCallback((currency: Currency) => {
+    try {
+      localStorage.setItem("ledgerly.displayCurrency", currency);
+    } catch (e) {
+      // ignore
+    }
+    setDisplayCurrencyState(currency);
+  }, []);
   
   // Mock conversion rates
   const rateToUSD: Record<Currency, number> = { USD: 1, EUR: 1.08, BRL: 0.19 };
@@ -102,8 +122,10 @@ export function TransactionsProvider({ children }: Props) {
     try {
       setLoading(true);
       setError(null);
-      const data = await listTransactions();
-      setTransactions(data);
+      const data = await getTransactions({});
+      // data is expected to be a TransactionPage { transactions: Transaction[] }
+      const items = Array.isArray(data.transactions) ? data.transactions : [];
+      setTransactions(items as Transaction[]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load transactions");
     } finally {
@@ -142,34 +164,42 @@ export function TransactionsProvider({ children }: Props) {
   });
   
   // Calculate totals
+  const getAmountCents = (transaction: Transaction) => {
+    return transaction.amount_cents ?? Math.round(((transaction as any).amount ?? 0) * 100);
+  };
+
   const incomes = filteredTransactions.reduce((acc, transaction) => {
-    if (transaction.type !== "income") return acc;
-    
-    if (transaction.converted_currency === displayCurrency && 
-        typeof transaction.converted_amount_cents === "number") {
-      return acc + (transaction.converted_amount_cents || 0) / 100;
+    // Determine numeric amount in display currency
+    let amtInDisplay = 0;
+    if (transaction.converted_currency === displayCurrency && typeof transaction.converted_amount_cents === "number") {
+      amtInDisplay = (transaction.converted_amount_cents || 0) / 100;
+    } else {
+      amtInDisplay = convert(
+        getAmountCents(transaction) / 100,
+        transaction.currency as Currency | undefined,
+        displayCurrency,
+      );
     }
-    
-    return acc + convert(
-      (transaction.amount_cents || 0) / 100,
-      transaction.currency as Currency | undefined,
-      displayCurrency,
-    );
+
+    // Count only positive amounts as incomes
+    return acc + (amtInDisplay > 0 ? Math.abs(amtInDisplay) : 0);
   }, 0);
   
   const expenses = filteredTransactions.reduce((acc, transaction) => {
-    if (transaction.type !== "expense") return acc;
-    
-    if (transaction.converted_currency === displayCurrency && 
-        typeof transaction.converted_amount_cents === "number") {
-      return acc + (transaction.converted_amount_cents || 0) / 100;
+    // Determine numeric amount in display currency
+    let amtInDisplay = 0;
+    if (transaction.converted_currency === displayCurrency && typeof transaction.converted_amount_cents === "number") {
+      amtInDisplay = (transaction.converted_amount_cents || 0) / 100;
+    } else {
+      amtInDisplay = convert(
+        getAmountCents(transaction) / 100,
+        transaction.currency as Currency | undefined,
+        displayCurrency,
+      );
     }
-    
-    return acc + convert(
-      (transaction.amount_cents || 0) / 100,
-      transaction.currency as Currency | undefined,
-      displayCurrency,
-    );
+
+    // Count only negative amounts as expenses (use absolute value)
+    return acc + (amtInDisplay < 0 ? Math.abs(amtInDisplay) : 0);
   }, 0);
   
   const balance = incomes - expenses;
@@ -180,21 +210,26 @@ export function TransactionsProvider({ children }: Props) {
     balance: balance
   };
   
+  const queryClient = useQueryClient();
+
   // Operations
   const handleCreateTransaction = useCallback(async (data: any) => {
-    await createTransaction(data);
+    await svcCreateTransaction(data);
+    queryClient.invalidateQueries({ queryKey: ["transactions"] });
     await refreshTransactions();
-  }, [refreshTransactions]);
+  }, [refreshTransactions, queryClient]);
   
   const handleUpdateTransaction = useCallback(async (id: string, data: any) => {
-    await updateTransaction(id, data);
+    await svcUpdateTransaction({ id, ...data });
+    queryClient.invalidateQueries({ queryKey: ["transactions"] });
     await refreshTransactions();
-  }, [refreshTransactions]);
+  }, [refreshTransactions, queryClient]);
   
   const handleDeleteTransaction = useCallback(async (id: string) => {
-    await deleteTransaction(id);
+    await svcDeleteTransaction({ id });
+    queryClient.invalidateQueries({ queryKey: ["transactions"] });
     await refreshTransactions();
-  }, [refreshTransactions]);
+  }, [refreshTransactions, queryClient]);
   
   // Currency formatting
   const formatCurrency = useCallback((amount: number) => {
