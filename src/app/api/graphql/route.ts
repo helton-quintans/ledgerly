@@ -3,10 +3,21 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { transactionResolvers } from './resolvers/transaction';
 import { transactionSchema } from './schema/transaction';
+import { recurringResolvers } from './resolvers/recurring';
+import { recurringType } from './schema/recurring';
 
-const typeDefs = transactionSchema;
+const typeDefs = `${transactionSchema}\n${recurringType}`;
 
-const resolvers = transactionResolvers;
+const resolvers = {
+  Query: {
+    ...(transactionResolvers.Query || {}),
+    ...(recurringResolvers.Query || {}),
+  },
+  Mutation: {
+    ...(transactionResolvers.Mutation || {}),
+    ...(recurringResolvers.Mutation || {}),
+  },
+};
 
 let apolloServer: ApolloServer | null = null;
 

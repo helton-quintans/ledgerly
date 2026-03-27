@@ -35,10 +35,15 @@ export async function createTransaction(
     throw new Error("User not authenticated. Please log in to create transactions.");
   }
 
+  const allowedCurrencies = ['BRL', 'USD', 'EUR'] as const;
+  if (!allowedCurrencies.includes(currency as any)) {
+    throw new Error(`Invalid currency: ${currency}`);
+  }
+
   const created = await prisma.transaction.create({
     data: {
       amount,
-      currency,
+      currency: currency as any,
       date: ((): Date => {
         // Accept both ISO strings and plain YYYY-MM-DD. For YYYY-MM-DD, construct
         // a local Date to avoid timezone shifting to previous day.
