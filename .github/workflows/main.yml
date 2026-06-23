@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  # Force GitHub runner to accept the Node execution without killing the process
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+
 jobs:
   test_and_build:
     runs-on: ubuntu-latest
@@ -19,11 +23,11 @@ jobs:
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
 
-    # Setup Node.js using the version from .nvmrc
+    # Setup Node.js explicitly
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version-file: '.nvmrc'
+        node-version: 22 # Explicitly setting Node 22 to bypass runner conflicts
         cache: 'pnpm'
 
     # Install dependencies
