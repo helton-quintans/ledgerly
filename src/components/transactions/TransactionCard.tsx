@@ -2,16 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import ConfirmModal from "@/components/ui/confirm-modal";
-import type { Currency } from "@ledgerly/schemas";
 import type { Transaction } from "@/lib/transactions";
+import type { Currency } from "@ledgerly/schemas";
 import { formatCurrencyFromCents, formatDateByCurrency } from "@ledgerly/utils";
-import {
-  Calendar,
-  Edit,
-  FileText,
-  Tag,
-  Trash2,
-} from "lucide-react";
+import { Calendar, Edit, FileText, Tag, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 type TransactionCardProps = {
@@ -29,8 +23,9 @@ export default function TransactionCard({
   onDelete,
   columnVisibility,
 }: TransactionCardProps) {
-  const amountCents = t.amount_cents ?? Math.round(((t as any).amount ?? 0) * 100);
-  const safeDate = t.date ? new Date(t.date) : new Date(NaN);
+  const amountCents =
+    t.amount_cents ?? Math.round(((t as any).amount ?? 0) * 100);
+  const safeDate = t.date ? new Date(t.date) : new Date(Number.NaN);
   return (
     <div className="rounded-lg border bg-card p-3 space-y-2">
       {/* Header with amount and type */}
@@ -38,7 +33,11 @@ export default function TransactionCard({
         {columnVisibility.amount && (
           <div
             className={`text-lg font-semibold ${
-              amountCents > 0 ? "text-success" : amountCents < 0 ? "text-destructive" : ""
+              amountCents > 0
+                ? "text-success"
+                : amountCents < 0
+                  ? "text-destructive"
+                  : ""
             }`}
           >
             {formatCurrencyFromCents(
@@ -64,14 +63,14 @@ export default function TransactionCard({
               confirmLabel="Delete"
               cancelLabel="Cancel"
               onConfirm={async () => {
-                  try {
-                    await onDelete(t.id);
-                    toast.success("Transaction deleted");
-                  } catch (err) {
-                    console.error(err);
-                    toast.error("Failed to delete transaction");
-                  }
-                }}
+                try {
+                  await onDelete(t.id);
+                  toast.success("Transaction deleted");
+                } catch (err) {
+                  console.error(err);
+                  toast.error("Failed to delete transaction");
+                }
+              }}
             >
               <Button
                 variant="ghost"

@@ -1,7 +1,10 @@
-import { recurringService } from '@/services/recurringService';
+import { resolveUserIdFromToken } from "@/lib/auth";
+import { recurringService } from "@/services/recurringService";
 
 export default async function getRecurrings(_parent: any, args: any, ctx: any) {
-  const userId = ctx?.user?.id;
+  const tokenUser = ctx?.user;
+  const userId = await resolveUserIdFromToken(tokenUser);
   // args may include pagination/filters
-  return recurringService.list({ userId, ...args });
+  const items = await recurringService.list({ userId, ...args });
+  return { items };
 }

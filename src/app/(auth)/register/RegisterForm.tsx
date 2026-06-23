@@ -72,7 +72,9 @@ export default function RegisterForm() {
       });
 
       if (result?.error) {
-        setServerError("Account created but automatic sign-in failed. Please login manually.");
+        setServerError(
+          "Account created but automatic sign-in failed. Please login manually.",
+        );
         router.push("/login");
         return;
       }
@@ -192,7 +194,10 @@ export default function RegisterForm() {
 
       <p className="text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <a className="text-primary underline hover:underline hover:opacity-80" href="/login">
+        <a
+          className="text-primary underline hover:underline hover:opacity-80"
+          href="/login"
+        >
           Sign in
         </a>
       </p>

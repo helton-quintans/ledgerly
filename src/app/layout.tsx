@@ -4,10 +4,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter, Montserrat } from "next/font/google";
 import type { ReactNode } from "react";
 
-import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { ApolloGraphQLProvider } from "@/components/providers/apollo-provider";
-import { cn } from "@ledgerly/utils";
 import { ReactQueryProvider } from "@/components/providers/react-query-provider";
+import { AuthSessionProvider } from "@/components/providers/session-provider";
+import { cn } from "@ledgerly/utils";
 
 import "@/app/globals.css";
 
@@ -76,9 +76,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-background text-foreground antialiased">
         <ReactQueryProvider>
           <ApolloGraphQLProvider>
-            <AuthSessionProvider>
-              {children}
-            </AuthSessionProvider>
+            <AuthSessionProvider>{children}</AuthSessionProvider>
           </ApolloGraphQLProvider>
         </ReactQueryProvider>
         <Analytics />

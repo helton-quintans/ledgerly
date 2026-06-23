@@ -1,1 +1,1 @@
-export * from './types/recurring.types';
+export * from "./types/recurring.types";

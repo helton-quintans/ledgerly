@@ -1,4 +1,4 @@
-export type Frequency = 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+export type Frequency = "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
 
 export interface CreateRecurringInput {
   amount: number;

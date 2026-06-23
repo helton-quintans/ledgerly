@@ -1,9 +1,9 @@
-import getRecurrings from '../queries/recurring/getRecurrings';
-import getRecurring from '../queries/recurring/getRecurring';
-import createRecurring from '../mutations/recurring/createRecurring';
-import updateRecurring from '../mutations/recurring/updateRecurring';
-import deleteRecurring from '../mutations/recurring/deleteRecurring';
-import toggleRecurringActive from '../mutations/recurring/toggleRecurringActive';
+import createRecurring from "../mutations/recurring/createRecurring";
+import deleteRecurring from "../mutations/recurring/deleteRecurring";
+import toggleRecurringActive from "../mutations/recurring/toggleRecurringActive";
+import updateRecurring from "../mutations/recurring/updateRecurring";
+import getRecurring from "../queries/recurring/getRecurring";
+import getRecurrings from "../queries/recurring/getRecurrings";
 
 export const recurringResolvers = {
   Query: {

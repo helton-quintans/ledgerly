@@ -1,10 +1,10 @@
 import { prisma } from "@/lib/prisma";
-import { CreateTransactionInput } from "../../../schema/types/transaction.types";
+import type { CreateTransactionInput } from "../../../schema/types/transaction.types";
 
 export async function createTransaction(
   _: unknown,
   args: CreateTransactionInput,
-  context: { user?: { sub?: string; id?: string; email?: string } }
+  context: { user?: { sub?: string; id?: string; email?: string } },
 ) {
   const { amount, currency, date, category, description } = args;
 
@@ -22,20 +22,26 @@ export async function createTransaction(
   }
 
   if (!userId && tokenUser?.email) {
-    const uByEmail = await prisma.user.findUnique({ where: { email: tokenUser.email } });
+    const uByEmail = await prisma.user.findUnique({
+      where: { email: tokenUser.email },
+    });
     if (uByEmail) userId = uByEmail.id;
   }
 
   if (!userId && tokenUser?.sub) {
-    const acct = await prisma.account.findFirst({ where: { providerAccountId: tokenUser.sub } });
+    const acct = await prisma.account.findFirst({
+      where: { providerAccountId: tokenUser.sub },
+    });
     if (acct) userId = acct.userId;
   }
 
   if (!userId) {
-    throw new Error("User not authenticated. Please log in to create transactions.");
+    throw new Error(
+      "User not authenticated. Please log in to create transactions.",
+    );
   }
 
-  const allowedCurrencies = ['BRL', 'USD', 'EUR'] as const;
+  const allowedCurrencies = ["BRL", "USD", "EUR"] as const;
   if (!allowedCurrencies.includes(currency as any)) {
     throw new Error(`Invalid currency: ${currency}`);
   }
@@ -63,7 +69,7 @@ export async function createTransaction(
     ...created,
     amount_cents: Math.round((created.amount ?? 0) * 100),
     type: (created.amount ?? 0) >= 0 ? "income" : "expense",
-    date: created.date instanceof Date ? created.date.toISOString() : created.date,
+    date:
+      created.date instanceof Date ? created.date.toISOString() : created.date,
   };
 }
-

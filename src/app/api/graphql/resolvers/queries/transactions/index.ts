@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "../../../../../../../generated/prisma/client";
-import { TransactionArgs } from "../../../schema/types/transaction.types";
+import type { TransactionArgs } from "../../../schema/types/transaction.types";
 
 export async function transactions(_: unknown, args: TransactionArgs) {
   const { year, currency, quickFilter, page = 1, pageSize = 10 } = args;
@@ -35,7 +35,7 @@ export async function transactions(_: unknown, args: TransactionArgs) {
         lte: new Date(year, lastMonth + 1, 0),
       };
     }
-    
+
     if (quickFilter === "this year") {
       where.date = {
         gte: new Date(now.getFullYear(), 0, 1),

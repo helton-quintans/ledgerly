@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
-import { FlowingMenu } from "@ledgerly/ui/components/FlowingMenu";
 import { ColorBends } from "@ledgerly/ui";
+import { FlowingMenu } from "@ledgerly/ui/components/FlowingMenu";
+import { useState } from "react";
 import Stepper, { Step } from "./components/Stepper";
 import GoalsStep from "./steps/GoalsStep";
 import PreferencesStep from "./steps/PreferencesStep";
@@ -13,22 +13,27 @@ const pillars = [
   {
     link: "#career",
     text: "Career",
-    image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=600&q=80"
+    image:
+      "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=600&q=80",
   },
   {
     link: "#finance",
     text: "Finance",
-    image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80"
+    image:
+      "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80",
   },
   {
     link: "#health",
     text: "Health & Well-being",
-    image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80"    
-  }
+    image:
+      "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80",
+  },
 ];
 
 export function OnboardingWizard() {
-  const [pillarSelected, setPillarSelected] = useState<null | (typeof pillars[0] & { confirmed?: boolean })>(null);
+  const [pillarSelected, setPillarSelected] = useState<
+    null | ((typeof pillars)[0] & { confirmed?: boolean })
+  >(null);
   const [startStepper, setStartStepper] = useState(false);
 
   if (!pillarSelected) {
@@ -78,9 +83,9 @@ export function OnboardingWizard() {
           </div>
           <div className="w-full h-[40vh] flex items-center justify-center py-3 bg-white/80 rounded-2xl border border-[#222] animate-fade-in delay-200">
             <FlowingMenu
-              items={pillars.map(pillar => ({
+              items={pillars.map((pillar) => ({
                 ...pillar,
-                onClick: () => setPillarSelected(pillar)
+                onClick: () => setPillarSelected(pillar),
               }))}
               speed={15}
               textColor="#fff"

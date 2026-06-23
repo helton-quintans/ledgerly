@@ -1,5 +1,5 @@
-import { LogoPulse } from "@ledgerly/ui/components/logo";
 import { ColorBends } from "@ledgerly/ui";
+import { LogoPulse } from "@ledgerly/ui/components/logo";
 import type { ReactNode } from "react";
 
 export const metadata = {
@@ -26,7 +26,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           className="pointer-events-auto"
         />
       </div>
-      
+
       {/* Content */}
       <div className="relative z-20 flex min-h-screen items-center justify-center px-4 py-4 pointer-events-none">
         <div className="w-full max-w-sm px-2 pointer-events-auto">

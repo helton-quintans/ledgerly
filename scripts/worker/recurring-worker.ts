@@ -1,5 +1,5 @@
-import { recurringService } from '../../src/services/recurringService';
-import { prisma } from '../../src/lib/prisma';
+import { prisma } from "../../src/lib/prisma";
+import { recurringService } from "../../src/services/recurringService";
 
 async function run() {
   const now = new Date();
@@ -14,26 +14,28 @@ async function run() {
     `;
 
     if (!rows.length) {
-      console.log('No recurring transactions due');
+      console.log("No recurring transactions due");
       return;
     }
 
     for (const r of rows) {
       try {
-        console.log('Materializing recurring', r.id);
+        console.log("Materializing recurring", r.id);
         await recurringService.materializeOccurrence(r, tx);
       } catch (err) {
-        console.error('Failed to materialize', r.id, err);
+        console.error("Failed to materialize", r.id, err);
       }
     }
   });
 }
 
 if (require.main === module) {
-  run().then(() => process.exit(0)).catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+  run()
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error(err);
+      process.exit(1);
+    });
 }
 
 export default run;

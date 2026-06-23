@@ -1,4 +1,3 @@
-
 import type { Currency } from "@ledgerly/schemas";
 
 export function formatCurrencyFromCents(

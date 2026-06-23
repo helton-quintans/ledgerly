@@ -1,8 +1,8 @@
 "use client";
 
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client/react";
-import { InMemoryCache, ApolloClient, HttpLink } from "@apollo/client";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 const client = new ApolloClient({
   link: new HttpLink({ uri: "/api/graphql", credentials: "same-origin" }),

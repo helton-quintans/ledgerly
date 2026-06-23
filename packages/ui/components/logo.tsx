@@ -1,7 +1,6 @@
 import { ReuleauxTriangle } from "./ReuleauxTriangle";
 import { Spinner } from "./Spinner";
 
-
 export function Logo() {
   return (
     <div className="flex items-center gap-2">
@@ -24,15 +23,13 @@ type LogoSpinnerProps = {
   size?: number;
 };
 
-export function LogoSpinner({ color = "var(--primary)", size = 28 }: LogoSpinnerProps) {
+export function LogoSpinner({
+  color = "var(--primary)",
+  size = 28,
+}: LogoSpinnerProps) {
   return (
     <div className="flex items-center gap-2">
-      <Spinner
-        size={size}
-        triangleScale={0.6}
-        color={color}
-        speed={0.4}
-      />
+      <Spinner size={size} triangleScale={0.6} color={color} speed={0.4} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "../../../../../../generated/prisma/client";
-import { TransactionArgs } from "../../schema/types/transaction.types";
+import type { TransactionArgs } from "../../schema/types/transaction.types";
 
 export async function transactions(_: unknown, args: TransactionArgs) {
   const { year, currency, quickFilter, page = 1, pageSize = 10 } = args;

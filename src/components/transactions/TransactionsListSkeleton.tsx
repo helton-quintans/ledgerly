@@ -20,7 +20,10 @@ export default function TransactionsListSkeleton() {
       {/* Mobile */}
       <div className="space-y-3 lg:hidden">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="p-4 rounded-md border bg-card flex items-center justify-between">
+          <div
+            key={i}
+            className="p-4 rounded-md border bg-card flex items-center justify-between"
+          >
             <div className="flex items-center gap-3">
               <Skeleton className="h-10 w-10 rounded-full" />
               <div>
@@ -48,7 +51,10 @@ export default function TransactionsListSkeleton() {
 
           <div className="mt-4 space-y-2">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="grid grid-cols-5 gap-4 items-center py-3 border-t">
+              <div
+                key={i}
+                className="grid grid-cols-5 gap-4 items-center py-3 border-t"
+              >
                 <Skeleton className="h-6 w-24" />
                 <Skeleton className="h-6 w-48" />
                 <Skeleton className="h-6 w-28" />

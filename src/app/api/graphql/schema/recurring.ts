@@ -2,10 +2,12 @@ export const recurringType = `
   type RecurringTransaction {
     id: ID!
     userId: ID!
+    amount_cents: Int
     amount: Float!
     currency: String!
     category: String!
     description: String
+    type: String
     frequency: String!
     interval: Int!
     daysOfWeek: String
@@ -23,6 +25,7 @@ export const recurringType = `
     currency: String!
     category: String!
     description: String
+    type: String
     frequency: String!
     interval: Int
     daysOfWeek: String
@@ -34,6 +37,7 @@ export const recurringType = `
   input UpdateRecurringInput {
     id: ID!
     amount: Float
+    type: String
     currency: String
     category: String
     description: String

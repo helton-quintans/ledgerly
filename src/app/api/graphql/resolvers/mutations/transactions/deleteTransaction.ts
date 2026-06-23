@@ -1,10 +1,10 @@
 import { prisma } from "@/lib/prisma";
-import { DeleteTransactionInput } from "../../../schema/types/transaction.types";
+import type { DeleteTransactionInput } from "../../../schema/types/transaction.types";
 
 export async function deleteTransaction(
   _: unknown,
   args: DeleteTransactionInput,
-  context: { user?: { sub?: string; id?: string; email?: string } }
+  context: { user?: { sub?: string; id?: string; email?: string } },
 ) {
   const tokenUser = context?.user;
 
@@ -17,17 +17,23 @@ export async function deleteTransaction(
   }
 
   if (!userId && tokenUser?.email) {
-    const uByEmail = await prisma.user.findUnique({ where: { email: tokenUser.email } });
+    const uByEmail = await prisma.user.findUnique({
+      where: { email: tokenUser.email },
+    });
     if (uByEmail) userId = uByEmail.id;
   }
 
   if (!userId && tokenUser?.sub) {
-    const acct = await prisma.account.findFirst({ where: { providerAccountId: tokenUser.sub } });
+    const acct = await prisma.account.findFirst({
+      where: { providerAccountId: tokenUser.sub },
+    });
     if (acct) userId = acct.userId;
   }
 
   if (!userId) {
-    throw new Error("User not authenticated. Please log in to delete transactions.");
+    throw new Error(
+      "User not authenticated. Please log in to delete transactions.",
+    );
   }
 
   const transaction = await prisma.transaction.findUnique({
@@ -42,11 +48,15 @@ export async function deleteTransaction(
   // or if the token email matches the owner's email (handles duplicate user records).
   if (transaction.userId !== userId) {
     if (tokenUser?.email) {
-      const owner = await prisma.user.findUnique({ where: { id: transaction.userId } });
+      const owner = await prisma.user.findUnique({
+        where: { id: transaction.userId },
+      });
       if (owner?.email === tokenUser.email) {
         // allow (same email but different internal user record)
       } else {
-        throw new Error("You do not have permission to delete this transaction.");
+        throw new Error(
+          "You do not have permission to delete this transaction.",
+        );
       }
     } else {
       throw new Error("You do not have permission to delete this transaction.");
@@ -61,6 +71,7 @@ export async function deleteTransaction(
     ...deleted,
     amount_cents: Math.round((deleted.amount ?? 0) * 100),
     type: (deleted.amount ?? 0) >= 0 ? "income" : "expense",
-    date: deleted.date instanceof Date ? deleted.date.toISOString() : deleted.date,
+    date:
+      deleted.date instanceof Date ? deleted.date.toISOString() : deleted.date,
   };
 }
