@@ -1,6 +1,6 @@
+import { TransactionsProvider } from "@/contexts/TransactionsContext";
 import ShellLayout from "@/layouts/shell-layout";
 import { getServerAuthSession } from "@/lib/auth";
-import { TransactionsProvider } from "@/contexts/TransactionsContext";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 

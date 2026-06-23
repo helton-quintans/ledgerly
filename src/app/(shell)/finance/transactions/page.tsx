@@ -2,9 +2,9 @@
 
 import CurrencySelector from "@/components/transactions/CurrencySelector";
 import DateFilter from "@/components/transactions/DateFilter";
+import DateFilterSkeleton from "@/components/transactions/DateFilterSkeleton";
 import Summary from "@/components/transactions/Summary";
 import SummarySkeleton from "@/components/transactions/SummarySkeleton";
-import DateFilterSkeleton from "@/components/transactions/DateFilterSkeleton";
 import TransactionsList from "@/components/transactions/TransactionsList";
 import TransactionsListSkeleton from "@/components/transactions/TransactionsListSkeleton";
 import { Card, CardContent } from "@/components/ui/card";
@@ -84,7 +84,6 @@ export default function Page() {
           )}
         </CardContent>
       </Card>
-
 
       {loading ? (
         <TransactionsListSkeleton />

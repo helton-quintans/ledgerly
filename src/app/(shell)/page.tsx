@@ -1,25 +1,20 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTransactions } from "@/contexts/TransactionsContext";
 import { SplitText } from "@ledgerly/ui";
-import { TrendingUp, TrendingDown, Wallet, ArrowRight } from "lucide-react";
+import { ArrowRight, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 export default function Home() {
   const { data: session } = useSession();
-  const {
-    incomes,
-    expenses,
-    balance,
-    formatCurrency,
-    filteredTransactions,
-  } = useTransactions();
+  const { incomes, expenses, balance, formatCurrency, filteredTransactions } =
+    useTransactions();
 
   // Get first name from user's name
-  const firstName = session?.user?.name?.split(' ')[0] || 'there';
+  const firstName = session?.user?.name?.split(" ")[0] || "there";
 
   // Recent transactions (last 3)
   const recentTransactions = filteredTransactions
@@ -46,7 +41,8 @@ export default function Home() {
           trigger="scroll"
         />
         <p className="mt-2 text-sm text-muted-foreground">
-          Welcome back to your Personal Triforce dashboard: Career, Health & Wellbeing, Finance.
+          Welcome back to your Personal Triforce dashboard: Career, Health &
+          Wellbeing, Finance.
         </p>
       </div>
 
@@ -61,7 +57,7 @@ export default function Home() {
             </Button>
           </Link>
         </div>
-        
+
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -74,7 +70,7 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Expenses</CardTitle>
@@ -86,14 +82,18 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Balance</CardTitle>
-              <Wallet className={`h-4 w-4 ${balance >= 0 ? 'text-green-500' : 'text-red-500'}`} />
+              <Wallet
+                className={`h-4 w-4 ${balance >= 0 ? "text-green-500" : "text-red-500"}`}
+              />
             </CardHeader>
             <CardContent>
-              <div className={`text-xl font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <div
+                className={`text-xl font-bold ${balance >= 0 ? "text-green-600" : "text-red-600"}`}
+              >
                 {formatCurrency(balance)}
               </div>
             </CardContent>
@@ -113,7 +113,7 @@ export default function Home() {
               </Button>
             </Link>
           </div>
-          
+
           <Card>
             <CardContent className="pt-6">
               <div className="space-y-3">
@@ -133,7 +133,8 @@ export default function Home() {
                       <div>
                         <p className="font-medium">{transaction.description}</p>
                         <p className="text-sm text-muted-foreground">
-                          {transaction.category} • {new Date(transaction.date).toLocaleDateString()}
+                          {transaction.category} •{" "}
+                          {new Date(transaction.date).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
@@ -174,7 +175,7 @@ export default function Home() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>Health & Wellbeing</CardTitle>

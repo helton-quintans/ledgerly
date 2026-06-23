@@ -3,21 +3,34 @@
 import type React from "react";
 
 type ReuleauxTriangleProps = React.SVGProps<SVGSVGElement> & {
-	radius?: number;
-	fill?: string;
-	stroke?: string;
-	strokeWidth?: number;
-	variant?: "filled" | "outline";
-	arcRadius?: number;
-	label?: string;
-	labelFill?: string;
-	labelFontSize?: number;
-	labelFontFamily?: string;
-	showLabel?: boolean;
+  radius?: number;
+  fill?: string;
+  stroke?: string;
+  strokeWidth?: number;
+  variant?: "filled" | "outline";
+  arcRadius?: number;
+  label?: string;
+  labelFill?: string;
+  labelFontSize?: number;
+  labelFontFamily?: string;
+  showLabel?: boolean;
 };
 
-export function ReuleauxTriangle({ radius = 48, fill = "currentColor", variant = "filled", stroke, strokeWidth, arcRadius, label, labelFill, labelFontSize, labelFontFamily, showLabel = true, ...props }: ReuleauxTriangleProps) {
-	const s = radius;
+export function ReuleauxTriangle({
+  radius = 48,
+  fill = "currentColor",
+  variant = "filled",
+  stroke,
+  strokeWidth,
+  arcRadius,
+  label,
+  labelFill,
+  labelFontSize,
+  labelFontFamily,
+  showLabel = true,
+  ...props
+}: ReuleauxTriangleProps) {
+  const s = radius;
   const h = (Math.sqrt(3) / 2) * s;
   const R = arcRadius ?? s;
 
@@ -25,7 +38,11 @@ export function ReuleauxTriangle({ radius = 48, fill = "currentColor", variant =
   const B = { x: 0, y: h };
   const C = { x: s, y: h };
 
-  const sweepFlag = (from: { x: number; y: number }, to: { x: number; y: number }, center: { x: number; y: number }) => {
+  const sweepFlag = (
+    from: { x: number; y: number },
+    to: { x: number; y: number },
+    center: { x: number; y: number },
+  ) => {
     const vA = { x: from.x - center.x, y: from.y - center.y };
     const vB = { x: to.x - center.x, y: to.y - center.y };
     const cross = vA.x * vB.y - vA.y * vB.x;
@@ -45,17 +62,30 @@ export function ReuleauxTriangle({ radius = 48, fill = "currentColor", variant =
 
   const isOutline = variant === "outline";
   const useStroke = stroke ?? (isOutline ? "currentColor" : undefined);
-  const useStrokeWidth = strokeWidth ?? (isOutline ? Math.max(2, Math.round(s * 0.06)) : undefined);
+  const useStrokeWidth =
+    strokeWidth ?? (isOutline ? Math.max(2, Math.round(s * 0.06)) : undefined);
 
   const labelText = label ?? undefined;
-  const labelColor = labelFill ?? (isOutline ? useStroke ?? "currentColor" : "#fff");
+  const labelColor =
+    labelFill ?? (isOutline ? (useStroke ?? "currentColor") : "#fff");
   const fontSize = labelFontSize ?? Math.round(s * 0.6);
-  const fontFamily = labelFontFamily ?? "'Brush Script MT', 'Segoe Script', 'Pacifico', cursive";
+  const fontFamily =
+    labelFontFamily ?? "'Brush Script MT', 'Segoe Script', 'Pacifico', cursive";
   const centerY = (h + Math.max(extend * 0.5, 0)) / 2;
 
   return (
-    <svg viewBox={`${-pad} ${-pad} ${vbW} ${vbH}`} width={vbW} height={vbH} {...props}>
-      <path d={d} fill={isOutline ? "none" : fill} stroke={useStroke} strokeWidth={useStrokeWidth} />
+    <svg
+      viewBox={`${-pad} ${-pad} ${vbW} ${vbH}`}
+      width={vbW}
+      height={vbH}
+      {...props}
+    >
+      <path
+        d={d}
+        fill={isOutline ? "none" : fill}
+        stroke={useStroke}
+        strokeWidth={useStrokeWidth}
+      />
       {showLabel && labelText && (
         <text
           x={s / 2}

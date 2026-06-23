@@ -1,10 +1,10 @@
-import { GET_TRANSACTIONS } from "@/graphql/queries/transactions/transactions";
 import {
   CREATE_TRANSACTION,
-  UPDATE_TRANSACTION,
   DELETE_TRANSACTION,
+  UPDATE_TRANSACTION,
 } from "@/graphql/mutations/transactions/transactions";
-import { print, DocumentNode } from "graphql";
+import { GET_TRANSACTIONS } from "@/graphql/queries/transactions/transactions";
+import { type DocumentNode, print } from "graphql";
 
 // Função utilitária para requisições GraphQL via fetch
 async function graphqlFetch(query: string | DocumentNode, variables: any) {

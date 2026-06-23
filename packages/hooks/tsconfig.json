@@ -7,9 +7,5 @@
     "outDir": "dist",
     "rootDir": "../"
   },
-  "include": [
-    "./index.ts",
-    "./**/*.ts",
-    "../services/**/*.ts"
-  ]
+  "include": ["./index.ts", "./**/*.ts", "../services/**/*.ts"]
 }

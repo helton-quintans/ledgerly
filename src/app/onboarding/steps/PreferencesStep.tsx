@@ -9,7 +9,7 @@ export default function PreferencesStep() {
       <h2>Qual pilar você quer focar primeiro?</h2>
       <select
         value={data.preferredPillar || ""}
-        onChange={e => setData({ preferredPillar: e.target.value })}
+        onChange={(e) => setData({ preferredPillar: e.target.value })}
       >
         <option value="">Selecione...</option>
         <option value="career">Carreira</option>

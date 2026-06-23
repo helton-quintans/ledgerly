@@ -1,9 +1,9 @@
-import { GET_TRANSACTIONS } from "@/graphql/queries/transactions/transactions";
 import {
   CREATE_TRANSACTION,
-  UPDATE_TRANSACTION,
   DELETE_TRANSACTION,
+  UPDATE_TRANSACTION,
 } from "@/graphql/mutations/transactions/transactions";
+import { GET_TRANSACTIONS } from "@/graphql/queries/transactions/transactions";
 import { print } from "graphql";
 import type { DocumentNode } from "graphql";
 
@@ -23,24 +23,24 @@ async function graphqlFetch(query: string | DocumentNode, variables: any) {
 
 export async function getTransactions(params: any) {
   return graphqlFetch(GET_TRANSACTIONS, params).then(
-    (data) => data.transactions
+    (data) => data.transactions,
   );
 }
 
 export async function createTransaction(params: any) {
   return graphqlFetch(CREATE_TRANSACTION, params).then(
-    (data) => data.createTransaction
+    (data) => data.createTransaction,
   );
 }
 
 export async function updateTransaction(params: any) {
   return graphqlFetch(UPDATE_TRANSACTION, params).then(
-    (data) => data.updateTransaction
+    (data) => data.updateTransaction,
   );
 }
 
 export async function deleteTransaction(params: any) {
   return graphqlFetch(DELETE_TRANSACTION, params).then(
-    (data) => data.deleteTransaction
+    (data) => data.deleteTransaction,
   );
 }

@@ -57,9 +57,9 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
         params: {
           scope: "openid email profile",
           access_type: "offline",
-          prompt: "consent"
-        }
-      }
+          prompt: "consent",
+        },
+      },
     }),
   );
 }

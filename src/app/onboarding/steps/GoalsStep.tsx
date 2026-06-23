@@ -12,7 +12,7 @@ export default function GoalsStep() {
         <input
           type="text"
           value={data.careerGoal || ""}
-          onChange={e => setData({ careerGoal: e.target.value })}
+          onChange={(e) => setData({ careerGoal: e.target.value })}
           maxLength={400}
         />
       </label>
@@ -21,7 +21,7 @@ export default function GoalsStep() {
         <input
           type="text"
           value={data.financeGoal || ""}
-          onChange={e => setData({ financeGoal: e.target.value })}
+          onChange={(e) => setData({ financeGoal: e.target.value })}
           maxLength={400}
         />
       </label>
@@ -30,7 +30,7 @@ export default function GoalsStep() {
         <input
           type="text"
           value={data.healthGoal || ""}
-          onChange={e => setData({ healthGoal: e.target.value })}
+          onChange={(e) => setData({ healthGoal: e.target.value })}
           maxLength={400}
         />
       </label>

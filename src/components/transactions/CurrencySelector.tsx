@@ -23,7 +23,11 @@ const options: { value: Currency; label: string; flag: string }[] = [
   { value: "BRL", label: "BRL", flag: "🇧🇷" },
 ];
 
-export default function CurrencySelector({ value, onChange, className }: Props) {
+export default function CurrencySelector({
+  value,
+  onChange,
+  className,
+}: Props) {
   const current = options.find((o) => o.value === value) || options[0];
 
   return (

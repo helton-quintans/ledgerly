@@ -1,10 +1,10 @@
 import { prisma } from "@/lib/prisma";
-import { UpdateTransactionInput } from "../../../schema/types/transaction.types";
+import type { UpdateTransactionInput } from "../../../schema/types/transaction.types";
 
 export async function updateTransaction(
   _: unknown,
   args: UpdateTransactionInput,
-  context: { user?: { sub?: string; id?: string; email?: string } }
+  context: { user?: { sub?: string; id?: string; email?: string } },
 ) {
   const tokenUser = context?.user;
 
@@ -17,17 +17,23 @@ export async function updateTransaction(
   }
 
   if (!userId && tokenUser?.email) {
-    const uByEmail = await prisma.user.findUnique({ where: { email: tokenUser.email } });
+    const uByEmail = await prisma.user.findUnique({
+      where: { email: tokenUser.email },
+    });
     if (uByEmail) userId = uByEmail.id;
   }
 
   if (!userId && tokenUser?.sub) {
-    const acct = await prisma.account.findFirst({ where: { providerAccountId: tokenUser.sub } });
+    const acct = await prisma.account.findFirst({
+      where: { providerAccountId: tokenUser.sub },
+    });
     if (acct) userId = acct.userId;
   }
 
   if (!userId) {
-    throw new Error("User not authenticated. Please log in to edit transactions.");
+    throw new Error(
+      "User not authenticated. Please log in to edit transactions.",
+    );
   }
 
   const transaction = await prisma.transaction.findUnique({
@@ -42,7 +48,9 @@ export async function updateTransaction(
   // or if the token email matches the owner's email (handles duplicate user records).
   if (transaction.userId !== userId) {
     if (tokenUser?.email) {
-      const owner = await prisma.user.findUnique({ where: { id: transaction.userId } });
+      const owner = await prisma.user.findUnique({
+        where: { id: transaction.userId },
+      });
       if (owner?.email === tokenUser.email) {
         // allow (same email but different internal user record)
       } else {
@@ -74,6 +82,7 @@ export async function updateTransaction(
     ...updated,
     amount_cents: Math.round((updated.amount ?? 0) * 100),
     type: (updated.amount ?? 0) >= 0 ? "income" : "expense",
-    date: updated.date instanceof Date ? updated.date.toISOString() : updated.date,
+    date:
+      updated.date instanceof Date ? updated.date.toISOString() : updated.date,
   };
 }

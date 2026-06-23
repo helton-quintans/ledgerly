@@ -26,8 +26,18 @@ type Props = {
 };
 
 const monthNames = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 export default function DateFilter({ transactions, filter, onChange }: Props) {
@@ -39,7 +49,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
   // Get available years from transactions
   const availableYears = useMemo(() => {
     const years = new Set<number>();
-    transactions.forEach(t => {
+    transactions.forEach((t) => {
       years.add(new Date(t.date).getFullYear());
     });
     // Add current year if no transactions exist
@@ -52,7 +62,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
     if (!filter.year) return {};
 
     const counts: Record<number, number> = {};
-    transactions.forEach(t => {
+    transactions.forEach((t) => {
       const date = new Date(t.date);
       if (date.getFullYear() === filter.year) {
         const month = date.getMonth();
@@ -76,7 +86,8 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
         break;
       case "last-month":
         const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-        const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+        const lastMonthYear =
+          currentMonth === 0 ? currentYear - 1 : currentYear;
         newFilter.year = lastMonthYear;
         newFilter.month = lastMonth;
         break;
@@ -95,8 +106,8 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
   const handleYearChange = (year: string) => {
     onChange({
       ...filter,
-      year: parseInt(year),
-      preset: "custom"
+      year: Number.parseInt(year),
+      preset: "custom",
     });
   };
 
@@ -107,16 +118,20 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
     onChange({
       year: targetYear,
       month: filter.month === month ? null : month, // Toggle selection
-      preset: "custom"
+      preset: "custom",
     });
   };
 
   const getFilterDisplayText = () => {
     switch (filter.preset) {
-      case "all": return "All Transactions";
-      case "this-month": return "This Month";
-      case "last-month": return "Last Month";
-      case "this-year": return "This Year";
+      case "all":
+        return "All Transactions";
+      case "this-month":
+        return "This Month";
+      case "last-month":
+        return "Last Month";
+      case "this-year":
+        return "This Year";
       case "custom":
         if (filter.year && filter.month !== null) {
           return `${monthNames[filter.month]} ${filter.year}`;
@@ -125,7 +140,8 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
           return `Year ${filter.year}`;
         }
         return "Custom Filter";
-      default: return "Select Filter";
+      default:
+        return "Select Filter";
     }
   };
 
@@ -143,7 +159,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                {availableYears.map(year => (
+                {availableYears.map((year) => (
                   <DropdownMenuItem
                     key={year}
                     onClick={() => handleYearChange(year.toString())}
@@ -167,13 +183,19 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                 <DropdownMenuItem onClick={() => handlePresetChange("all")}>
                   All Transactions
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handlePresetChange("this-month")}>
+                <DropdownMenuItem
+                  onClick={() => handlePresetChange("this-month")}
+                >
                   This Month
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handlePresetChange("last-month")}>
+                <DropdownMenuItem
+                  onClick={() => handlePresetChange("last-month")}
+                >
                   Last Month
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handlePresetChange("this-year")}>
+                <DropdownMenuItem
+                  onClick={() => handlePresetChange("this-year")}
+                >
                   This Year
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -186,20 +208,35 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                 const count = monthCounts[index] || 0;
                 const isSelected = filter.month === index;
                 const hasTransactions = count > 0;
-                const isCurrentMonth = filter.year === currentYear && index === currentMonth;
+                const isCurrentMonth =
+                  filter.year === currentYear && index === currentMonth;
 
                 return (
                   <Button
                     key={index}
-                    variant={isSelected ? "default" : hasTransactions ? "outline" : "ghost"}
+                    variant={
+                      isSelected
+                        ? "default"
+                        : hasTransactions
+                          ? "outline"
+                          : "ghost"
+                    }
                     size="sm"
-                    className={`h-7 px-2 text-xs shrink-0 min-w-[44px] ${!hasTransactions ? "opacity-50" : ""
-                      } ${isCurrentMonth && !isSelected ? "ring-2 ring-primary/20 border-primary/40 font-semibold" : ""
-                      }`}
+                    className={`h-7 px-2 text-xs shrink-0 min-w-[44px] ${
+                      !hasTransactions ? "opacity-50" : ""
+                    } ${
+                      isCurrentMonth && !isSelected
+                        ? "ring-2 ring-primary/20 border-primary/40 font-semibold"
+                        : ""
+                    }`}
                     onClick={() => handleMonthChange(index)}
                     disabled={!hasTransactions}
                   >
-                    <span className={`font-medium ${isCurrentMonth ? "font-semibold" : ""}`}>{name}</span>
+                    <span
+                      className={`font-medium ${isCurrentMonth ? "font-semibold" : ""}`}
+                    >
+                      {name}
+                    </span>
                     {hasTransactions && count > 0 && (
                       <span className="ml-1 text-[10px] opacity-70">
                         {count}
@@ -224,7 +261,7 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                {availableYears.map(year => (
+                {availableYears.map((year) => (
                   <DropdownMenuItem
                     key={year}
                     onClick={() => handleYearChange(year.toString())}
@@ -247,13 +284,19 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                 <DropdownMenuItem onClick={() => handlePresetChange("all")}>
                   All Transactions
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handlePresetChange("this-month")}>
+                <DropdownMenuItem
+                  onClick={() => handlePresetChange("this-month")}
+                >
                   This Month
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handlePresetChange("last-month")}>
+                <DropdownMenuItem
+                  onClick={() => handlePresetChange("last-month")}
+                >
                   Last Month
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handlePresetChange("this-year")}>
+                <DropdownMenuItem
+                  onClick={() => handlePresetChange("this-year")}
+                >
                   This Year
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -266,20 +309,35 @@ export default function DateFilter({ transactions, filter, onChange }: Props) {
                 const count = monthCounts[index] || 0;
                 const isSelected = filter.month === index;
                 const hasTransactions = count > 0;
-                const isCurrentMonth = filter.year === currentYear && index === currentMonth;
+                const isCurrentMonth =
+                  filter.year === currentYear && index === currentMonth;
 
                 return (
                   <Button
                     key={index}
-                    variant={isSelected ? "default" : hasTransactions ? "outline" : "ghost"}
+                    variant={
+                      isSelected
+                        ? "default"
+                        : hasTransactions
+                          ? "outline"
+                          : "ghost"
+                    }
                     size="sm"
-                    className={`h-8 px-2 text-xs ${!hasTransactions ? "opacity-50" : ""
-                      } ${isCurrentMonth && !isSelected ? "ring-2 ring-primary/20 border-primary/40 font-semibold" : ""
-                      }`}
+                    className={`h-8 px-2 text-xs ${
+                      !hasTransactions ? "opacity-50" : ""
+                    } ${
+                      isCurrentMonth && !isSelected
+                        ? "ring-2 ring-primary/20 border-primary/40 font-semibold"
+                        : ""
+                    }`}
                     onClick={() => handleMonthChange(index)}
                     disabled={!hasTransactions}
                   >
-                    <span className={`font-medium ${isCurrentMonth ? "font-semibold" : ""}`}>{name}</span>
+                    <span
+                      className={`font-medium ${isCurrentMonth ? "font-semibold" : ""}`}
+                    >
+                      {name}
+                    </span>
                     {hasTransactions && count > 0 && (
                       <span className="ml-1 text-[10px] opacity-70">
                         {count}

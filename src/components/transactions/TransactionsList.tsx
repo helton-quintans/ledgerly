@@ -1,8 +1,6 @@
 "use client";
 
-import { useTransactions } from "@ledgerly/hooks/transactions/useTransactions";
 import { Button } from "@/components/ui/button";
-import { LogoSpinner } from "@ledgerly/ui/components/logo";
 import ConfirmModal from "@/components/ui/confirm-modal";
 import {
   DropdownMenu,
@@ -12,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SearchInput } from "@/components/ui/search-input";
-import { useIsMobile } from "@ledgerly/hooks/use-mobile";
 import {
   Table,
   TableBody,
@@ -21,56 +18,60 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Currency } from "@ledgerly/schemas";
 import type { Transaction } from "@/lib/transactions";
+import { useTransactions } from "@ledgerly/hooks/transactions/useTransactions";
+import { useIsMobile } from "@ledgerly/hooks/use-mobile";
+import type { Currency } from "@ledgerly/schemas";
+import { LogoSpinner } from "@ledgerly/ui/components/logo";
 import { formatCurrencyFromCents, formatDateByCurrency } from "@ledgerly/utils";
 import {
+  Briefcase,
   Calendar,
+  Car,
   ChevronDown,
   DollarSign,
   Edit,
   FileText,
+  Film,
+  Gift,
+  GraduationCap,
+  Heart,
+  Laptop,
+  Plane,
+  ShoppingBag,
+  ShoppingCart,
   Tag,
   Trash2,
-  UtensilsCrossed,
-  Car,
-  ShoppingBag,
-  Film,
-  Zap,
-  Heart,
-  GraduationCap,
-  Plane,
-  ShoppingCart,
-  Briefcase,
-  Laptop,
   TrendingUp,
-  Gift,
+  UtensilsCrossed,
+  Zap,
 } from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
+import type React from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import EmptyState from "./EmptyState";
 import TransactionCard from "./TransactionCard";
 import TransactionFormModal from "./TransactionFormModal";
-import EmptyState from "./EmptyState";
 import TransactionsListSkeleton from "./TransactionsListSkeleton";
 
 // Category icons mapping
 const getCategoryIcon = (category: string) => {
   const categoryMap: Record<string, React.ReactNode> = {
     "Food & Dining": <UtensilsCrossed className="size-4" />,
-    "Food": <UtensilsCrossed className="size-4" />,
-    "Transportation": <Car className="size-4" />,
-    "Shopping": <ShoppingBag className="size-4" />,
-    "Entertainment": <Film className="size-4" />,
+    Food: <UtensilsCrossed className="size-4" />,
+    Transportation: <Car className="size-4" />,
+    Shopping: <ShoppingBag className="size-4" />,
+    Entertainment: <Film className="size-4" />,
     "Bills & Utilities": <Zap className="size-4" />,
-    "Healthcare": <Heart className="size-4" />,
-    "Education": <GraduationCap className="size-4" />,
-    "Travel": <Plane className="size-4" />,
-    "Groceries": <ShoppingCart className="size-4" />,
-    "Salary": <Briefcase className="size-4" />,
-    "Freelance": <Laptop className="size-4" />,
-    "Investment": <TrendingUp className="size-4" />,
-    "Gift": <Gift className="size-4" />,
-    "Other": <FileText className="size-4" />,
+    Healthcare: <Heart className="size-4" />,
+    Education: <GraduationCap className="size-4" />,
+    Travel: <Plane className="size-4" />,
+    Groceries: <ShoppingCart className="size-4" />,
+    Salary: <Briefcase className="size-4" />,
+    Freelance: <Laptop className="size-4" />,
+    Investment: <TrendingUp className="size-4" />,
+    Gift: <Gift className="size-4" />,
+    Other: <FileText className="size-4" />,
   };
 
   return categoryMap[category] || <FileText className="size-4" />;
@@ -106,15 +107,13 @@ export default function TransactionsList({
     return () => clearTimeout(id);
   }, [searchQuery]);
 
-  const {
-    data,
-    isLoading,
-    error
-  } = !items ? useTransactions({
-    page,
-    pageSize: perPage,
-    search: remoteSearch
-  }) : { data: undefined, isLoading: false, error: undefined } as any;
+  const { data, isLoading, error } = !items
+    ? useTransactions({
+        page,
+        pageSize: perPage,
+        search: remoteSearch,
+      })
+    : ({ data: undefined, isLoading: false, error: undefined } as any);
   const [columnVisibility, setColumnVisibility] = useState<
     Record<string, boolean>
   >({
@@ -137,7 +136,7 @@ export default function TransactionsList({
   };
 
   // Determine source items: prefer `items` prop (client-side), otherwise use server data
-  const sourceItems: Transaction[] = items ?? (data?.transactions ?? []);
+  const sourceItems: Transaction[] = items ?? data?.transactions ?? [];
 
   // If `items` provided, apply local search (immediate). Otherwise server already filtered.
   const filtered = items
@@ -152,8 +151,12 @@ export default function TransactionsList({
       })
     : sourceItems;
 
-  const totalPages = items ? Math.max(1, Math.ceil((filtered.length || 0) / perPage)) : (data?.totalPages ?? 1);
-  const pageItems = items ? filtered.slice((page - 1) * perPage, page * perPage) : filtered;
+  const totalPages = items
+    ? Math.max(1, Math.ceil((filtered.length || 0) / perPage))
+    : (data?.totalPages ?? 1);
+  const pageItems = items
+    ? filtered.slice((page - 1) * perPage, page * perPage)
+    : filtered;
 
   return (
     <div className="space-y-4">
@@ -178,9 +181,13 @@ export default function TransactionsList({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{isMobile ? "Card Fields" : "Columns"}</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                {isMobile ? "Card Fields" : "Columns"}
+              </DropdownMenuLabel>
               {(
-                Object.keys(columnVisibility) as (keyof typeof columnVisibility)[]
+                Object.keys(
+                  columnVisibility,
+                ) as (keyof typeof columnVisibility)[]
               ).map((col) => (
                 <DropdownMenuCheckboxItem
                   key={col}
@@ -297,11 +304,16 @@ export default function TransactionsList({
                           className={`${(t.amount_cents ?? Math.round(((t as any).amount ?? 0) * 100)) >= 0 ? "text-success/80" : "text-destructive/80"} text-left`}
                         >
                           {(() => {
-                            const amountCents = t.amount_cents ?? Math.round(((t as any).amount ?? 0) * 100);
-                            return (amountCents >= 0 ? "+" : "-");
+                            const amountCents =
+                              t.amount_cents ??
+                              Math.round(((t as any).amount ?? 0) * 100);
+                            return amountCents >= 0 ? "+" : "-";
                           })()}
                           {formatCurrencyFromCents(
-                            Math.abs(t.amount_cents ?? Math.round(((t as any).amount ?? 0) * 100)),
+                            Math.abs(
+                              t.amount_cents ??
+                                Math.round(((t as any).amount ?? 0) * 100),
+                            ),
                             (t.currency ?? "USD") as Currency,
                           )}
                         </TableCell>
@@ -321,7 +333,12 @@ export default function TransactionsList({
                       )}
 
                       {columnVisibility.date && (
-                        <TableCell>{formatDateByCurrency(new Date(t.date), displayCurrency)}</TableCell>
+                        <TableCell>
+                          {formatDateByCurrency(
+                            new Date(t.date),
+                            displayCurrency,
+                          )}
+                        </TableCell>
                       )}
 
                       {columnVisibility.actions && (

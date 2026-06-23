@@ -3,6 +3,7 @@
 import CategorySelector from "@/components/transactions/CategorySelector";
 import CurrencySelector from "@/components/transactions/CurrencySelector";
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Dialog,
   DialogContent,
@@ -14,20 +15,30 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useIsMobile } from "@ledgerly/hooks/use-mobile";
 import { useCreateTransaction } from "@ledgerly/hooks/transactions/useCreateTransaction";
-import { ArrowDown, ArrowUp, Coins, DollarSign, FileText, Plus, Tag, TrendingUp, XCircle, Calendar as CalendarIcon } from "lucide-react";
-import { DatePicker } from "@/components/ui/date-picker";
+import { useIsMobile } from "@ledgerly/hooks/use-mobile";
+import {
+  ArrowDown,
+  ArrowUp,
+  Calendar as CalendarIcon,
+  Coins,
+  DollarSign,
+  FileText,
+  Plus,
+  Tag,
+  TrendingUp,
+  XCircle,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import type { Transaction } from "@/lib/transactions";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useUpdateTransaction } from "@ledgerly/hooks/transactions/useUpdateTransaction";
+import type { Currency } from "@ledgerly/schemas";
 import transactionFormSchema, {
   type TransactionFormValues,
 } from "@ledgerly/schemas/transaction";
-import type { Currency } from "@ledgerly/schemas";
-import type { Transaction } from "@/lib/transactions";
-import { useUpdateTransaction } from "@ledgerly/hooks/transactions/useUpdateTransaction";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 
@@ -50,14 +61,15 @@ export default function TransactionFormModal({
 }: Props) {
   const isMobile = useIsMobile();
   const [internalOpen, setInternalOpen] = useState(false);
-  
+
   // Use external open state if provided, otherwise use internal state
   const open = externalOpen !== undefined ? externalOpen : internalOpen;
-  const setOpen = externalOpen !== undefined 
-    ? (value: boolean) => {
-        if (!value) onClose?.();
-      }
-    : setInternalOpen;
+  const setOpen =
+    externalOpen !== undefined
+      ? (value: boolean) => {
+          if (!value) onClose?.();
+        }
+      : setInternalOpen;
 
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema) as any,
@@ -91,7 +103,8 @@ export default function TransactionFormModal({
   const parseYMD = (s?: string | null) => {
     if (!s) return undefined;
     const parts = s.split("-").map((p) => Number(p));
-    if (parts.length < 3 || parts.some((n) => Number.isNaN(n))) return undefined;
+    if (parts.length < 3 || parts.some((n) => Number.isNaN(n)))
+      return undefined;
     const [y, m, d] = parts;
     return new Date(y, m - 1, d);
   };
@@ -104,9 +117,13 @@ export default function TransactionFormModal({
   async function onSubmit(values: TransactionFormValues) {
     // `values.amount` is provided by the form schema as integer cents.
     // Convert to major units (float) when sending to GraphQL (`amount: Float`).
-    const amount = (values.type === "expense" ? -1 : 1) * (Math.abs(values.amount as number) / 100);
+    const amount =
+      (values.type === "expense" ? -1 : 1) *
+      (Math.abs(values.amount as number) / 100);
     try {
-      const dateIso = values.date ? new Date(`${values.date}T00:00:00`).toISOString() : new Date().toISOString();
+      const dateIso = values.date
+        ? new Date(`${values.date}T00:00:00`).toISOString()
+        : new Date().toISOString();
       if (transaction) {
         await updateMutation.mutateAsync({
           id: transaction.id,
@@ -149,9 +166,9 @@ export default function TransactionFormModal({
   }
 
   const defaultTrigger = (
-    <Button 
-      onClick={() => setOpen(true)} 
-      variant="default" 
+    <Button
+      onClick={() => setOpen(true)}
+      variant="default"
       className={`shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 font-medium ${className}`}
     >
       <Plus className="size-4" />
@@ -174,8 +191,12 @@ export default function TransactionFormModal({
       setOpen(true);
       clearErrors();
       // derive type from transaction or from amount sign when missing
-      const derivedAmountCents = transaction.amount_cents ?? Math.round(((transaction as any).amount ?? 0) * 100);
-      const derivedType = (transaction as any).type ?? (derivedAmountCents >= 0 ? "income" : "expense");
+      const derivedAmountCents =
+        transaction.amount_cents ??
+        Math.round(((transaction as any).amount ?? 0) * 100);
+      const derivedType =
+        (transaction as any).type ??
+        (derivedAmountCents >= 0 ? "income" : "expense");
 
       reset({
         description: transaction.description || "",
@@ -184,10 +205,12 @@ export default function TransactionFormModal({
         category: transaction.category || "",
         type: derivedType,
         currency: (transaction.currency as Currency) || "USD",
-        date: transaction.date ? (() => {
-          const d = new Date(transaction.date);
-          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-        })() : undefined,
+        date: transaction.date
+          ? (() => {
+              const d = new Date(transaction.date);
+              return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+            })()
+          : undefined,
       } as any);
       return;
     }
@@ -230,7 +253,7 @@ export default function TransactionFormModal({
           <div className="h-5 mt-1 text-sm text-destructive">
             {errors.currency?.message as string}
           </div>
-          
+
           <div className="mt-2 w-full">
             <label className="w-full flex text-sm font-medium mb-2">
               <CalendarIcon className="size-4 mr-2" />
@@ -387,22 +410,22 @@ export default function TransactionFormModal({
           </Label>
           <div className="flex gap-2">
             <button
-            type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 rounded h-10 cursor-pointer border ${watch("type") === "income" ? "bg-success/20 text-success border-success/30" : "text-success border-neutral-200"}`}
-            onClick={() => setValue("type", "income")}
-          >
-            <ArrowUp className="size-4" />
-            <span>In</span>
-          </button>
+              type="button"
+              className={`flex-1 flex items-center justify-center gap-2 px-3 rounded h-10 cursor-pointer border ${watch("type") === "income" ? "bg-success/20 text-success border-success/30" : "text-success border-neutral-200"}`}
+              onClick={() => setValue("type", "income")}
+            >
+              <ArrowUp className="size-4" />
+              <span>In</span>
+            </button>
 
-          <button
-            type="button"
-            className={`flex-1 flex items-center justify-center gap-2 px-3 rounded h-10 cursor-pointer border ${watch("type") === "expense" ? "bg-destructive/20 text-destructive border-destructive/30" : "text-destructive border-neutral-200"}`}
-            onClick={() => setValue("type", "expense")}
-          >
-            <ArrowDown className="size-4" />
-            <span>Out</span>
-          </button>
+            <button
+              type="button"
+              className={`flex-1 flex items-center justify-center gap-2 px-3 rounded h-10 cursor-pointer border ${watch("type") === "expense" ? "bg-destructive/20 text-destructive border-destructive/30" : "text-destructive border-neutral-200"}`}
+              onClick={() => setValue("type", "expense")}
+            >
+              <ArrowDown className="size-4" />
+              <span>Out</span>
+            </button>
           </div>
         </div>
       </div>
@@ -422,9 +445,7 @@ export default function TransactionFormModal({
         >
           Cancel
         </Button>
-        <Button onClick={handleSubmit(onSubmit)}>
-          Save
-        </Button>
+        <Button onClick={handleSubmit(onSubmit)}>Save</Button>
       </DialogFooter>
     </div>
   );
@@ -438,7 +459,9 @@ export default function TransactionFormModal({
           if (!val) onClose?.();
         }}
       >
-        {externalOpen === undefined && <SheetTrigger asChild>{trigger}</SheetTrigger>}
+        {externalOpen === undefined && (
+          <SheetTrigger asChild>{trigger}</SheetTrigger>
+        )}
         <SheetContent side="bottom" className="p-8">
           {content}
         </SheetContent>
@@ -454,7 +477,9 @@ export default function TransactionFormModal({
         if (!val) onClose?.();
       }}
     >
-      {externalOpen === undefined && <DialogTrigger asChild>{trigger}</DialogTrigger>}
+      {externalOpen === undefined && (
+        <DialogTrigger asChild>{trigger}</DialogTrigger>
+      )}
       <DialogContent>{content}</DialogContent>
     </Dialog>
   );
