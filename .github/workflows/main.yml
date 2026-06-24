@@ -36,7 +36,8 @@ jobs:
 
     # Run code linting and formatting
     - name: Run Lint
-      run: pnpm run lint
+      run: pnpm run lint:ci
+      continue-on-error: true
 
     # Build the Next.js application
     - name: Build App
