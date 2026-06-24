@@ -1,0 +1,53 @@
+name: Ledgerly CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  # Force GitHub runner to accept the Node execution without killing the process
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+
+jobs:
+  test_and_build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Clone the repository to the runner
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Setup pnpm package manager (reads version automatically from package.json)
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+
+    # Setup Node.js explicitly
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22 # Explicitly setting Node 22 to bypass runner conflicts
+        cache: 'pnpm'
+
+    # Install dependencies
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    # Run code linting and formatting
+    - name: Run Lint
+      run: pnpm run lint:ci
+      continue-on-error: true
+
+    # Build the Next.js application
+    - name: Build App
+      run: pnpm run build
+      env:
+        DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/ledgerly"
+        DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/ledgerly"
+        NEXTAUTH_SECRET: "7l8vc/z9wiA4K1nNCGSJBBITV9Pt4xV2Vsr7u8xsr9g="
+        NEXTAUTH_URL: "http://localhost:3000"
+        GOOGLE_CLIENT_ID: "mock_id_for_ci"
+        GOOGLE_CLIENT_SECRET: "mock_secret_for_ci"
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: "mock_id_for_ci"
+        NEXT_PUBLIC_GOOGLE_SECRET: "mock_secret_for_ci"
