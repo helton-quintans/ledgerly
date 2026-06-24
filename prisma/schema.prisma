@@ -95,7 +95,7 @@ model RecurringTransaction {
   userId       String
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   amount       Float
-  currency     String
+  currency     Currency
   category     String
   description  String?
   frequency    Frequency
