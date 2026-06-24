@@ -1,9 +1,7 @@
 "use client";
 
-import CategorySelector from "@/components/transactions/CategorySelector";
-import CurrencySelector from "@/components/transactions/CurrencySelector";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { DatePicker } from "@/components/ui/date-picker";
 import {
   Dialog,
   DialogContent,
@@ -14,27 +12,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import * as recurringClient from "@/services/recurringClient";
-import {
-  ArrowDown,
-  ArrowUp,
-  Calendar as CalendarIcon,
-  Coins,
-  DollarSign,
-  FileText,
-  Tag,
-  TrendingUp,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { NumericFormat } from "react-number-format";
 import { toast } from "sonner";
+import * as recurringClient from "@/services/recurringClient";
+import CurrencySelector from "@/components/transactions/CurrencySelector";
+import CategorySelector from "@/components/transactions/CategorySelector";
+import { DatePicker } from "@/components/ui/date-picker";
+import { NumericFormat } from "react-number-format";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { ArrowDown, ArrowUp, Coins, DollarSign, FileText, Tag, TrendingUp, Calendar as CalendarIcon } from "lucide-react";
 
 type Props = {
   onSaved?: () => void;
@@ -42,11 +27,7 @@ type Props = {
   trigger?: React.ReactNode;
 };
 
-export default function RecurringFormModal({
-  onSaved,
-  initial = null,
-  trigger,
-}: Props) {
+export default function RecurringFormModal({ onSaved, initial = null, trigger }: Props) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<any>({
     amount: initial?.amount ?? 0,
@@ -60,63 +41,19 @@ export default function RecurringFormModal({
   });
 
   useEffect(() => {
-    if (initial) setForm((s: any) => ({ ...s, ...initial }));
+    if (initial) setForm((s:any) => ({ ...s, ...initial }));
   }, [initial]);
 
-  const currencySymbolMap: Record<string, string> = {
-    USD: "$",
-    EUR: "€",
-    BRL: "R$",
-  };
+  const currencySymbolMap: Record<string, string> = { USD: "$", EUR: "€", BRL: "R$" };
 
   async function save() {
     try {
-      const {
-        id,
-        amount,
-        currency,
-        frequency,
-        interval,
-        description,
-        category,
-        type,
-        startDate,
-        endDate,
-        daysOfWeek,
-        dayOfMonth,
-        active,
-      } = form;
+      const { id, amount, currency, frequency, interval, description, category, type, startDate, endDate, daysOfWeek, dayOfMonth, active } = form;
       if (initial?.id) {
-        await recurringClient.updateRecurring({
-          id,
-          amount,
-          currency,
-          frequency,
-          interval,
-          description,
-          category,
-          type,
-          startDate,
-          endDate,
-          daysOfWeek,
-          dayOfMonth,
-          active,
-        });
+        await recurringClient.updateRecurring({ id, amount, currency, frequency, interval, description, category, type, startDate, endDate, daysOfWeek, dayOfMonth, active });
         toast.success("Recurring updated");
       } else {
-        await recurringClient.createRecurring({
-          amount,
-          currency,
-          frequency,
-          interval,
-          description,
-          category,
-          type,
-          startDate,
-          endDate,
-          daysOfWeek,
-          dayOfMonth,
-        });
+        await recurringClient.createRecurring({ amount, currency, frequency, interval, description, category, type, startDate, endDate, daysOfWeek, dayOfMonth });
         toast.success("Recurring created");
       }
       setOpen(false);
@@ -128,11 +65,7 @@ export default function RecurringFormModal({
   }
 
   const defaultTrigger = (
-    <Button
-      onClick={() => setOpen(true)}
-      variant="default"
-      className="shadow-lg font-medium"
-    >
+    <Button onClick={() => setOpen(true)} variant="default" className="shadow-lg font-medium">
       <PlusIcon />
       New recurring
     </Button>
@@ -145,9 +78,7 @@ export default function RecurringFormModal({
       {renderTrigger && <DialogTrigger asChild>{renderTrigger}</DialogTrigger>}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {initial ? "Edit recurring" : "New recurring"}
-          </DialogTitle>
+          <DialogTitle>{initial ? "Edit recurring" : "New recurring"}</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-3 py-4">
@@ -156,11 +87,7 @@ export default function RecurringFormModal({
               <Coins className="size-4" />
               Currency
             </Label>
-            <CurrencySelector
-              value={form.currency}
-              onChange={(v) => setForm({ ...form, currency: v })}
-              className="w-full h-10"
-            />
+            <CurrencySelector value={form.currency} onChange={(v) => setForm({ ...form, currency: v })} className="w-full h-10" />
           </div>
 
           <div className="mt-2 w-full">
@@ -170,9 +97,7 @@ export default function RecurringFormModal({
             </label>
             <DatePicker
               value={form.startDate ? new Date(form.startDate) : undefined}
-              onChange={(d) =>
-                setForm({ ...form, startDate: d ? d.toISOString() : undefined })
-              }
+              onChange={(d) => setForm({ ...form, startDate: d ? d.toISOString() : undefined })}
               className="w-full h-10 justify-center text-center gap-2"
             />
           </div>
@@ -190,9 +115,7 @@ export default function RecurringFormModal({
               allowNegative={false}
               prefix={currencySymbolMap[form.currency] || ""}
               value={form.amount}
-              onValueChange={(v) =>
-                setForm({ ...form, amount: v.floatValue ?? 0 })
-              }
+              onValueChange={(v) => setForm({ ...form, amount: v.floatValue ?? 0 })}
               className="h-10"
             />
           </div>
@@ -202,13 +125,7 @@ export default function RecurringFormModal({
               <FileText className="size-4" />
               Description
             </Label>
-            <Input
-              value={form.description}
-              onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
-              }
-              className="h-10"
-            />
+            <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="h-10" />
           </div>
 
           <div className="space-y-2">
@@ -216,11 +133,7 @@ export default function RecurringFormModal({
               <Tag className="size-4" />
               Category
             </Label>
-            <CategorySelector
-              value={form.category}
-              onChange={(v) => setForm({ ...form, category: v })}
-              className="w-full h-10"
-            />
+            <CategorySelector value={form.category} onChange={(v) => setForm({ ...form, category: v })} className="w-full h-10" />
           </div>
 
           <div className="space-y-2">
@@ -252,10 +165,7 @@ export default function RecurringFormModal({
           <div className="grid grid-cols-2 gap-2">
             <div>
               <Label>Frequency</Label>
-              <Select
-                value={form.frequency}
-                onValueChange={(v) => setForm({ ...form, frequency: v })}
-              >
+              <Select value={form.frequency} onValueChange={(v) => setForm({ ...form, frequency: v })}>
                 <SelectTrigger className="w-full" size="default">
                   <SelectValue>{form.frequency}</SelectValue>
                 </SelectTrigger>
@@ -269,10 +179,7 @@ export default function RecurringFormModal({
             </div>
             <div>
               <Label>Interval</Label>
-              <Select
-                value={String(form.interval)}
-                onValueChange={(v) => setForm({ ...form, interval: Number(v) })}
-              >
+              <Select value={String(form.interval)} onValueChange={(v) => setForm({ ...form, interval: Number(v) })}>
                 <SelectTrigger className="w-full" size="default">
                   <SelectValue>{String(form.interval)}</SelectValue>
                 </SelectTrigger>
@@ -292,9 +199,7 @@ export default function RecurringFormModal({
         </div>
 
         <DialogFooter className="mt-1 flex flex-row justify-end gap-2 sm:justify-end">
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
+          <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
           <Button onClick={save}>{initial ? "Save" : "Create"}</Button>
         </DialogFooter>
       </DialogContent>
@@ -304,18 +209,6 @@ export default function RecurringFormModal({
 
 function PlusIcon() {
   return (
-    <svg
-      className="w-4 h-4 mr-2"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-    >
-      <path
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 5v14M5 12h14"
-      />
-    </svg>
+    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14"/></svg>
   );
 }

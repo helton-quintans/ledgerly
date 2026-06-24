@@ -1,12 +1,12 @@
-import { print } from "graphql";
+import { print } from 'graphql';
 
 async function graphqlFetch(query: string | any, variables: any) {
-  const queryString = typeof query === "string" ? query : print(query);
-  const res = await fetch("/api/graphql", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  const queryString = typeof query === 'string' ? query : print(query);
+  const res = await fetch('/api/graphql', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query: queryString, variables }),
-    credentials: "same-origin",
+    credentials: 'same-origin',
   });
   const { data, errors } = await res.json();
   if (errors) throw errors;
