@@ -1,5 +1,6 @@
 "use client";
-import React, { createContext, useContext, useState } from "react";
+import type React from "react";
+import { createContext, useContext, useState } from "react";
 
 export type OnboardingData = {
   careerGoal?: string;
@@ -16,7 +17,9 @@ const OnboardingContext = createContext<{
   setData: () => {},
 });
 
-export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [data, setDataState] = useState<OnboardingData>({});
 
   const setData = (newData: Partial<OnboardingData>) => {

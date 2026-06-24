@@ -4,7 +4,8 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "rootDir": "../"
   },
-  "include": ["./index.ts", "./**/*.ts"]
+  "include": ["./index.ts", "./**/*.ts", "../services/**/*.ts"]
 }

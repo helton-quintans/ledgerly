@@ -1,6 +1,5 @@
 "use client";
 
-import { useTransactions } from "@/contexts/TransactionsContext";
 import { Button } from "@/components/ui/button";
 import ConfirmModal from "@/components/ui/confirm-modal";
 import {
@@ -11,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SearchInput } from "@/components/ui/search-input";
-import { useIsMobile } from "@ledgerly/hooks/use-mobile";
 import {
   Table,
   TableBody,
@@ -20,83 +18,102 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Currency } from "@ledgerly/schemas";
 import type { Transaction } from "@/lib/transactions";
+import { useTransactions } from "@ledgerly/hooks/transactions/useTransactions";
+import { useIsMobile } from "@ledgerly/hooks/use-mobile";
+import type { Currency } from "@ledgerly/schemas";
+import { LogoSpinner } from "@ledgerly/ui/components/logo";
 import { formatCurrencyFromCents, formatDateByCurrency } from "@ledgerly/utils";
 import {
+  Briefcase,
   Calendar,
+  Car,
   ChevronDown,
   DollarSign,
   Edit,
   FileText,
+  Film,
+  Gift,
+  GraduationCap,
+  Heart,
+  Laptop,
+  Plane,
+  ShoppingBag,
+  ShoppingCart,
   Tag,
   Trash2,
-  UtensilsCrossed,
-  Car,
-  ShoppingBag,
-  Film,
-  Zap,
-  Heart,
-  GraduationCap,
-  Plane,
-  ShoppingCart,
-  Briefcase,
-  Laptop,
   TrendingUp,
-  Gift,
+  UtensilsCrossed,
+  Zap,
 } from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
+import type React from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import EmptyState from "./EmptyState";
 import TransactionCard from "./TransactionCard";
 import TransactionFormModal from "./TransactionFormModal";
-import EmptyState from "./EmptyState";
+import TransactionsListSkeleton from "./TransactionsListSkeleton";
 
 // Category icons mapping
 const getCategoryIcon = (category: string) => {
   const categoryMap: Record<string, React.ReactNode> = {
     "Food & Dining": <UtensilsCrossed className="size-4" />,
-    "Food": <UtensilsCrossed className="size-4" />,
-    "Transportation": <Car className="size-4" />,
-    "Shopping": <ShoppingBag className="size-4" />,
-    "Entertainment": <Film className="size-4" />,
+    Food: <UtensilsCrossed className="size-4" />,
+    Transportation: <Car className="size-4" />,
+    Shopping: <ShoppingBag className="size-4" />,
+    Entertainment: <Film className="size-4" />,
     "Bills & Utilities": <Zap className="size-4" />,
-    "Healthcare": <Heart className="size-4" />,
-    "Education": <GraduationCap className="size-4" />,
-    "Travel": <Plane className="size-4" />,
-    "Groceries": <ShoppingCart className="size-4" />,
-    "Salary": <Briefcase className="size-4" />,
-    "Freelance": <Laptop className="size-4" />,
-    "Investment": <TrendingUp className="size-4" />,
-    "Gift": <Gift className="size-4" />,
-    "Other": <FileText className="size-4" />,
+    Healthcare: <Heart className="size-4" />,
+    Education: <GraduationCap className="size-4" />,
+    Travel: <Plane className="size-4" />,
+    Groceries: <ShoppingCart className="size-4" />,
+    Salary: <Briefcase className="size-4" />,
+    Freelance: <Laptop className="size-4" />,
+    Investment: <TrendingUp className="size-4" />,
+    Gift: <Gift className="size-4" />,
+    Other: <FileText className="size-4" />,
   };
 
   return categoryMap[category] || <FileText className="size-4" />;
 };
 
 type Props = {
-  items: Transaction[];
   displayCurrency: Currency;
   onEdit: (t: Transaction) => void;
   onDelete: (id: string) => Promise<void>;
   editing?: Transaction | null;
   onSaved?: () => void;
   onClose?: () => void;
+  items?: Transaction[];
 };
 
 export default function TransactionsList({
-  items,
   displayCurrency,
   onEdit,
   onDelete,
   editing,
   onSaved,
-  onClose
+  onClose,
+  items,
 }: Props) {
   const isMobile = useIsMobile();
-  const { searchQuery, setSearchQuery } = useTransactions();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [remoteSearch, setRemoteSearch] = useState("");
   const [page, setPage] = useState(1);
   const perPage = 8;
+  // debounce remote search (avoid request per keypress)
+  useEffect(() => {
+    const id = setTimeout(() => setRemoteSearch(searchQuery.trim()), 300);
+    return () => clearTimeout(id);
+  }, [searchQuery]);
+
+  const { data, isLoading, error } = !items
+    ? useTransactions({
+        page,
+        pageSize: perPage,
+        search: remoteSearch,
+      })
+    : ({ data: undefined, isLoading: false, error: undefined } as any);
   const [columnVisibility, setColumnVisibility] = useState<
     Record<string, boolean>
   >({
@@ -118,15 +135,28 @@ export default function TransactionsList({
     return iconMap[columnName] || null;
   };
 
-  // Use filtered items directly from props (already filtered by context)
-  const filtered = items;
+  // Determine source items: prefer `items` prop (client-side), otherwise use server data
+  const sourceItems: Transaction[] = items ?? data?.transactions ?? [];
 
-  useEffect(() => {
-    setPage(1);
-  }, [searchQuery]);
+  // If `items` provided, apply local search (immediate). Otherwise server already filtered.
+  const filtered = items
+    ? sourceItems.filter((t) => {
+        const q = searchQuery.trim().toLowerCase();
+        if (!q) return true;
+        return (
+          (t.description || "").toLowerCase().includes(q) ||
+          (t.category || "").toLowerCase().includes(q) ||
+          (t.currency || "").toLowerCase().includes(q)
+        );
+      })
+    : sourceItems;
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
-  const pageItems = filtered.slice((page - 1) * perPage, page * perPage);
+  const totalPages = items
+    ? Math.max(1, Math.ceil((filtered.length || 0) / perPage))
+    : (data?.totalPages ?? 1);
+  const pageItems = items
+    ? filtered.slice((page - 1) * perPage, page * perPage)
+    : filtered;
 
   return (
     <div className="space-y-4">
@@ -139,7 +169,7 @@ export default function TransactionsList({
             className="flex-1 lg:max-w-md"
           />
           <div className="text-sm text-muted-foreground">
-            {filtered.length} results
+            {data?.total ?? 0} results
           </div>
         </div>
 
@@ -151,9 +181,13 @@ export default function TransactionsList({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{isMobile ? "Card Fields" : "Columns"}</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                {isMobile ? "Card Fields" : "Columns"}
+              </DropdownMenuLabel>
               {(
-                Object.keys(columnVisibility) as (keyof typeof columnVisibility)[]
+                Object.keys(
+                  columnVisibility,
+                ) as (keyof typeof columnVisibility)[]
               ).map((col) => (
                 <DropdownMenuCheckboxItem
                   key={col}
@@ -185,190 +219,206 @@ export default function TransactionsList({
         </div>
       </div>
 
-      {items.length === 0 && (
-        <EmptyState
-          type="no-transactions"
-          onSaved={onSaved}
-          onClose={onClose}
-          editing={editing}
-        />
-      )}
-
-      {items.length > 0 && filtered.length === 0 && (
-        <EmptyState type="no-results" />
-      )}
-
-      {/* Mobile Cards Layout */}
-      {isMobile && filtered.length > 0 && (
-        <div className="space-y-3">
-          {pageItems.map((t) => (
-            <TransactionCard
-              key={t.id}
-              transaction={t}
-              displayCurrency={displayCurrency}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              columnVisibility={columnVisibility}
+      {isLoading ? (
+        <TransactionsListSkeleton />
+      ) : (
+        <>
+          {error && <div>Error loading transactions.</div>}
+          {filtered.length === 0 && (
+            <EmptyState
+              type={data?.total === 0 ? "no-transactions" : "no-results"}
+              onSaved={onSaved}
+              onClose={onClose}
+              editing={editing}
             />
-          ))}
-        </div>
-      )}
+          )}
 
-      {/* Desktop Table Layout */}
-      {!isMobile && filtered.length > 0 && (
-        <div className="overflow-hidden rounded-md border accent-shadow">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {columnVisibility.amount && (
-                  <TableHead className="text-left">
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="size-4" />
-                      <span>Amount</span>
-                    </div>
-                  </TableHead>
-                )}
-                {columnVisibility.description && (
-                  <TableHead>
-                    <div className="flex items-center gap-2">
-                      <FileText className="size-4" />
-                      <span>Description</span>
-                    </div>
-                  </TableHead>
-                )}
-                {columnVisibility.category && (
-                  <TableHead>
-                    <div className="flex items-center gap-2">
-                      <Tag className="size-4" />
-                      <span>Category</span>
-                    </div>
-                  </TableHead>
-                )}
-                {columnVisibility.date && (
-                  <TableHead>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="size-4" />
-                      <span>Date</span>
-                    </div>
-                  </TableHead>
-                )}
-                {columnVisibility.actions && (
-                  <TableHead className="text-center">
-                    <div className="flex items-center justify-center gap-2">
-                      <span>Actions</span>
-                    </div>
-                  </TableHead>
-                )}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {pageItems.map((t) => (
-                <TableRow key={t.id}>
-                  {columnVisibility.amount && (
-                    <TableCell
-                      className={`${t.type === "income" ? "text-success/80" : "text-destructive/80"} text-left`}
-                    >
-                      {t.type === "income" ? "+" : "-"}
-                      {formatCurrencyFromCents(
-                        t.amount_cents || 0,
-                        (t.currency ?? "USD") as Currency,
-                      )}
-                    </TableCell>
-                  )}
-
-                  {columnVisibility.description && (
-                    <TableCell>{t.description || t.category}</TableCell>
-                  )}
-
-                  {columnVisibility.category && (
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {getCategoryIcon(t.category)}
-                        <span>{t.category}</span>
-                      </div>
-                    </TableCell>
-                  )}
-
-                  {columnVisibility.date && (
-                    <TableCell>{formatDateByCurrency(new Date(t.date), displayCurrency)}</TableCell>
-                  )}
-
-                  {columnVisibility.actions && (
-                    <TableCell className="text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => onEdit(t)}
-                          aria-label="Edit"
-                        >
-                          <Edit className="size-4" />
-                        </Button>
-                        <ConfirmModal
-                          title="Delete transaction"
-                          description="This action cannot be undone. Are you sure you want to delete this transaction?"
-                          confirmLabel="Delete"
-                          cancelLabel="Cancel"
-                          onConfirm={async () => {
-                            try {
-                              await Promise.resolve(onDelete(t.id));
-                              toast.success("Transaction deleted");
-                            } catch (err) {
-                              console.error(err);
-                              toast.error("Failed to delete transaction");
-                            }
-                          }}
-                        >
-                          <Button
-                            size="icon"
-                            variant="destructive"
-                            aria-label="Delete"
-                          >
-                            <Trash2 className="size-4" />
-                          </Button>
-                        </ConfirmModal>
-                      </div>
-                    </TableCell>
-                  )}
-                </TableRow>
+          {/* Mobile Cards Layout */}
+          {isMobile && filtered.length > 0 && (
+            <div className="space-y-3">
+              {pageItems.map((t: Transaction) => (
+                <TransactionCard
+                  key={t.id}
+                  transaction={t}
+                  displayCurrency={displayCurrency}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                  columnVisibility={columnVisibility}
+                />
               ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+            </div>
+          )}
 
-      {/* Pagination - compartilhada entre mobile e desktop */}
-      {filtered.length > 0 && (
-        <div className="flex items-center justify-center gap-2 mt-2">
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            aria-label="Prev"
-          >
-            ◀
-          </Button>
-          {Array.from({ length: totalPages }).map((_, i) => {
-            const pageNumber = i + 1;
-            return (
+          {/* Desktop Table Layout */}
+          {!isMobile && filtered.length > 0 && (
+            <div className="overflow-hidden rounded-md border accent-shadow">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    {columnVisibility.amount && (
+                      <TableHead className="text-left">
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="size-4" />
+                          <span>Amount</span>
+                        </div>
+                      </TableHead>
+                    )}
+                    {columnVisibility.description && (
+                      <TableHead>
+                        <div className="flex items-center gap-2">
+                          <FileText className="size-4" />
+                          <span>Description</span>
+                        </div>
+                      </TableHead>
+                    )}
+                    {columnVisibility.category && (
+                      <TableHead>
+                        <div className="flex items-center gap-2">
+                          <Tag className="size-4" />
+                          <span>Category</span>
+                        </div>
+                      </TableHead>
+                    )}
+                    {columnVisibility.date && (
+                      <TableHead>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="size-4" />
+                          <span>Date</span>
+                        </div>
+                      </TableHead>
+                    )}
+                    {columnVisibility.actions && (
+                      <TableHead className="text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <span>Actions</span>
+                        </div>
+                      </TableHead>
+                    )}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pageItems.map((t: Transaction) => (
+                    <TableRow key={t.id}>
+                      {columnVisibility.amount && (
+                        <TableCell
+                          className={`${(t.amount_cents ?? Math.round(((t as any).amount ?? 0) * 100)) >= 0 ? "text-success/80" : "text-destructive/80"} text-left`}
+                        >
+                          {(() => {
+                            const amountCents =
+                              t.amount_cents ??
+                              Math.round(((t as any).amount ?? 0) * 100);
+                            return amountCents >= 0 ? "+" : "-";
+                          })()}
+                          {formatCurrencyFromCents(
+                            Math.abs(
+                              t.amount_cents ??
+                                Math.round(((t as any).amount ?? 0) * 100),
+                            ),
+                            (t.currency ?? "USD") as Currency,
+                          )}
+                        </TableCell>
+                      )}
+
+                      {columnVisibility.description && (
+                        <TableCell>{t.description || t.category}</TableCell>
+                      )}
+
+                      {columnVisibility.category && (
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {getCategoryIcon(t.category)}
+                            <span>{t.category}</span>
+                          </div>
+                        </TableCell>
+                      )}
+
+                      {columnVisibility.date && (
+                        <TableCell>
+                          {formatDateByCurrency(
+                            new Date(t.date),
+                            displayCurrency,
+                          )}
+                        </TableCell>
+                      )}
+
+                      {columnVisibility.actions && (
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => onEdit(t)}
+                              aria-label="Edit"
+                            >
+                              <Edit className="size-4" />
+                            </Button>
+                            <ConfirmModal
+                              title="Delete transaction"
+                              description="This action cannot be undone. Are you sure you want to delete this transaction?"
+                              confirmLabel="Delete"
+                              cancelLabel="Cancel"
+                              onConfirm={async () => {
+                                try {
+                                  await onDelete(t.id);
+                                  toast.success("Transaction deleted");
+                                } catch (err) {
+                                  console.error(err);
+                                  toast.error("Failed to delete transaction");
+                                }
+                              }}
+                            >
+                              <Button
+                                size="icon"
+                                variant="destructive"
+                                aria-label="Delete"
+                              >
+                                <Trash2 className="size-4" />
+                              </Button>
+                            </ConfirmModal>
+                          </div>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+
+          {/* Pagination - compartilhada entre mobile e desktop */}
+          {filtered.length > 0 && (
+            <div className="flex items-center justify-center gap-2 mt-2">
               <Button
-                key={`page-${pageNumber}`}
-                variant={page === pageNumber ? "default" : "ghost"}
-                onClick={() => setPage(pageNumber)}
+                size="icon"
+                variant="ghost"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                aria-label="Prev"
               >
-                {pageNumber}
+                ◀
               </Button>
-            );
-          })}
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            aria-label="Next"
-          >
-            ▶
-          </Button>
-        </div>
+              {Array.from({ length: totalPages }).map((_, i) => {
+                const pageNumber = i + 1;
+                return (
+                  <Button
+                    key={`page-${pageNumber}`}
+                    variant={page === pageNumber ? "default" : "ghost"}
+                    onClick={() => setPage(pageNumber)}
+                  >
+                    {pageNumber}
+                  </Button>
+                );
+              })}
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                aria-label="Next"
+              >
+                ▶
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

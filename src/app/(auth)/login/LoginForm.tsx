@@ -1,15 +1,16 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LogoSpinner } from "@ledgerly/ui/components/logo";
+import { cn } from "@ledgerly/utils";
+import { Eye, EyeOff } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Eye, EyeOff } from "lucide-react";
-import { LogoSpinner } from "@/components/logo";
-import { cn } from "@ledgerly/utils";
+
 const schema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
@@ -33,7 +34,6 @@ export default function LoginForm({ error }: LoginFormProps) {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
-
 
   async function onSubmit(data: FormValues) {
     setLoading(true);
@@ -68,7 +68,9 @@ export default function LoginForm({ error }: LoginFormProps) {
     <>
       {error === "OAuthAccountNotLinked" && (
         <p className="text-center text-sm text-destructive" role="alert">
-          An account with this email already exists. Please login with your email and password, then link your Google account in your profile settings.
+          An account with this email already exists. Please login with your
+          email and password, then link your Google account in your profile
+          settings.
         </p>
       )}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -142,7 +144,10 @@ export default function LoginForm({ error }: LoginFormProps) {
 
         <p className="text-center text-sm">
           Don’t have an account?{" "}
-          <a className="text-primary underline hover:underline hover:opacity-80" href="/register">
+          <a
+            className="text-primary underline hover:underline hover:opacity-80"
+            href="/register"
+          >
             Sign up
           </a>
         </p>

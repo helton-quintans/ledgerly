@@ -6,16 +6,16 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { signOut, useSession } from "next-auth/react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSidebar } from "@/components/ui/sidebar";
+import { signOut, useSession } from "next-auth/react";
 
 import ThemeToggle from "@/components/theme-toggle";
 
@@ -89,7 +89,10 @@ export function BrandHeader() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="size-8 shadow-sm cursor-pointer">
-                <AvatarImage src={session?.user?.image ?? undefined} alt={session?.user?.name ?? undefined} />
+                <AvatarImage
+                  src={session?.user?.image ?? undefined}
+                  alt={session?.user?.name ?? undefined}
+                />
                 <AvatarFallback className="bg-primary text-primary-foreground">
                   {session?.user?.name?.[0] ?? "?"}
                 </AvatarFallback>
@@ -104,8 +107,13 @@ export function BrandHeader() {
                   {session?.user?.email || "email@example.com"}
                 </p>
               </div>
-              <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
-                <span className="text-destructive hover:bg-destructive/10 hover:text-destructive">Logout</span>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => signOut()}
+              >
+                <span className="text-destructive hover:bg-destructive/10 hover:text-destructive">
+                  Logout
+                </span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -125,7 +133,10 @@ export function BrandHeader() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="size-8 shadow-sm cursor-pointer">
-                <AvatarImage src={session?.user?.image ?? undefined} alt={session?.user?.name ?? undefined} />
+                <AvatarImage
+                  src={session?.user?.image ?? undefined}
+                  alt={session?.user?.name ?? undefined}
+                />
                 <AvatarFallback className="bg-primary text-primary-foreground">
                   {session?.user?.name?.[0] ?? "?"}
                 </AvatarFallback>
@@ -140,8 +151,13 @@ export function BrandHeader() {
                   {session?.user?.email || "email@example.com"}
                 </p>
               </div>
-              <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
-                <span className="text-destructive hover:bg-destructive/10 hover:text-destructive">Logout</span>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => signOut()}
+              >
+                <span className="text-destructive hover:bg-destructive/10 hover:text-destructive">
+                  Logout
+                </span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -7,8 +7,9 @@
     "dev": "next dev --turbopack",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "biome check",
+    "lint": "biome check || true",
     "lint:fix": "biome check --write",
+    "lint:ci": "biome ci",
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:db:push": "prisma db push",
@@ -88,5 +89,11 @@
   },
   "overrides": {
     "react-is": "^19.0.0-rc-69d4b800-20241021"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "prisma",
+      "@prisma/client"
+    ]
   }
 }

@@ -8,17 +8,19 @@ datasource db {
 }
 
 model User {
-  id                  String               @id @default(cuid())
-  name                String?
-  email               String?              @unique
-  emailVerified       DateTime?
-  image               String?
-  passwordHash        String?
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  accounts            Account[]
-  passwordResetTokens PasswordResetToken[]
-  sessions            Session[]
+  id                    String                 @id @default(cuid())
+  name                  String?
+  email                 String?                @unique
+  emailVerified         DateTime?
+  image                 String?
+  passwordHash          String?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  accounts              Account[]
+  passwordResetTokens   PasswordResetToken[]
+  sessions              Session[]
+  transactions          Transaction[]
+  recurringTransactions RecurringTransaction[]
 }
 
 model Account {
@@ -71,4 +73,53 @@ model PasswordResetToken {
 
   @@index([email])
   @@index([expiresAt])
+}
+
+model Transaction {
+  id          String                @id @default(cuid())
+  amount      Float
+  currency    Currency
+  date        DateTime
+  category    String
+  description String?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  userId      String
+  user        User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recurringId String?
+  recurring   RecurringTransaction? @relation("RecurringOccurrences", fields: [recurringId], references: [id], onDelete: SetNull)
+}
+
+model RecurringTransaction {
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount       Float
+  currency     Currency
+  category     String
+  description  String?
+  frequency    Frequency
+  interval     Int           @default(1)
+  daysOfWeek   String?
+  dayOfMonth   Int?
+  startDate    DateTime?
+  endDate      DateTime?
+  nextRunAt    DateTime?
+  active       Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[] @relation("RecurringOccurrences")
+}
+
+enum Currency {
+  BRL
+  USD
+  EUR
+}
+
+enum Frequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
 }

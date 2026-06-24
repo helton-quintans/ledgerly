@@ -48,6 +48,16 @@ interface NavItem {
   children?: { title: string; href: string }[];
 }
 
+/**
+ * Feature flags to control visibility of modules under development
+ * for production rollout and clean UX/UI presentation.
+ */
+const FEATURE_FLAGS = {
+  ENABLE_EXTENDED_MAIN_ITEMS: false,
+  ENABLE_CAREER_PILLAR: false,
+  ENABLE_TOOLS_ITEMS: false,
+};
+
 export function BrandSidebar() {
   const pathname = usePathname();
   const { state, setOpenMobile } = useSidebar();
@@ -56,7 +66,6 @@ export function BrandSidebar() {
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
-  // Helper functions for active states
   function isRouteActive(href: string): boolean {
     return pathname === href;
   }
@@ -64,69 +73,77 @@ export function BrandSidebar() {
   function isParentActive(item: NavItem): boolean {
     if (pathname === item.href) return true;
     if (item.children) {
-      return item.children.some(child => pathname === child.href || pathname.startsWith(child.href + '/'));
+      return item.children.some(
+        (child) =>
+          pathname === child.href || pathname.startsWith(child.href + "/"),
+      );
     }
-    return pathname.startsWith(item.href + '/');
+    return pathname.startsWith(item.href + "/");
   }
 
   function isChildActive(href: string): boolean {
-    return pathname === href || pathname.startsWith(href + '/');
+    return pathname === href || pathname.startsWith(href + "/");
   }
 
-  // Auto-expand parent items when on child routes
   React.useEffect(() => {
     const autoExpand: Record<string, boolean> = {};
-    
-    [...mainNavItems, ...pillarNavItems, ...toolsNavItems].forEach(item => {
+
+    [...mainNavItems, ...pillarNavItems, ...toolsNavItems].forEach((item) => {
       if (item.children && isParentActive(item)) {
         autoExpand[item.title] = true;
       }
     });
-    
-    setExpanded(prev => ({ ...prev, ...autoExpand }));
+
+    setExpanded((prev) => ({ ...prev, ...autoExpand }));
   }, [pathname]);
 
   function toggleExpand(key: string) {
     setExpanded((s) => ({ ...s, [key]: !s[key] }));
   }
 
-  // Menus essenciais (enxuto)
   const mainNavItems: NavItem[] = [
     { title: "Home", href: "/", icon: <Home className="size-4" /> },
-    // Pillars will be rendered separately below Home
-    {
-      title: "Projects",
-      href: "/projects",
-      icon: <LayoutGrid className="size-4" />,
-      children: [
-        { title: "Alpha", href: "/projects/alpha" },
-        { title: "Beta", href: "/projects/beta" },
-      ],
-    },
-    {
-      title: "Databases",
-      href: "/databases",
-      icon: <Database className="size-4" />,
-    },
-    {
-      title: "Tables",
-      href: "/tables",
-      icon: <Table className="size-4" />,
-      badge: { text: "Beta" },
-    },
+    ...(FEATURE_FLAGS.ENABLE_EXTENDED_MAIN_ITEMS
+      ? [
+          {
+            title: "Projects",
+            href: "/projects",
+            icon: <LayoutGrid className="size-4" />,
+            children: [
+              { title: "Alpha", href: "/projects/alpha" },
+              { title: "Beta", href: "/projects/beta" },
+            ],
+          },
+          {
+            title: "Databases",
+            href: "/databases",
+            icon: <Database className="size-4" />,
+          },
+          {
+            title: "Tables",
+            href: "/tables",
+            icon: <Table className="size-4" />,
+            badge: { text: "Beta" },
+          },
+        ]
+      : []),
   ];
 
   const pillarNavItems: NavItem[] = [
-    {
-      title: "Career",
-      href: "/career",
-      icon: <Briefcase className="size-4" />,
-      children: [
-        { title: "Overview", href: "/career/overview" },
-        { title: "Goals", href: "/career/goals" },
-        { title: "Tasks", href: "/career/tasks" },
-      ],
-    },
+    ...(FEATURE_FLAGS.ENABLE_CAREER_PILLAR
+      ? [
+          {
+            title: "Career",
+            href: "/career",
+            icon: <Briefcase className="size-4" />,
+            children: [
+              { title: "Overview", href: "/career/overview" },
+              { title: "Goals", href: "/career/goals" },
+              { title: "Tasks", href: "/career/tasks" },
+            ],
+          },
+        ]
+      : []),
     {
       title: "Health & Wellbeing",
       href: "/health-wellbeing",
@@ -145,45 +162,41 @@ export function BrandSidebar() {
         { title: "Overview", href: "/finance/overview" },
         { title: "Budget", href: "/finance/budget" },
         { title: "Transactions", href: "/finance/transactions" },
+        { title: "Recurring", href: "/finance/recurring" },
       ],
     },
   ];
 
-  const toolsNavItems: NavItem[] = [
-    {
-      title: "Alerts",
-      href: "/alerts",
-      icon: <AlertTriangle className="size-4" />,
-    },
-    {
-      title: "Analytics",
-      href: "/analytics",
-      icon: <BarChart2 className="size-4" />,
-      children: [
-        { title: "Live", href: "/analytics/live" },
-        { title: "Reports", href: "/analytics/reports" },
-      ],
-    },
-    { title: "History", href: "/history", icon: <Clock className="size-4" /> },
-    {
-      title: "AI",
-      href: "/ai",
-      icon: <MessageSquareText className="size-4" />,
-    },
-  ];
+  const toolsNavItems: NavItem[] = FEATURE_FLAGS.ENABLE_TOOLS_ITEMS
+    ? [
+        {
+          title: "Alerts",
+          href: "/alerts",
+          icon: <AlertTriangle className="size-4" />,
+        },
+        {
+          title: "Analytics",
+          href: "/analytics",
+          icon: <BarChart2 className="size-4" />,
+          children: [
+            { title: "Live", href: "/analytics/live" },
+            { title: "Reports", href: "/analytics/reports" },
+          ],
+        },
+        { title: "History", href: "/history", icon: <Clock className="size-4" /> },
+        {
+          title: "AI",
+          href: "/ai",
+          icon: <MessageSquareText className="size-4" />,
+        },
+      ]
+    : [];
 
   const q = query.trim().toLowerCase();
 
   return (
     <Sidebar variant="sidebar" collapsible="icon" className="mt-16">
       <SidebarHeader>
-        {/* <div className={cn(isCollapsed ? "py-2" : "p-2")}>
-          <Button className={cn(isCollapsed ? "h-8 w-8 p-0" : "w-full")}>
-            <Plus className={cn("size-4", !isCollapsed && "mr-1")} />
-            {!isCollapsed && <span>Create</span>}
-          </Button>
-        </div> */}
-
         {!isCollapsed && (
           <div className="px-2 pt-2">
             <div className="pb-2">
@@ -201,7 +214,6 @@ export function BrandSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        {/* Main Nav Items */}
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -234,8 +246,9 @@ export function BrandSidebar() {
                             asChild
                             className={cn(
                               "cursor-pointer",
-                              isParentActive(item) && "bg-sidebar-accent text-sidebar-accent-foreground",
-                              isParentActive(item) && "dark:text-gray-900"
+                              isParentActive(item) &&
+                                "bg-sidebar-accent text-sidebar-accent-foreground",
+                              isParentActive(item) && "dark:text-gray-900",
                             )}
                             tooltip={item.title}
                           >
@@ -260,7 +273,8 @@ export function BrandSidebar() {
                             isActive={isRouteActive(item.href)}
                             tooltip={item.title}
                             className={cn(
-                              isRouteActive(item.href) && "dark:data-[active=true]:text-gray-900"
+                              isRouteActive(item.href) &&
+                                "dark:data-[active=true]:text-gray-900",
                             )}
                           >
                             <Link
@@ -284,11 +298,12 @@ export function BrandSidebar() {
                               })
                               .map((child) => (
                                 <SidebarMenuSubItem key={child.href}>
-                                  <SidebarMenuSubButton 
+                                  <SidebarMenuSubButton
                                     asChild
                                     isActive={isChildActive(child.href)}
                                     className={cn(
-                                      isChildActive(child.href) && "dark:data-[active=true]:text-gray-900"
+                                      isChildActive(child.href) &&
+                                        "dark:data-[active=true]:text-gray-900",
                                     )}
                                   >
                                     <Link
@@ -311,7 +326,6 @@ export function BrandSidebar() {
                       </SidebarMenuItem>
 
                       {item.title === "Home" &&
-                        // Insert pillar menus immediately after Home
                         pillarNavItems.map((p) => {
                           const pHasChildren = Boolean(p.children?.length);
                           const pChildMatches = pHasChildren
@@ -330,8 +344,9 @@ export function BrandSidebar() {
                                   asChild
                                   className={cn(
                                     "cursor-pointer",
-                                    isParentActive(p) && "bg-sidebar-accent text-sidebar-accent-foreground",
-                                    isParentActive(p) && "dark:text-gray-900"
+                                    isParentActive(p) &&
+                                      "bg-sidebar-accent text-sidebar-accent-foreground",
+                                    isParentActive(p) && "dark:text-gray-900",
                                   )}
                                   tooltip={p.title}
                                 >
@@ -356,7 +371,8 @@ export function BrandSidebar() {
                                   isActive={isRouteActive(p.href)}
                                   tooltip={p.title}
                                   className={cn(
-                                    isRouteActive(p.href) && "dark:data-[active=true]:text-gray-900"
+                                    isRouteActive(p.href) &&
+                                      "dark:data-[active=true]:text-gray-900",
                                   )}
                                 >
                                   <Link
@@ -373,11 +389,12 @@ export function BrandSidebar() {
                                 <SidebarMenuSub>
                                   {p.children!.map((child) => (
                                     <SidebarMenuSubItem key={child.href}>
-                                      <SidebarMenuSubButton 
+                                      <SidebarMenuSubButton
                                         asChild
                                         isActive={isChildActive(child.href)}
                                         className={cn(
-                                          isChildActive(child.href) && "dark:data-[active=true]:text-gray-900"
+                                          isChildActive(child.href) &&
+                                            "dark:data-[active=true]:text-gray-900",
                                         )}
                                       >
                                         <Link
@@ -403,7 +420,6 @@ export function BrandSidebar() {
 
         <SidebarSeparator />
 
-        {/* Tools Group (accordion) */}
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -435,8 +451,9 @@ export function BrandSidebar() {
                           asChild
                           className={cn(
                             "cursor-pointer",
-                            isParentActive(item) && "bg-sidebar-accent text-sidebar-accent-foreground",
-                            isParentActive(item) && "dark:text-gray-900"
+                            isParentActive(item) &&
+                              "bg-sidebar-accent text-sidebar-accent-foreground",
+                            isParentActive(item) && "dark:text-gray-900",
                           )}
                           tooltip={item.title}
                         >
@@ -461,7 +478,8 @@ export function BrandSidebar() {
                           isActive={isRouteActive(item.href)}
                           tooltip={item.title}
                           className={cn(
-                            isRouteActive(item.href) && "dark:data-[active=true]:text-gray-900"
+                            isRouteActive(item.href) &&
+                              "dark:data-[active=true]:text-gray-900",
                           )}
                         >
                           <Link
@@ -485,17 +503,18 @@ export function BrandSidebar() {
                             })
                             .map((child) => (
                               <SidebarMenuSubItem key={child.href}>
-                                <SidebarMenuSubButton 
+                                <SidebarMenuSubButton
                                   asChild
                                   isActive={isChildActive(child.href)}
                                   className={cn(
-                                    isChildActive(child.href) && "dark:data-[active=true]:text-gray-900"
+                                    isChildActive(child.href) &&
+                                      "dark:data-[active=true]:text-gray-900",
                                   )}
                                 >
                                   <Link
                                     href={child.href}
                                     onClick={() => {
-                                      setOpenMobile(false);
+                                        setOpenMobile(false);
                                     }}
                                   >
                                     {child.title}

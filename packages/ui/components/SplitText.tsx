@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
+import { gsap } from "gsap";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type SplitTextProps = {
   text: string;
@@ -9,36 +10,36 @@ export type SplitTextProps = {
   delay?: number;
   duration?: number;
   ease?: string;
-  splitType?: 'chars' | 'words' | 'lines';
+  splitType?: "chars" | "words" | "lines";
   from?: gsap.TweenVars;
   to?: gsap.TweenVars;
   threshold?: number;
   rootMargin?: string;
-  textAlign?: 'left' | 'center' | 'right';
+  textAlign?: "left" | "center" | "right";
   onLetterAnimationComplete?: () => void;
   showCallback?: boolean;
   stagger?: number;
-  trigger?: 'immediate' | 'scroll';
+  trigger?: "immediate" | "scroll";
   style?: React.CSSProperties;
 };
 
 export function SplitText({
   text,
-  className = '',
+  className = "",
   delay = 0,
   duration = 1,
-  ease = 'power2.out',
-  splitType = 'chars',
+  ease = "power2.out",
+  splitType = "chars",
   from = { opacity: 0, y: 20 },
   to = { opacity: 1, y: 0 },
   threshold = 0.1,
-  rootMargin = '0px',
-  textAlign = 'left',
+  rootMargin = "0px",
+  textAlign = "left",
   onLetterAnimationComplete,
   showCallback = false,
   stagger = 0.05,
-  trigger = 'scroll',
-  style
+  trigger = "scroll",
+  style,
 }: SplitTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isInView, setIsInView] = useState(false);
@@ -48,25 +49,29 @@ export function SplitText({
   // Split text into elements based on splitType
   const splitTextIntoElements = () => {
     switch (splitType) {
-      case 'words':
-        return text.split(' ').map((word, index) => (
-          <span key={index} className="inline-block mr-[0.25em]" data-split-element>
+      case "words":
+        return text.split(" ").map((word, index) => (
+          <span
+            key={index}
+            className="inline-block mr-[0.25em]"
+            data-split-element
+          >
             {word}
           </span>
         ));
-      
-      case 'lines':
-        return text.split('\n').map((line, index) => (
+
+      case "lines":
+        return text.split("\n").map((line, index) => (
           <span key={index} className="block" data-split-element>
             {line}
           </span>
         ));
-      
-      case 'chars':
+
+      case "chars":
       default:
-        return text.split('').map((char, index) => (
+        return text.split("").map((char, index) => (
           <span key={index} className="inline-block" data-split-element>
-            {char === ' ' ? '\u00A0' : char}
+            {char === " " ? "\u00A0" : char}
           </span>
         ));
     }
@@ -76,7 +81,9 @@ export function SplitText({
   const animateElements = () => {
     if (!containerRef.current || hasAnimated) return;
 
-    const elements = containerRef.current.querySelectorAll('[data-split-element]');
+    const elements = containerRef.current.querySelectorAll(
+      "[data-split-element]",
+    );
     if (elements.length === 0) return;
 
     // Set initial state
@@ -91,9 +98,9 @@ export function SplitText({
           onLetterAnimationComplete();
         }
         if (showCallback) {
-          console.log('Animation complete!');
+          console.log("Animation complete!");
         }
-      }
+      },
     });
 
     // Animate elements
@@ -101,13 +108,13 @@ export function SplitText({
       ...to,
       duration: duration,
       ease: ease,
-      stagger: stagger
+      stagger: stagger,
     });
   };
 
   // Intersection Observer setup
   useEffect(() => {
-    if (trigger === 'immediate') {
+    if (trigger === "immediate") {
       setIsInView(true);
       return;
     }
@@ -123,8 +130,8 @@ export function SplitText({
       },
       {
         threshold,
-        rootMargin
-      }
+        rootMargin,
+      },
     );
 
     observer.observe(containerRef.current);
@@ -149,9 +156,9 @@ export function SplitText({
   }, []);
 
   const alignmentClasses = {
-    left: 'text-left',
-    center: 'text-center',
-    right: 'text-right'
+    left: "text-left",
+    center: "text-center",
+    right: "text-right",
   };
 
   return (

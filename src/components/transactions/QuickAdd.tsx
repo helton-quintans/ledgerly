@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { Currency } from "@ledgerly/schemas";
 import { createTransaction } from "@/lib/transactions";
+import type { Currency } from "@ledgerly/schemas";
 import { CheckCircle, XCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

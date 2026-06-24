@@ -18,7 +18,10 @@ export type Transaction = {
 };
 
 // mock conversion rates to USD
-const rateToUSD: Record<import("../../packages/schemas/transaction").Currency, number> = {
+const rateToUSD: Record<
+  import("../../packages/schemas/transaction").Currency,
+  number
+> = {
   USD: 1,
   EUR: 1.08,
   BRL: 0.19,
@@ -64,7 +67,7 @@ let items: Transaction[] = [
     category: "Food",
     description: "Lunch",
   },
-   {
+  {
     id: generateId(),
     type: "expense",
     amount_cents: Math.round(100.5 * 100),

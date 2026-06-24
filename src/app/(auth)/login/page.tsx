@@ -1,6 +1,5 @@
-
-import OAuthButtons from "../components/OAuthButtons";
 import { Suspense } from "react";
+import OAuthButtons from "../components/OAuthButtons";
 import LoginClient from "./LoginClient";
 
 export default function LoginPage() {

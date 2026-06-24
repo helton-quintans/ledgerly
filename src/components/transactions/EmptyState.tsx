@@ -1,8 +1,8 @@
 "use client";
 
-import { Receipt, FileText } from "lucide-react";
-import TransactionFormModal from "./TransactionFormModal";
 import type { Transaction } from "@/lib/transactions";
+import { FileText, Receipt } from "lucide-react";
+import TransactionFormModal from "./TransactionFormModal";
 
 type EmptyStateProps = {
   type: "no-transactions" | "no-results";
@@ -11,22 +11,22 @@ type EmptyStateProps = {
   editing?: Transaction | null;
 };
 
-export default function EmptyState({ 
-  type, 
-  onSaved, 
-  onClose, 
-  editing 
+export default function EmptyState({
+  type,
+  onSaved,
+  onClose,
+  editing,
 }: EmptyStateProps) {
   if (type === "no-transactions") {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
+      <div className="flex flex-col items-center justify-center py-4 text-center">
         <div className="rounded-full bg-muted p-6 mb-4">
           <Receipt className="size-12 text-muted-foreground" />
         </div>
         <h3 className="text-lg font-semibold mb-2">No transactions yet</h3>
         <p className="text-muted-foreground mb-6 max-w-md">
-          Start tracking your finances by adding your first transaction. 
-          Record income, expenses, and keep your budget organized.
+          Start tracking your finances by adding your first transaction. Record
+          income, expenses, and keep your budget organized.
         </p>
         {onSaved && onClose && (
           <TransactionFormModal

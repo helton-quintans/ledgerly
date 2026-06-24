@@ -2,23 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import ConfirmModal from "@/components/ui/confirm-modal";
-import type { Currency } from "@ledgerly/schemas";
 import type { Transaction } from "@/lib/transactions";
+import type { Currency } from "@ledgerly/schemas";
 import { formatCurrencyFromCents, formatDateByCurrency } from "@ledgerly/utils";
-import {
-  Calendar,
-  Edit,
-  FileText,
-  Tag,
-  Trash2,
-} from "lucide-react";
+import { Calendar, Edit, FileText, Tag, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 type TransactionCardProps = {
   transaction: Transaction;
   displayCurrency: Currency;
   onEdit: (t: Transaction) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
   columnVisibility: Record<string, boolean>;
 };
 
@@ -29,6 +23,9 @@ export default function TransactionCard({
   onDelete,
   columnVisibility,
 }: TransactionCardProps) {
+  const amountCents =
+    t.amount_cents ?? Math.round(((t as any).amount ?? 0) * 100);
+  const safeDate = t.date ? new Date(t.date) : new Date(Number.NaN);
   return (
     <div className="rounded-lg border bg-card p-3 space-y-2">
       {/* Header with amount and type */}
@@ -36,12 +33,16 @@ export default function TransactionCard({
         {columnVisibility.amount && (
           <div
             className={`text-lg font-semibold ${
-              t.type === "income" ? "text-success" : "text-destructive"
+              amountCents > 0
+                ? "text-success"
+                : amountCents < 0
+                  ? "text-destructive"
+                  : ""
             }`}
           >
-            {t.type === "income" ? "+" : "-"}
             {formatCurrencyFromCents(
-              t.amount_cents || 0,
+              // fallback to `amount` (float) when `amount_cents` missing
+              Math.abs(amountCents),
               (t.currency ?? "USD") as Currency,
             )}
           </div>
@@ -63,7 +64,7 @@ export default function TransactionCard({
               cancelLabel="Cancel"
               onConfirm={async () => {
                 try {
-                  await Promise.resolve(onDelete(t.id));
+                  await onDelete(t.id);
                   toast.success("Transaction deleted");
                 } catch (err) {
                   console.error(err);
@@ -100,7 +101,7 @@ export default function TransactionCard({
         {columnVisibility.date && (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="size-4" />
-            <span>{formatDateByCurrency(new Date(t.date), displayCurrency)}</span>
+            <span>{formatDateByCurrency(safeDate, displayCurrency)}</span>
           </div>
         )}
       </div>

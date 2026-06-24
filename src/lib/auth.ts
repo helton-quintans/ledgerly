@@ -8,6 +8,36 @@ import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
 
+export async function resolveUserIdFromToken(
+  tokenUser: any,
+): Promise<string | undefined> {
+  if (!tokenUser) return undefined;
+
+  // Prefer token.sub as User.id
+  if (tokenUser?.sub) {
+    const u = await prisma.user.findUnique({ where: { id: tokenUser.sub } });
+    if (u) return u.id;
+  }
+
+  // Then try email
+  if (tokenUser?.email) {
+    const uByEmail = await prisma.user.findUnique({
+      where: { email: tokenUser.email },
+    });
+    if (uByEmail) return uByEmail.id;
+  }
+
+  // Finally, try to match an Account.providerAccountId
+  if (tokenUser?.sub) {
+    const acct = await prisma.account.findFirst({
+      where: { providerAccountId: tokenUser.sub },
+    });
+    if (acct) return acct.userId;
+  }
+
+  return undefined;
+}
+
 const credentialsSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
@@ -57,9 +87,9 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
         params: {
           scope: "openid email profile",
           access_type: "offline",
-          prompt: "consent"
-        }
-      }
+          prompt: "consent",
+        },
+      },
     }),
   );
 }
