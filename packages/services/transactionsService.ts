@@ -6,7 +6,7 @@ import {
 import { GET_TRANSACTIONS } from "@/graphql/queries/transactions/transactions";
 import { type DocumentNode, print } from "graphql";
 
-// Função utilitária para requisições GraphQL via fetch
+// function util for GraphQL requests via fetch
 async function graphqlFetch(query: string | DocumentNode, variables: any) {
   const queryString = typeof query === "string" ? query : print(query);
   const res = await fetch("/api/graphql", {

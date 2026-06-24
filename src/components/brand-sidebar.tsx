@@ -162,6 +162,7 @@ export function BrandSidebar() {
         { title: "Overview", href: "/finance/overview" },
         { title: "Budget", href: "/finance/budget" },
         { title: "Transactions", href: "/finance/transactions" },
+        { title: "Recurring", href: "/finance/recurring" },
       ],
     },
   ];

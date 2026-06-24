@@ -2,7 +2,15 @@ import { prisma } from "@/lib/prisma";
 import type { Prisma } from "../../../../../../generated/prisma/client";
 import type { TransactionArgs } from "../../schema/types/transaction.types";
 
-export async function transactions(_: unknown, args: TransactionArgs) {
+/**
+ * Extracts the exact strict type expected by Prisma for the currency filter
+ * from the generated TransactionWhereInput definition.
+ */
+interface ValidatedTransactionArgs extends Omit<TransactionArgs, "currency"> {
+  currency?: Prisma.TransactionWhereInput["currency"];
+}
+
+export async function transactions(_: unknown, args: ValidatedTransactionArgs) {
   const { year, currency, quickFilter, page = 1, pageSize = 10 } = args;
   const where: Prisma.TransactionWhereInput = {};
 
@@ -48,6 +56,7 @@ export async function transactions(_: unknown, args: TransactionArgs) {
     take: pageSize,
     orderBy: { date: "desc" },
   });
+
   return {
     transactions,
     total,

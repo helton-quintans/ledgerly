@@ -1,8 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "../../../../../../../generated/prisma/client";
-import type { TransactionArgs } from "../../../schema/types/transaction.types";
+import type { TransactionArgs } from "@/app/api/graphql/schema/types/transaction.types";
 
-export async function transactions(_: unknown, args: TransactionArgs) {
+interface ValidatedTransactionArgs extends Omit<TransactionArgs, "currency"> {
+  currency?: Prisma.TransactionWhereInput["currency"];
+}
+
+export async function transactions(_: unknown, args: ValidatedTransactionArgs) {
   const { year, currency, quickFilter, page = 1, pageSize = 10 } = args;
   const where: Prisma.TransactionWhereInput = {};
 
@@ -19,14 +23,12 @@ export async function transactions(_: unknown, args: TransactionArgs) {
 
   if (quickFilter) {
     const now = new Date();
-
     if (quickFilter === "this month") {
       where.date = {
         gte: new Date(now.getFullYear(), now.getMonth(), 1),
         lte: new Date(now.getFullYear(), now.getMonth() + 1, 0),
       };
     }
-
     if (quickFilter === "last month") {
       const lastMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
       const year = lastMonth === 11 ? now.getFullYear() - 1 : now.getFullYear();
@@ -35,7 +37,6 @@ export async function transactions(_: unknown, args: TransactionArgs) {
         lte: new Date(year, lastMonth + 1, 0),
       };
     }
-
     if (quickFilter === "this year") {
       where.date = {
         gte: new Date(now.getFullYear(), 0, 1),
@@ -45,19 +46,22 @@ export async function transactions(_: unknown, args: TransactionArgs) {
   }
 
   const total = await prisma.transaction.count({ where });
-  const raw = await prisma.transaction.findMany({
+  
+  // Busca os dados brutos do banco
+  const rawTransactions = await prisma.transaction.findMany({
     where,
     skip: (page - 1) * pageSize,
     take: pageSize,
     orderBy: { date: "desc" },
   });
 
-  const transactions = raw.map((t) => ({
+  const transactions = rawTransactions.map((t) => ({
     ...t,
     amount_cents: Math.round((t.amount ?? 0) * 100),
     type: (t.amount ?? 0) >= 0 ? "income" : "expense",
     date: t.date instanceof Date ? t.date.toISOString() : t.date,
   }));
+
   return {
     transactions,
     total,
